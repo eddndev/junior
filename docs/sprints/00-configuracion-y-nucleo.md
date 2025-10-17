@@ -51,6 +51,23 @@ Establecer las bases del proyecto Junior implementando la infraestructura comple
 - [x] Actualizar `DatabaseSeeder` para ejecutar todos los seeders
 - [x] Ejecutar seeders exitosamente sin errores
 
+### Middleware y Autorización
+- [x] Crear `CheckPermission` middleware para verificación de permisos
+- [x] Crear `CheckRole` middleware para verificación de roles
+- [x] Registrar middlewares en `bootstrap/app.php` con aliases 'permission' y 'role'
+- [x] Implementar Gates dinámicos en `AppServiceProvider`
+- [x] Configurar super-admin bypass (Dirección General) con `Gate::before()`
+
+### Factories
+- [x] Crear `RoleFactory` con estados `active()` e `inactive()`
+- [x] Crear `PermissionFactory` con generación de módulos aleatorios
+- [x] Crear `AreaFactory` con estados `active()` e `inactive()`
+- [x] Crear `TaskFactory` con estados `completed()`, `highPriority()`, `subtaskOf()`
+- [x] Crear `ClientFactory` con estados `active()` e `inactive()`
+- [x] Crear `BudgetFactory` con estados `active()` y `fullyConsumed()`
+- [x] Crear `QuoteFactory` con estados `accepted()`, `sent()`, `expired()`
+- [x] Crear `CampaignFactory` con estados `active()`, `completed()`, `planning()`
+
 ---
 
 ## 3. Registro de Decisiones Técnicas
@@ -123,6 +140,59 @@ Establecer las bases del proyecto Junior implementando la infraestructura comple
 
 ---
 
+### 2025-10-16: Infraestructura de Autorización con Middleware y Gates
+**Decisión:** Implementar un sistema completo de autorización con middleware personalizados y Gates dinámicos.
+
+**Razón:**
+- Protección de rutas mediante middleware con aliases simples (`permission:slug`, `role:slug`)
+- Gates dinámicos registrados automáticamente desde la tabla de permisos
+- Facilita verificación de permisos en vistas, controladores y policies
+- Super-admin bypass permite que Dirección General tenga acceso total sin asignación explícita de cada permiso
+
+**Implementación:**
+- Middleware `CheckPermission` para verificar permisos del usuario
+- Middleware `CheckRole` para verificar roles del usuario
+- Registro en `bootstrap/app.php` con aliases 'permission' y 'role'
+- Gates dinámicos en `AppServiceProvider::boot()` basados en `Permission::all()`
+- `Gate::before()` para bypass de 'direccion-general'
+
+**Uso en Rutas:**
+```php
+Route::get('/usuarios', [UserController::class, 'index'])
+    ->middleware('permission:gestionar-usuarios');
+
+Route::get('/finanzas', [FinanceController::class, 'index'])
+    ->middleware('role:gestor-financiero');
+```
+
+---
+
+### 2025-10-16: Factories con Estados para Testing
+**Decisión:** Crear factories con múltiples estados (states) para facilitar testing y seeding flexible.
+
+**Razón:**
+- Permite generar datos de prueba realistas con diferentes escenarios
+- Estados específicos facilitan testing de casos edge (completados, expirados, etc.)
+- Reduce código duplicado en tests
+- Acelera desarrollo de features al tener datos de prueba listos
+
+**Implementación:**
+- 8 factories creados para modelos principales
+- Estados comunes: `active()`, `inactive()`, `completed()`, `expired()`
+- Estados específicos: `highPriority()`, `subtaskOf()`, `fullyConsumed()`, `planning()`
+- Uso de Faker para datos realistas y únicos
+
+**Ejemplo de Uso:**
+```php
+// Crear tarea de alta prioridad completada
+Task::factory()->highPriority()->completed()->create();
+
+// Crear cliente inactivo con 5 cotizaciones
+Client::factory()->inactive()->has(Quote::factory()->count(5))->create();
+```
+
+---
+
 ## 4. Registro de Bloqueos y Soluciones
 
 ### 2025-10-16: Error de Índices Duplicados en Migraciones
@@ -147,7 +217,7 @@ Establecer las bases del proyecto Junior implementando la infraestructura comple
 
 ## 5. Resultado del Sprint
 
-### Tareas Completadas: 8 de 8
+### Tareas Completadas: 11 de 11
 
 **Resumen:** El Sprint 0 se completó exitosamente. Se establecieron las bases completas del proyecto Junior con:
 - ✅ Esquema de base de datos robusto y documentado (26 tablas)
@@ -156,6 +226,9 @@ Establecer las bases del proyecto Junior implementando la infraestructura comple
 - ✅ 5 seeders funcionales con datos de ejemplo
 - ✅ Sistema de permisos aditivos implementado
 - ✅ 7 roles, 46 permisos, 6 áreas y 9 usuarios de prueba
+- ✅ Middleware de autorización (CheckPermission, CheckRole)
+- ✅ Gates dinámicos registrados en AppServiceProvider
+- ✅ 8 factories con estados para testing (Role, Permission, Area, Task, Client, Budget, Quote, Campaign)
 
 **Estado de la Base de Datos:**
 ```
@@ -164,6 +237,20 @@ Permisos creados: 46
 Áreas creadas: 6
 Usuarios creados: 9
 Tiempo total de ejecución: ~3.4 segundos
+```
+
+**Componentes de Autorización:**
+```
+Middleware: 2 (CheckPermission, CheckRole)
+Gates dinámicos: 46 (uno por cada permiso)
+Super-admin bypass: ✅ (Dirección General)
+```
+
+**Factories Creados:**
+```
+Factories con estados: 8
+Estados totales implementados: 17
+Modelos cubiertos: Núcleo (3), Tareas (1), Finanzas (3), Marketing (1)
 ```
 
 ---
