@@ -267,14 +267,15 @@ Modelos cubiertos: Núcleo (3), Tareas (1), Finanzas (3), Marketing (1)
 1. **Validación de Migraciones:** Implementar un script o comando que valide índices duplicados antes de ejecutar migraciones.
 2. **Documentación de Modelos:** Considerar agregar PHPDoc más detallado en los métodos de relaciones.
 3. **Tests Unitarios:** Crear tests para verificar relaciones de modelos (tarea para Sprint 1).
-4. **Factory Classes:** Crear factories para cada modelo para facilitar testing (tarea para Sprint 1).
+4. **Factories Adicionales:** Crear factories para los modelos restantes (Subtask, TeamLog, Notification, etc.).
 
 #### Acciones para Sprints Futuros:
-- [ ] Crear factories para todos los modelos
-- [ ] Implementar tests unitarios para relaciones
+- [ ] Crear factories para los 15 modelos restantes
+- [ ] Implementar tests unitarios para relaciones de modelos
+- [ ] Implementar tests de feature para middleware de autorización
 - [ ] Documentar ejemplos de uso de métodos helper en modelos
-- [ ] Crear middleware para verificación de permisos
-- [ ] Implementar observers para auditoría automática
+- [ ] Implementar observers para auditoría automática con AuditLog
+- [ ] Crear policies personalizadas para modelos críticos
 
 ---
 
@@ -326,20 +327,39 @@ database/
 │   ├── 2025_10_16_000002_create_permissions_table.php
 │   ├── 2025_10_16_000003_create_areas_table.php
 │   └── ... (22 migraciones más)
-└── seeders/
-    ├── DatabaseSeeder.php (modificado)
-    ├── RoleSeeder.php
-    ├── PermissionSeeder.php
-    ├── RolePermissionSeeder.php
-    ├── AreaSeeder.php
-    └── UserSeeder.php
+├── seeders/
+│   ├── DatabaseSeeder.php (modificado)
+│   ├── RoleSeeder.php
+│   ├── PermissionSeeder.php
+│   ├── RolePermissionSeeder.php
+│   ├── AreaSeeder.php
+│   └── UserSeeder.php
+└── factories/
+    ├── RoleFactory.php
+    ├── PermissionFactory.php
+    ├── AreaFactory.php
+    ├── TaskFactory.php
+    ├── ClientFactory.php
+    ├── BudgetFactory.php
+    ├── QuoteFactory.php
+    └── CampaignFactory.php
 
-app/Models/
-├── User.php (modificado)
-├── Role.php
-├── Permission.php
-├── Area.php
-└── ... (19 modelos más)
+app/
+├── Models/
+│   ├── User.php (modificado)
+│   ├── Role.php
+│   ├── Permission.php
+│   ├── Area.php
+│   └── ... (19 modelos más)
+├── Http/
+│   └── Middleware/
+│       ├── CheckPermission.php
+│       └── CheckRole.php
+└── Providers/
+    └── AppServiceProvider.php (modificado)
+
+bootstrap/
+└── app.php (modificado - registra middleware aliases)
 
 docs/
 ├── 03-database-schema.md (actualizado)
@@ -362,7 +382,7 @@ docs/
 - Configurar autenticación (Laravel Breeze/Jetstream)
 - Instalar y configurar Livewire para frontend reactivo
 - Configurar Filament para panel de administración
-- Crear middleware de permisos personalizado
+- ✅ Crear middleware de permisos personalizado (completado)
 
 ---
 
