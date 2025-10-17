@@ -25,9 +25,8 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            // Índices para consultas
+            // Índice para consultas
             $table->index('created_by');
-            $table->index('status');
         });
     }
 

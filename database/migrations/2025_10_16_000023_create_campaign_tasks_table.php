@@ -24,7 +24,6 @@ return new class extends Migration
 
             // Índices para consultas
             $table->index('campaign_id');
-            $table->index('status');
             $table->index('due_date');
         });
     }

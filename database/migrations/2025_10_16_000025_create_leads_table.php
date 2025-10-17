@@ -27,7 +27,6 @@ return new class extends Migration
             // Índices para consultas
             $table->index('campaign_id');
             $table->index('registered_by');
-            $table->index('status');
             $table->index('email');
         });
     }

@@ -29,7 +29,6 @@ return new class extends Migration
             // Índices para consultas
             $table->index('client_id');
             $table->index('created_by');
-            $table->index('status');
         });
     }
 
