@@ -646,17 +646,215 @@
 /&gt;</code></pre>
                     </div>
                 </div>
+
+                {{-- Radio Básico --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Radio - Grupo Simple</h3>
+
+                    <x-forms.radio-group
+                        legend="Método de notificación"
+                        description="¿Cómo prefieres recibir notificaciones?"
+                    >
+                        <x-forms.radio
+                            name="notification_method"
+                            value="email"
+                            label="Email"
+                            :checked="true"
+                        />
+
+                        <x-forms.radio
+                            name="notification_method"
+                            value="sms"
+                            label="Phone (SMS)"
+                        />
+
+                        <x-forms.radio
+                            name="notification_method"
+                            value="push"
+                            label="Push notification"
+                        />
+                    </x-forms.radio-group>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.radio-group legend="Método de notificación"&gt;
+    &lt;x-forms.radio name="method" value="email" label="Email" /&gt;
+    &lt;x-forms.radio name="method" value="sms" label="SMS" /&gt;
+&lt;/x-forms.radio-group&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Radio con Descripción --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Radio - Con Descripción</h3>
+
+                    <x-forms.radio-group legend="Plan" srOnly>
+                        <x-forms.radio
+                            name="plan"
+                            value="small"
+                            label="Small"
+                            description="4 GB RAM / 2 CPUS / 80 GB SSD Storage"
+                            :checked="true"
+                        />
+
+                        <x-forms.radio
+                            name="plan"
+                            value="medium"
+                            label="Medium"
+                            description="8 GB RAM / 4 CPUS / 160 GB SSD Storage"
+                        />
+
+                        <x-forms.radio
+                            name="plan"
+                            value="large"
+                            label="Large"
+                            description="16 GB RAM / 8 CPUS / 320 GB SSD Storage"
+                        />
+                    </x-forms.radio-group>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.radio-group legend="Plan"&gt;
+    &lt;x-forms.radio
+        name="plan"
+        value="small"
+        label="Small"
+        description="4 GB RAM / 2 CPUS..."
+    /&gt;
+&lt;/x-forms.radio-group&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Toggle Básico --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Toggle - Básico</h3>
+
+                    <x-forms.toggle
+                        name="available"
+                        label="Available to hire"
+                        description="Nulla amet tempus sit accumsan. Aliquet turpis sed sit lacinia."
+                    />
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.toggle
+    name="available"
+    label="Available to hire"
+    description="Descripción opcional..."
+/&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Toggle Activado --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Toggle - Activado</h3>
+
+                    <div class="space-y-4">
+                        <x-forms.toggle
+                            name="notifications"
+                            label="Notificaciones push"
+                            description="Recibe notificaciones en tiempo real."
+                            :checked="true"
+                        />
+
+                        <x-forms.toggle
+                            name="newsletter"
+                            label="Newsletter semanal"
+                        />
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.toggle
+    name="notifications"
+    label="Notificaciones"
+    :checked="true"
+/&gt;</code></pre>
+                    </div>
+                </div>
             </div>
         </section>
 
-        {{-- Data Display Section (Placeholder) --}}
+        {{-- Data Display Section --}}
         <section id="data-display">
             <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Data Display</h2>
             <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-                Stats, tablas, feeds, description lists, etc.
+                Badges, stats, tablas, feeds, description lists, etc.
             </p>
-            <div class="mt-6 rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
-                <p class="text-sm text-neutral-500 dark:text-neutral-400">Componentes en desarrollo...</p>
+
+            <div class="mt-6 space-y-8">
+                {{-- Badge Simple --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Badge - Simple</h3>
+
+                    <div class="flex flex-wrap gap-2">
+                        <x-data-display.badge>Badge</x-data-display.badge>
+                        <x-data-display.badge>Badge 2</x-data-display.badge>
+                        <x-data-display.badge>Badge 3</x-data-display.badge>
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.badge&gt;Badge&lt;/x-data-display.badge&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Badge con Dot --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Badge - Con Dot (Indicador de Color)</h3>
+
+                    <div class="flex flex-wrap gap-2">
+                        <x-data-display.badge color="red" :dot="true">Cancelado</x-data-display.badge>
+                        <x-data-display.badge color="yellow" :dot="true">Pendiente</x-data-display.badge>
+                        <x-data-display.badge color="green" :dot="true">Activo</x-data-display.badge>
+                        <x-data-display.badge color="blue" :dot="true">Info</x-data-display.badge>
+                        <x-data-display.badge color="primary" :dot="true">Destacado</x-data-display.badge>
+                        <x-data-display.badge color="purple" :dot="true">Nuevo</x-data-display.badge>
+                        <x-data-display.badge color="pink" :dot="true">Hot</x-data-display.badge>
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.badge color="green" :dot="true"&gt;
+    Activo
+&lt;/x-data-display.badge&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Badge Estados --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Badge - Casos de Uso Comunes</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Ejemplos de badges para diferentes estados y categorías.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-300">Estados de tarea:</p>
+                            <div class="flex flex-wrap gap-2">
+                                <x-data-display.badge color="neutral" :dot="true">Draft</x-data-display.badge>
+                                <x-data-display.badge color="yellow" :dot="true">En progreso</x-data-display.badge>
+                                <x-data-display.badge color="blue" :dot="true">En revisión</x-data-display.badge>
+                                <x-data-display.badge color="green" :dot="true">Completado</x-data-display.badge>
+                                <x-data-display.badge color="red" :dot="true">Rechazado</x-data-display.badge>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-300">Categorías:</p>
+                            <div class="flex flex-wrap gap-2">
+                                <x-data-display.badge>Marketing</x-data-display.badge>
+                                <x-data-display.badge>Desarrollo</x-data-display.badge>
+                                <x-data-display.badge>Diseño</x-data-display.badge>
+                                <x-data-display.badge>Ventas</x-data-display.badge>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>{{-- Estado de tarea --}}
+&lt;x-data-display.badge color="green" :dot="true"&gt;
+    Completado
+&lt;/x-data-display.badge&gt;
+
+{{-- Categoría --}}
+&lt;x-data-display.badge&gt;Marketing&lt;/x-data-display.badge&gt;</code></pre>
+                    </div>
+                </div>
             </div>
         </section>
 
