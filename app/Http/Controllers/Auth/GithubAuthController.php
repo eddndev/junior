@@ -22,7 +22,8 @@ class GithubAuthController extends Controller
     }
 
     /**
-     * Obtiene la información del usuario de GitHub y maneja el login/registro.
+     * Obtiene la información del usuario de GitHub y maneja la asociación de cuenta.
+     * Solo permite asociar cuentas OAuth con usuarios existentes registrados por RRHH.
      */
     public function callback()
     {
@@ -33,7 +34,7 @@ class GithubAuthController extends Controller
             $user = User::where('github_id', $githubUser->getId())->first();
 
             if ($user) {
-                // Si existe, actualiza el token y listo
+                // Si existe, actualiza el token
                 $user->update([
                     'github_token' => $githubUser->token,
                     'github_refresh_token' => $githubUser->refreshToken,
@@ -44,30 +45,28 @@ class GithubAuthController extends Controller
 
                 if ($user) {
                     // Si existe por email, vincula la cuenta con el ID de GitHub
+                    // y verifica el correo electrónico automáticamente
                     $user->update([
                         'github_id' => $githubUser->getId(),
                         'github_token' => $githubUser->token,
                         'github_refresh_token' => $githubUser->refreshToken,
+                        'email_verified_at' => $user->email_verified_at ?? now(),
                     ]);
                 } else {
-                    // Si no existe de ninguna forma, crea un nuevo usuario
-                    $user = User::create([
-                        'name' => $githubUser->getName() ?? $githubUser->getNickname(),
-                        'email' => $githubUser->getEmail(),
-                        'github_id' => $githubUser->getId(),
-                        'github_token' => $githubUser->token,
-                        'github_refresh_token' => $githubUser->refreshToken,
-                        'email_verified_at' => now(),
-                        'password' => Hash::make(Str::random(24)), // Contraseña aleatoria segura
-                    ]);
+                    // Si no existe, rechaza el acceso
+                    return redirect('/login')->with('error', 'Este correo electrónico no está autorizado para acceder al sistema. Por favor, contacta al departamento de RRHH.');
                 }
             }
 
+            // Inicia sesión con el usuario encontrado
             Auth::login($user, remember: true);
 
+            // Redirige al usuario a su dashboard
             return redirect()->intended(route('dashboard', absolute: false));
 
         } catch (Exception $e) {
+            // Si algo sale mal (ej. el usuario deniega el acceso),
+            // se registra el error y se redirige al login con un mensaje.
             Log::error('Error en la autenticación con GitHub', ['exception' => $e]);
 
             return redirect('/login')->with('error', 'No se pudo autenticar con GitHub. Por favor, inténtelo de nuevo.');
