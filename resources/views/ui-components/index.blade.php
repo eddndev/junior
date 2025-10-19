@@ -131,43 +131,6 @@
                 </div>
             </div>
         </section>
-            <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Headings</h2>
-            <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-                Jerarquía de títulos para estructurar páginas y secciones.
-            </p>
-
-            <div class="mt-6 space-y-6">
-                {{-- Page Heading Example --}}
-                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
-                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Page Heading</h3>
-                    <div class="space-y-4">
-                        <h1 class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">Page Title</h1>
-                        <p class="text-sm text-neutral-600 dark:text-neutral-400">Descripción de la página</p>
-                    </div>
-                    <div class="mt-4 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
-                        <code class="text-xs text-neutral-800 dark:text-neutral-200">&lt;h1 class="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white"&gt;Page Title&lt;/h1&gt;</code>
-                    </div>
-                </div>
-
-                {{-- Card Heading Example --}}
-                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
-                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Card Heading</h3>
-                    <h2 class="text-xl font-semibold text-neutral-900 dark:text-white">Card Title</h2>
-                    <div class="mt-4 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
-                        <code class="text-xs text-neutral-800 dark:text-neutral-200">&lt;h2 class="text-xl font-semibold text-neutral-900 dark:text-white"&gt;Card Title&lt;/h2&gt;</code>
-                    </div>
-                </div>
-
-                {{-- Section Heading Example --}}
-                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
-                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Section Heading</h3>
-                    <h3 class="text-base font-semibold text-neutral-900 dark:text-white">Section Title</h3>
-                    <div class="mt-4 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
-                        <code class="text-xs text-neutral-800 dark:text-neutral-200">&lt;h3 class="text-base font-semibold text-neutral-900 dark:text-white"&gt;Section Title&lt;/h3&gt;</code>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         {{-- Forms Section --}}
         <section id="forms">
@@ -298,14 +261,187 @@
             </div>
         </section>
 
-        {{-- Feedback Section (Placeholder) --}}
+        {{-- Feedback Section --}}
         <section id="feedback">
             <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Feedback</h2>
             <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-                Alertas, empty states, loading states, etc.
+                Alertas, notificaciones, empty states, loading states, etc.
             </p>
-            <div class="mt-6 rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
-                <p class="text-sm text-neutral-500 dark:text-neutral-400">Componentes en desarrollo...</p>
+
+            <div class="mt-6 space-y-8">
+                {{-- Alert Success - Simple --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Alert - Success Simple</h3>
+
+                    <x-feedback.alert type="success" title="Successfully uploaded" />
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-feedback.alert type="success" title="Successfully uploaded" /&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Alert Warning - Con Descripción --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Alert - Warning con Descripción</h3>
+
+                    <x-feedback.alert type="warning" title="Attention needed">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum similique veniam quo totam eius aperiam dolorum.</p>
+                    </x-feedback.alert>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-feedback.alert type="warning" title="Attention needed"&gt;
+    &lt;p&gt;Descripción del problema...&lt;/p&gt;
+&lt;/x-feedback.alert&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Alert Error - Con Lista --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Alert - Error con Lista</h3>
+
+                    <x-feedback.alert type="error" title="There were 2 errors with your submission">
+                        <ul role="list" class="list-disc space-y-1 pl-5">
+                            <li>Your password must be at least 8 characters</li>
+                            <li>Your password must include at least one pro wrestling finishing move</li>
+                        </ul>
+                    </x-feedback.alert>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-feedback.alert type="error" title="There were 2 errors..."&gt;
+    &lt;ul role="list" class="list-disc space-y-1 pl-5"&gt;
+        &lt;li&gt;Error 1&lt;/li&gt;
+        &lt;li&gt;Error 2&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/x-feedback.alert&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Alert Info --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Alert - Info</h3>
+
+                    <x-feedback.alert type="info" title="Nueva actualización disponible">
+                        <p>Una nueva versión del sistema está disponible. Por favor actualiza para obtener las últimas mejoras.</p>
+                    </x-feedback.alert>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-feedback.alert type="info" title="Nueva actualización..."&gt;
+    &lt;p&gt;Descripción...&lt;/p&gt;
+&lt;/x-feedback.alert&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Alert No Dismissible --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Alert - Sin Botón Dismiss</h3>
+
+                    <x-feedback.alert type="success" title="Cambios guardados permanentemente" :dismissible="false">
+                        <p>Esta notificación no puede ser cerrada por el usuario.</p>
+                    </x-feedback.alert>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-feedback.alert type="success" title="..." :dismissible="false"&gt;
+    &lt;p&gt;Contenido...&lt;/p&gt;
+&lt;/x-feedback.alert&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Toast Notifications --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Toast - Notificaciones Temporales</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Los toasts aparecen automáticamente en la esquina superior derecha y se ocultan después de unos segundos.
+                    </p>
+
+                    <div class="flex flex-wrap gap-3">
+                        <x-actions.button variant="primary" onclick="showToast({ type: 'success', title: 'Operación exitosa', description: 'Los cambios se han guardado correctamente.' })">
+                            Success Toast
+                        </x-actions.button>
+
+                        <x-actions.button variant="danger" onclick="showToast({ type: 'error', title: 'Error al procesar', description: 'No se pudo completar la operación. Por favor intenta de nuevo.', autoHide: false })">
+                            Error Toast
+                        </x-actions.button>
+
+                        <x-actions.button variant="secondary" onclick="showToast({ type: 'warning', title: 'Atención requerida', description: 'Por favor revisa los campos marcados.', duration: 7000 })">
+                            Warning Toast
+                        </x-actions.button>
+
+                        <x-actions.button variant="ghost" onclick="showToast({ type: 'info', title: 'Nueva versión disponible' })">
+                            Info Toast
+                        </x-actions.button>
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>// JavaScript - Mostrar toast
+window.showToast({
+    type: 'success',
+    title: 'Operación exitosa',
+    description: 'Los cambios se han guardado.',
+    autoHide: true,
+    duration: 5000
+});
+
+// PHP - Flash message (se convierte automáticamente en toast)
+return redirect()-&gt;route('dashboard')
+    -&gt;with('success', 'Tarea creada exitosamente');</code></pre>
+                    </div>
+                </div>
+
+                {{-- Toast con Acciones --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Toast - Con Acciones</h3>
+
+                    <div class="flex flex-wrap gap-3">
+                        <x-actions.button variant="primary" onclick="showToast({
+                            type: 'info',
+                            title: 'Discusión movida',
+                            description: 'La discusión se ha movido a otro proyecto.',
+                            autoHide: false,
+                            actions: [
+                                {
+                                    label: 'Deshacer',
+                                    primary: true,
+                                    onClick: () => { console.log('Undo clicked'); },
+                                    dismiss: true
+                                },
+                                {
+                                    label: 'Cerrar',
+                                    primary: false,
+                                    onClick: () => {},
+                                    dismiss: true
+                                }
+                            ]
+                        })">
+                            Toast con Acciones
+                        </x-actions.button>
+
+                        <x-actions.button variant="secondary" onclick="showToast({
+                            type: 'success',
+                            title: 'Archivo subido',
+                            showIcon: false,
+                            description: 'El archivo se ha procesado correctamente.'
+                        })">
+                            Toast sin Ícono
+                        </x-actions.button>
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>window.showToast({
+    type: 'info',
+    title: 'Discusión movida',
+    description: 'La discusión se ha movido...',
+    autoHide: false,
+    actions: [
+        {
+            label: 'Deshacer',
+            primary: true,
+            onClick: () => { /* acción */ },
+            dismiss: true
+        }
+    ]
+});</code></pre>
+                    </div>
+                </div>
             </div>
         </section>
 

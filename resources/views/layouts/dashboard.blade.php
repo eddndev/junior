@@ -135,6 +135,55 @@
             </main>
         </div>
 
+        {{-- Toast Container --}}
+        <x-feedback.toast-container />
+
+        {{-- Flash Messages Handler --}}
+        @if(session()->has('success') || session()->has('error') || session()->has('warning') || session()->has('info'))
+            <script>
+                // Wait for Alpine.js to be fully initialized
+                document.addEventListener('alpine:initialized', function() {
+                    // Small delay to ensure toast container is ready
+                    setTimeout(function() {
+                        @if(session('success'))
+                            window.showToast({
+                                type: 'success',
+                                title: {!! json_encode(session('success')) !!},
+                                autoHide: true,
+                                duration: 5000
+                            });
+                        @endif
+
+                        @if(session('error'))
+                            window.showToast({
+                                type: 'error',
+                                title: {!! json_encode(session('error')) !!},
+                                autoHide: false
+                            });
+                        @endif
+
+                        @if(session('warning'))
+                            window.showToast({
+                                type: 'warning',
+                                title: {!! json_encode(session('warning')) !!},
+                                autoHide: true,
+                                duration: 7000
+                            });
+                        @endif
+
+                        @if(session('info'))
+                            window.showToast({
+                                type: 'info',
+                                title: {!! json_encode(session('info')) !!},
+                                autoHide: true,
+                                duration: 5000
+                            });
+                        @endif
+                    }, 100);
+                });
+            </script>
+        @endif
+
         @livewireScripts
     </body>
 </html>
