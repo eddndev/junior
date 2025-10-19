@@ -388,6 +388,264 @@
 &lt;/x-forms.composer&gt;</code></pre>
                     </div>
                 </div>
+
+                {{-- Select Básico --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Select - Básico</h3>
+
+                    <x-forms.select
+                        label="País"
+                        name="country"
+                        value="mx"
+                        description="Selecciona tu país de residencia."
+                    >
+                        <x-forms.select-option value="us">
+                            <span class="block truncate font-normal group-aria-selected/option:font-semibold">Estados Unidos</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="mx">
+                            <span class="block truncate font-normal group-aria-selected/option:font-semibold">México</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="ca">
+                            <span class="block truncate font-normal group-aria-selected/option:font-semibold">Canadá</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="es">
+                            <span class="block truncate font-normal group-aria-selected/option:font-semibold">España</span>
+                        </x-forms.select-option>
+                    </x-forms.select>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.select label="País" name="country" value="mx"&gt;
+    &lt;x-forms.select-option value="us"&gt;
+        &lt;span&gt;Estados Unidos&lt;/span&gt;
+    &lt;/x-forms.select-option&gt;
+    &lt;x-forms.select-option value="mx"&gt;
+        &lt;span&gt;México&lt;/span&gt;
+    &lt;/x-forms.select-option&gt;
+&lt;/x-forms.select&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Select con Error --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Select - Con Error</h3>
+
+                    <x-forms.select
+                        label="Categoría"
+                        name="category"
+                        error="Debes seleccionar una categoría válida."
+                    >
+                        <x-forms.select-option value="1">
+                            <span class="block truncate font-normal group-aria-selected/option:font-semibold">Marketing</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="2">
+                            <span class="block truncate font-normal group-aria-selected/option:font-semibold">Desarrollo</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="3">
+                            <span class="block truncate font-normal group-aria-selected/option:font-semibold">Diseño</span>
+                        </x-forms.select-option>
+                    </x-forms.select>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.select
+    label="Categoría"
+    name="category"
+    error="Mensaje de error..."
+&gt;
+    ...opciones...
+&lt;/x-forms.select&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Select con Avatares --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Select - Con Avatares</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Componente versátil que permite contenido complejo dentro de las opciones.
+                    </p>
+
+                    <x-forms.select
+                        label="Asignado a"
+                        name="assigned_to"
+                        value="4"
+                    >
+                        <x-forms.select-option value="1">
+                            <img src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-5 shrink-0 rounded-full" />
+                            <span class="ml-3 block truncate font-normal group-aria-selected/option:font-semibold">Wade Cooper</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="2">
+                            <img src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-5 shrink-0 rounded-full" />
+                            <span class="ml-3 block truncate font-normal group-aria-selected/option:font-semibold">Arlene Mccoy</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="3">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="" class="size-5 shrink-0 rounded-full" />
+                            <span class="ml-3 block truncate font-normal group-aria-selected/option:font-semibold">Devon Webb</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="4">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-5 shrink-0 rounded-full" />
+                            <span class="ml-3 block truncate font-normal group-aria-selected/option:font-semibold">Tom Cook</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="5">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="size-5 shrink-0 rounded-full" />
+                            <span class="ml-3 block truncate font-normal group-aria-selected/option:font-semibold">Tanya Fox</span>
+                        </x-forms.select-option>
+                    </x-forms.select>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.select label="Asignado a" name="user_id"&gt;
+    &lt;x-forms.select-option value="1"&gt;
+        &lt;img src="..." class="size-5 rounded-full" /&gt;
+        &lt;span class="ml-3"&gt;Wade Cooper&lt;/span&gt;
+    &lt;/x-forms.select-option&gt;
+&lt;/x-forms.select&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Select con Metadata --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Select - Con Metadata</h3>
+
+                    <x-forms.select
+                        label="Miembro del equipo"
+                        name="team_member"
+                        value="4"
+                        cornerHint="Opcional"
+                    >
+                        <x-forms.select-option value="1">
+                            <span class="truncate font-normal group-aria-selected/option:font-semibold">Wade Cooper</span>
+                            <span class="ml-2 truncate text-neutral-500 group-focus/option:text-primary-200 dark:text-neutral-400 dark:group-focus/option:text-primary-100">@wadecooper</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="2">
+                            <span class="truncate font-normal group-aria-selected/option:font-semibold">Arlene Mccoy</span>
+                            <span class="ml-2 truncate text-neutral-500 group-focus/option:text-primary-200 dark:text-neutral-400 dark:group-focus/option:text-primary-100">@arlenemccoy</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="3">
+                            <span class="truncate font-normal group-aria-selected/option:font-semibold">Devon Webb</span>
+                            <span class="ml-2 truncate text-neutral-500 group-focus/option:text-primary-200 dark:text-neutral-400 dark:group-focus/option:text-primary-100">@devonwebb</span>
+                        </x-forms.select-option>
+                        <x-forms.select-option value="4">
+                            <span class="truncate font-normal group-aria-selected/option:font-semibold">Tom Cook</span>
+                            <span class="ml-2 truncate text-neutral-500 group-focus/option:text-primary-200 dark:text-neutral-400 dark:group-focus/option:text-primary-100">@tomcook</span>
+                        </x-forms.select-option>
+                    </x-forms.select>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.select label="Miembro del equipo"&gt;
+    &lt;x-forms.select-option value="1"&gt;
+        &lt;span&gt;Wade Cooper&lt;/span&gt;
+        &lt;span class="text-neutral-500"&gt;@wadecooper&lt;/span&gt;
+    &lt;/x-forms.select-option&gt;
+&lt;/x-forms.select&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Checkbox Individual --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Checkbox - Individual</h3>
+
+                    <x-forms.checkbox
+                        name="terms"
+                        label="Acepto los términos y condiciones"
+                        description="Al aceptar, confirmas que has leído nuestra política de privacidad."
+                        :checked="true"
+                    />
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.checkbox
+    name="terms"
+    label="Acepto los términos y condiciones"
+    description="Descripción opcional..."
+    :checked="true"
+/&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Checkbox Simple sin Descripción --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Checkbox - Simple</h3>
+
+                    <x-forms.checkbox
+                        name="newsletter"
+                        label="Suscribirse al newsletter"
+                    />
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.checkbox
+    name="newsletter"
+    label="Suscribirse al newsletter"
+/&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Checkbox Group --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Checkbox - Grupo</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Agrupa múltiples checkboxes relacionados con fieldset y legend.
+                    </p>
+
+                    <x-forms.checkbox-group legend="Notificaciones">
+                        <x-forms.checkbox
+                            name="comments"
+                            label="Comentarios"
+                            description="Recibe una notificación cuando alguien publique un comentario."
+                            :checked="true"
+                        />
+
+                        <x-forms.checkbox
+                            name="candidates"
+                            label="Candidatos"
+                            description="Recibe una notificación cuando un candidato solicite un trabajo."
+                        />
+
+                        <x-forms.checkbox
+                            name="offers"
+                            label="Ofertas"
+                            description="Recibe una notificación cuando un candidato acepte o rechace una oferta."
+                        />
+                    </x-forms.checkbox-group>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.checkbox-group legend="Notificaciones"&gt;
+    &lt;x-forms.checkbox
+        name="comments"
+        label="Comentarios"
+        description="Descripción..."
+        :checked="true"
+    /&gt;
+    &lt;x-forms.checkbox name="candidates" label="Candidatos" /&gt;
+&lt;/x-forms.checkbox-group&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Checkbox Disabled --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Checkbox - Disabled</h3>
+
+                    <div class="space-y-5">
+                        <x-forms.checkbox
+                            name="disabled-unchecked"
+                            label="Opción deshabilitada"
+                            description="Esta opción no puede ser modificada."
+                            disabled
+                        />
+
+                        <x-forms.checkbox
+                            name="disabled-checked"
+                            label="Opción deshabilitada y marcada"
+                            description="Esta opción está marcada y no puede ser modificada."
+                            :checked="true"
+                            disabled
+                        />
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.checkbox
+    name="option"
+    label="Opción deshabilitada"
+    disabled
+/&gt;</code></pre>
+                    </div>
+                </div>
             </div>
         </section>
 
