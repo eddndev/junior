@@ -17,5 +17,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// UI Components Showcase (solo en desarrollo)
+if (config('app.debug')) {
+    Route::get('/ui-components', function () {
+        return view('ui-components.index');
+    })->middleware(['auth'])->name('ui-components');
+}
+
 require __DIR__.'/socialite.php';
 require __DIR__.'/auth.php';
