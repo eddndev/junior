@@ -247,6 +247,147 @@
 &lt;/x-forms.input&gt;</code></pre>
                     </div>
                 </div>
+
+                {{-- Textarea Básico --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Textarea - Básico</h3>
+
+                    <x-forms.textarea
+                        label="Comentario"
+                        name="comment"
+                        rows="4"
+                        placeholder="Escribe tu comentario aquí..."
+                        description="Tu comentario será visible para todo el equipo."
+                    />
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.textarea
+    label="Comentario"
+    name="comment"
+    rows="4"
+    placeholder="Escribe tu comentario..."
+    description="Descripción del campo..."
+/&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Textarea con Error --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Textarea - Con Error</h3>
+
+                    <x-forms.textarea
+                        label="Descripción"
+                        name="description-error"
+                        rows="3"
+                        value="Texto muy corto"
+                        error="La descripción debe tener al menos 50 caracteres."
+                    />
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.textarea
+    label="Descripción"
+    name="description"
+    error="Mensaje de error..."
+/&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Textarea con Corner Hint --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Textarea - Con Corner Hint</h3>
+
+                    <x-forms.textarea
+                        label="Notas adicionales"
+                        name="notes"
+                        rows="3"
+                        placeholder="Agrega notas si es necesario..."
+                        cornerHint="Opcional"
+                    />
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.textarea
+    label="Notas adicionales"
+    name="notes"
+    cornerHint="Opcional"
+/&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Composer - Entrada de Bitácora --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Composer - Entrada de Bitácora</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Componente compuesto ideal para bitácoras, notas, notificaciones y cualquier contenido con título + descripción.
+                    </p>
+
+                    <form action="#" method="POST">
+                        <x-forms.composer
+                            titlePlaceholder="Título de la entrada"
+                            descriptionPlaceholder="Describe lo que sucedió en tu equipo..."
+                            titleName="log_title"
+                            descriptionName="log_description"
+                            :descriptionRows="3"
+                        >
+                            <x-slot name="rightActions">
+                                <x-actions.button type="submit" variant="primary">
+                                    Publicar en bitácora
+                                </x-actions.button>
+                            </x-slot>
+                        </x-forms.composer>
+                    </form>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.composer
+    titlePlaceholder="Título"
+    descriptionPlaceholder="Descripción..."
+&gt;
+    &lt;x-slot name="rightActions"&gt;
+        &lt;x-actions.button type="submit"&gt;Publicar&lt;/x-actions.button&gt;
+    &lt;/x-slot&gt;
+&lt;/x-forms.composer&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Composer - Con Acciones Adicionales --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Composer - Con Acciones Adicionales</h3>
+
+                    <form action="#" method="POST">
+                        <x-forms.composer
+                            titlePlaceholder="Asunto de la notificación"
+                            descriptionPlaceholder="Mensaje para el equipo..."
+                            titleName="notification_title"
+                            descriptionName="notification_message"
+                        >
+                            <x-slot name="leftActions">
+                                <button type="button" class="group -my-2 -ml-2 inline-flex items-center rounded-full px-3 py-2 text-left text-neutral-400 dark:text-neutral-500">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="mr-2 -ml-1 size-5 group-hover:text-neutral-500 dark:group-hover:text-white">
+                                        <path d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                    </svg>
+                                    <span class="text-sm text-neutral-500 italic group-hover:text-neutral-600 dark:text-neutral-400 dark:group-hover:text-white">Adjuntar archivo</span>
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="rightActions">
+                                <x-actions.button type="submit" variant="primary">
+                                    Enviar notificación
+                                </x-actions.button>
+                            </x-slot>
+                        </x-forms.composer>
+                    </form>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-forms.composer&gt;
+    &lt;x-slot name="leftActions"&gt;
+        &lt;button&gt;Adjuntar archivo&lt;/button&gt;
+    &lt;/x-slot&gt;
+
+    &lt;x-slot name="rightActions"&gt;
+        &lt;x-actions.button&gt;Enviar&lt;/x-actions.button&gt;
+    &lt;/x-slot&gt;
+&lt;/x-forms.composer&gt;</code></pre>
+                    </div>
+                </div>
             </div>
         </section>
 
