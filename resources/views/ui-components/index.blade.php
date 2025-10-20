@@ -1206,6 +1206,95 @@
 &lt;x-layout.divider&gt;o continuar con&lt;/x-layout.divider&gt;</code></pre>
                     </div>
                 </div>
+
+                {{-- Table Component --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Table - Con Selección y Acciones Masivas</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Tabla empresarial con checkboxes, acciones masivas y datos dinámicos.
+                    </p>
+
+                    <x-layout.table
+                        id="example-table"
+                        title="Usuarios del Sistema"
+                        description="Lista de todos los usuarios registrados con sus roles y estados"
+                        :selectable="true"
+                        :bulkActions="true"
+                    >
+                        <x-slot:actionButton>
+                            <button type="button" class="block rounded-md bg-primary-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-primary-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 dark:bg-primary-500 dark:hover:bg-primary-400">
+                                Agregar Usuario
+                            </button>
+                        </x-slot:actionButton>
+
+                        <x-slot:bulkActions>
+                            <button type="button" class="inline-flex items-center rounded-sm bg-white px-2 py-1 text-sm font-semibold text-neutral-900 shadow-xs inset-ring inset-ring-neutral-300 hover:bg-neutral-50 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/15">
+                                Editar selección
+                            </button>
+                            <button type="button" class="inline-flex items-center rounded-sm bg-white px-2 py-1 text-sm font-semibold text-neutral-900 shadow-xs inset-ring inset-ring-neutral-300 hover:bg-neutral-50 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/15">
+                                Eliminar todos
+                            </button>
+                        </x-slot:bulkActions>
+
+                        <x-slot:header>
+                            <x-layout.table-header class="min-w-48">Nombre</x-layout.table-header>
+                            <x-layout.table-header>Cargo</x-layout.table-header>
+                            <x-layout.table-header>Email</x-layout.table-header>
+                            <x-layout.table-header>Role</x-layout.table-header>
+                            <x-layout.table-header align="right" :srOnly="true">Acciones</x-layout.table-header>
+                        </x-slot:header>
+
+                        <x-layout.table-row :selectable="true" :highlight="true">
+                            <x-layout.table-cell :primary="true">Lindsay Walton</x-layout.table-cell>
+                            <x-layout.table-cell>Front-end Developer</x-layout.table-cell>
+                            <x-layout.table-cell>lindsay.walton@example.com</x-layout.table-cell>
+                            <x-layout.table-cell>Member</x-layout.table-cell>
+                            <x-layout.table-cell align="right">
+                                <a href="#" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300">
+                                    Editar<span class="sr-only">, Lindsay Walton</span>
+                                </a>
+                            </x-layout.table-cell>
+                        </x-layout.table-row>
+
+                        <x-layout.table-row :selectable="true" :highlight="true">
+                            <x-layout.table-cell :primary="true">Courtney Henry</x-layout.table-cell>
+                            <x-layout.table-cell>Designer</x-layout.table-cell>
+                            <x-layout.table-cell>courtney.henry@example.com</x-layout.table-cell>
+                            <x-layout.table-cell>Admin</x-layout.table-cell>
+                            <x-layout.table-cell align="right">
+                                <a href="#" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300">
+                                    Editar<span class="sr-only">, Courtney Henry</span>
+                                </a>
+                            </x-layout.table-cell>
+                        </x-layout.table-row>
+
+                        <x-layout.table-row :selectable="true" :highlight="true">
+                            <x-layout.table-cell :primary="true">Tom Cook</x-layout.table-cell>
+                            <x-layout.table-cell>Director of Product</x-layout.table-cell>
+                            <x-layout.table-cell>tom.cook@example.com</x-layout.table-cell>
+                            <x-layout.table-cell>Member</x-layout.table-cell>
+                            <x-layout.table-cell align="right">
+                                <a href="#" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300">
+                                    Editar<span class="sr-only">, Tom Cook</span>
+                                </a>
+                            </x-layout.table-cell>
+                        </x-layout.table-row>
+                    </x-layout.table>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-layout.table id="users-table" :selectable="true"&gt;
+    &lt;x-slot:header&gt;
+        &lt;x-layout.table-header&gt;Nombre&lt;/x-layout.table-header&gt;
+        &lt;x-layout.table-header&gt;Email&lt;/x-layout.table-header&gt;
+    &lt;/x-slot:header&gt;
+
+    &lt;x-layout.table-row :selectable="true"&gt;
+        &lt;x-layout.table-cell :primary="true"&gt;John Doe&lt;/x-layout.table-cell&gt;
+        &lt;x-layout.table-cell&gt;john@example.com&lt;/x-layout.table-cell&gt;
+    &lt;/x-layout.table-row&gt;
+&lt;/x-layout.table&gt;</code></pre>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1390,6 +1479,108 @@ return redirect()-&gt;route('dashboard')
 });</code></pre>
                     </div>
                 </div>
+
+                {{-- Modal Component --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Modal / Dialog</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Componente de modal/diálogo con variantes para diferentes tipos de mensajes (danger, success, warning, info).
+                    </p>
+
+                    {{-- Modal Examples --}}
+                    <div class="flex flex-wrap gap-3">
+                        <button command="show-modal" commandfor="modal-danger" class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-400">
+                            Danger Modal
+                        </button>
+                        <button command="show-modal" commandfor="modal-success" class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">
+                            Success Modal
+                        </button>
+                        <button command="show-modal" commandfor="modal-warning" class="rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-500 dark:bg-amber-500 dark:hover:bg-amber-400">
+                            Warning Modal
+                        </button>
+                        <button command="show-modal" commandfor="modal-info" class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400">
+                            Info Modal
+                        </button>
+                    </div>
+
+                    {{-- Danger Modal --}}
+                    <x-layout.modal id="modal-danger" title="Desactivar cuenta" :danger="true">
+                        <x-slot:content>
+                            <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                ¿Estás seguro de que deseas desactivar tu cuenta? Todos tus datos serán eliminados permanentemente de nuestros servidores. Esta acción no se puede deshacer.
+                            </p>
+                        </x-slot:content>
+                        <x-slot:actions>
+                            <button type="button" command="close" commandfor="modal-danger" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 sm:ml-3 sm:w-auto dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400">
+                                Desactivar
+                            </button>
+                            <button type="button" command="close" commandfor="modal-danger" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-xs inset-ring-1 inset-ring-neutral-300 hover:bg-neutral-50 sm:mt-0 sm:w-auto dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+                                Cancelar
+                            </button>
+                        </x-slot:actions>
+                    </x-layout.modal>
+
+                    {{-- Success Modal --}}
+                    <x-layout.modal id="modal-success" title="Operación exitosa" :success="true">
+                        <x-slot:content>
+                            <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                La operación se completó exitosamente. Todos los cambios han sido guardados.
+                            </p>
+                        </x-slot:content>
+                        <x-slot:actions>
+                            <button type="button" command="close" commandfor="modal-success" class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-500 sm:w-auto dark:bg-primary-500 dark:shadow-none dark:hover:bg-primary-400">
+                                Continuar
+                            </button>
+                        </x-slot:actions>
+                    </x-layout.modal>
+
+                    {{-- Warning Modal --}}
+                    <x-layout.modal id="modal-warning" title="Advertencia importante" :warning="true">
+                        <x-slot:content>
+                            <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                Esta acción puede tener consecuencias. Por favor, revisa cuidadosamente antes de continuar.
+                            </p>
+                        </x-slot:content>
+                        <x-slot:actions>
+                            <button type="button" command="close" commandfor="modal-warning" class="inline-flex w-full justify-center rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-amber-500 sm:ml-3 sm:w-auto dark:bg-amber-500 dark:shadow-none dark:hover:bg-amber-400">
+                                Entendido
+                            </button>
+                            <button type="button" command="close" commandfor="modal-warning" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-xs inset-ring-1 inset-ring-neutral-300 hover:bg-neutral-50 sm:mt-0 sm:w-auto dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+                                Cancelar
+                            </button>
+                        </x-slot:actions>
+                    </x-layout.modal>
+
+                    {{-- Info Modal --}}
+                    <x-layout.modal id="modal-info" title="Información" :info="true" maxWidth="2xl">
+                        <x-slot:content>
+                            <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                Este es un modal informativo con un ancho máximo de 2xl. Puedes personalizar el tamaño usando la prop maxWidth.
+                            </p>
+                        </x-slot:content>
+                        <x-slot:actions>
+                            <button type="button" command="close" commandfor="modal-info" class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-500 sm:w-auto dark:bg-primary-500 dark:shadow-none dark:hover:bg-primary-400">
+                                Aceptar
+                            </button>
+                        </x-slot:actions>
+                    </x-layout.modal>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>{{-- Botón para abrir --}}
+&lt;button command="show-modal" commandfor="confirm-delete"&gt;Eliminar&lt;/button&gt;
+
+{{-- Modal --}}
+&lt;x-layout.modal id="confirm-delete" title="Confirmar eliminación" :danger="true"&gt;
+    &lt;x-slot:content&gt;
+        &lt;p&gt;¿Estás seguro?&lt;/p&gt;
+    &lt;/x-slot:content&gt;
+    &lt;x-slot:actions&gt;
+        &lt;button command="close" commandfor="confirm-delete"&gt;Eliminar&lt;/button&gt;
+        &lt;button command="close" commandfor="confirm-delete"&gt;Cancelar&lt;/button&gt;
+    &lt;/x-slot:actions&gt;
+&lt;/x-layout.modal&gt;</code></pre>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1478,6 +1669,92 @@ return redirect()-&gt;route('dashboard')
     &lt;svg&gt;...&lt;/svg&gt;
     Crear nuevo
 &lt;/x-actions.button&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Dropdown Component --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Dropdown Menu</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Menú desplegable con opciones y acciones. Soporta links, botones y dividers.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4">
+                        {{-- Dropdown Simple --}}
+                        <x-layout.dropdown>
+                            <x-slot:trigger>
+                                <button class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-xs inset-ring-1 inset-ring-neutral-300 hover:bg-neutral-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+                                    Opciones
+                                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-mr-1 size-5 text-neutral-400">
+                                        <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot:trigger>
+
+                            <x-layout.dropdown-link href="#">Configuración de cuenta</x-layout.dropdown-link>
+                            <x-layout.dropdown-link href="#">Soporte</x-layout.dropdown-link>
+                            <x-layout.dropdown-link href="#">Licencia</x-layout.dropdown-link>
+                            <x-layout.dropdown-divider />
+                            <form action="#" method="POST">
+                                <x-layout.dropdown-button type="submit">Cerrar sesión</x-layout.dropdown-button>
+                            </form>
+                        </x-layout.dropdown>
+
+                        {{-- Dropdown con posición personalizada --}}
+                        <x-layout.dropdown anchor="bottom start">
+                            <x-slot:trigger>
+                                <button class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400">
+                                    Acciones
+                                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-mr-1 size-5">
+                                        <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot:trigger>
+
+                            <x-layout.dropdown-link href="#">Editar perfil</x-layout.dropdown-link>
+                            <x-layout.dropdown-link href="#" :active="true">Vista actual</x-layout.dropdown-link>
+                            <x-layout.dropdown-link href="#">Compartir</x-layout.dropdown-link>
+                            <x-layout.dropdown-divider />
+                            <x-layout.dropdown-link href="#">Archivar</x-layout.dropdown-link>
+                        </x-layout.dropdown>
+
+                        {{-- Dropdown más ancho --}}
+                        <x-layout.dropdown width="72">
+                            <x-slot:trigger>
+                                <button class="inline-flex justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-xs inset-ring-1 inset-ring-neutral-300 hover:bg-neutral-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+                                    Menú Extendido
+                                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-mr-1 size-5 text-neutral-400">
+                                        <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </x-slot:trigger>
+
+                            <x-layout.dropdown-link href="#">
+                                Mi perfil completo con información extendida
+                            </x-layout.dropdown-link>
+                            <x-layout.dropdown-link href="#">
+                                Configuración avanzada del sistema
+                            </x-layout.dropdown-link>
+                            <x-layout.dropdown-divider />
+                            <x-layout.dropdown-link href="#">
+                                Centro de ayuda y documentación
+                            </x-layout.dropdown-link>
+                        </x-layout.dropdown>
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-layout.dropdown&gt;
+    &lt;x-slot:trigger&gt;
+        &lt;button&gt;Opciones&lt;/button&gt;
+    &lt;/x-slot:trigger&gt;
+
+    &lt;x-layout.dropdown-link href="#"&gt;Configuración&lt;/x-layout.dropdown-link&gt;
+    &lt;x-layout.dropdown-link href="#"&gt;Soporte&lt;/x-layout.dropdown-link&gt;
+    &lt;x-layout.dropdown-divider /&gt;
+    &lt;form action="/logout" method="POST"&gt;
+        &lt;x-layout.dropdown-button&gt;Cerrar sesión&lt;/x-layout.dropdown-button&gt;
+    &lt;/form&gt;
+&lt;/x-layout.dropdown&gt;</code></pre>
                     </div>
                 </div>
             </div>
