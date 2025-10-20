@@ -12,8 +12,8 @@
 
 @php
 $classes = $active
-    ? 'block px-4 py-2 text-sm bg-neutral-100 text-neutral-900 focus:outline-hidden dark:bg-white/5 dark:text-white'
-    : 'block px-4 py-2 text-sm text-neutral-700 focus:bg-neutral-100 focus:text-neutral-900 focus:outline-hidden dark:text-neutral-300 dark:focus:bg-white/5 dark:focus:text-white';
+    ? 'flex items-center gap-3 px-4 py-2 text-sm bg-neutral-100 text-neutral-900 focus:outline-hidden dark:bg-white/5 dark:text-white'
+    : 'flex items-center gap-3 px-4 py-2 text-sm text-neutral-700 focus:bg-neutral-100 focus:text-neutral-900 focus:outline-hidden dark:text-neutral-300 dark:focus:bg-white/5 dark:focus:text-white';
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>

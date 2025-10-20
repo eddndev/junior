@@ -22,6 +22,7 @@
 @props([
     'width' => '56',
     'anchor' => 'bottom end',
+    'block' => false,
 ])
 
 @php
@@ -33,9 +34,10 @@ $widthClass = match ($width) {
     '80' => 'w-80',
     default => 'w-56',
 };
+$displayClass = $block ? 'block' : 'inline-block';
 @endphp
 
-<el-dropdown class="inline-block">
+<el-dropdown class="{{ $displayClass }}">
     {{ $trigger }}
 
     <el-menu
