@@ -4,8 +4,6 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@variant dark (&:where(.dark, .dark *));
-
 @theme {
   /* ========================================
      FUENTES PERSONALIZADAS

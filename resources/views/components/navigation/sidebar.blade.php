@@ -171,7 +171,7 @@
     <li class="mt-auto">
         <x-layout.dropdown anchor="top end" width="72" :block="true">
             <x-slot:trigger>
-                <button type="button" class="flex w-full items-center gap-x-4 p-2 text-sm/6 font-semibold text-neutral-900 hover:bg-neutral-50 rounded-md dark:text-white dark:hover:bg-white/5">
+                <button type="button" class="flex w-full items-center gap-x-4 p-2 text-sm/6 font-semibold text-neutral-900 hover:bg-neutral-50 rounded-md dark:text-white dark:hover:bg-white/5 -mx-2">
                     <img
                         src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128"
                         alt="{{ Auth::user()->name }}"

@@ -57,6 +57,15 @@ Crear una biblioteca completa de componentes UI reutilizables para el sistema Ju
 * **2025-10-19:** El componente de modal soporta múltiples variantes visuales (danger, success, warning, info).
     * **Razón:** Cubrir los casos de uso más comunes de modales de confirmación sin necesidad de crear componentes separados. Los iconos y colores se ajustan automáticamente según la variante.
 
+* **2025-10-19:** Los componentes `dropdown-link` y `dropdown-button` usan `flex items-center gap-3` para alineación horizontal de íconos y texto.
+    * **Razón:** Asegurar que todos los elementos del dropdown tengan la misma alineación visual, evitando que íconos y texto se apilen verticalmente. Esto proporciona una experiencia visual consistente y profesional.
+
+* **2025-10-19:** El componente `dropdown` soporta una propiedad `block` para controlar el display (inline-block vs block).
+    * **Razón:** Permitir que el dropdown ocupe todo el ancho del contenedor cuando sea necesario (como en el sidebar), lo que mejora el posicionamiento del anchor y la usabilidad en diferentes contextos de layout.
+
+* **2025-10-19:** Los dropdowns se integraron en `dashboard.blade.php` (mobile header) y `sidebar.blade.php` (user profile) con menú de usuario.
+    * **Razón:** Proporcionar navegación consistente para acciones de usuario (Mi Perfil, Configuración, Cerrar Sesión) en todos los contextos de la aplicación. Usa `anchor="bottom end"` en mobile y `anchor="top end"` en sidebar para optimizar el posicionamiento.
+
 ---
 
 ## 4. Registro de Bloqueos y Soluciones
@@ -67,7 +76,15 @@ Crear una biblioteca completa de componentes UI reutilizables para el sistema Ju
 
 * **2025-10-19:**
     * **Problema:** El componente de tabla necesitaba soporte para selección múltiple con estado indeterminado.
-    * **Solución:** Se implementó lógica JavaScript que maneja los tres estados del checkbox principal: no marcado, indeterminado (algunos seleccionados), y marcado (todos seleccionados). La propiedad `indeterminate` solo puede establecerse via JavaScript, no via HTML.
+    * **Solución:** Se implementó lógica JavaScript que maneja los tres estados del checkbox principal: no marcado, indeterminado (algunos seleccionados), y marcado (todos seleccionado seleccionados). La propiedad `indeterminate` solo puede establecerse via JavaScript, no via HTML.
+
+* **2025-10-19:**
+    * **Problema:** Los elementos dentro del dropdown (Mi Perfil, Configuración, Cerrar Sesión) estaban desalineados, con íconos y texto apilados verticalmente en lugar de horizontalmente.
+    * **Solución:** Se cambió de `block` a `flex items-center gap-3` en ambos componentes `dropdown-link` y `dropdown-button`. También se ajustó la estructura para que el `<form>` envuelva al `dropdown-button` en lugar de estar dentro de él, eliminando la doble anidación que causaba problemas de alineación.
+
+* **2025-10-19:**
+    * **Problema:** El dropdown en el sidebar se posicionaba pegado al borde izquierdo de la página debido al `-mx-6` en el contenedor del perfil de usuario.
+    * **Solución:** Se removió el `-mx-6` del `<li>`, se agregó la propiedad `block` al dropdown, y se ajustó el padding del botón de `px-6 py-3` a `p-2` con `rounded-md` para consistencia visual con otros elementos de navegación. El anchor positioning ahora funciona correctamente con `anchor="top end"`.
 
 ---
 
@@ -137,16 +154,44 @@ resources/views/components/layout/
     </x-slot:actions>
 </x-layout.modal>
 
-<!-- Dropdowns -->
-<x-layout.dropdown>
+<!-- Dropdowns básico -->
+<x-layout.dropdown anchor="bottom end" width="56">
     <x-slot:trigger>
         <button>Opciones</button>
     </x-slot:trigger>
-    <x-layout.dropdown-link href="#">Configuración</x-layout.dropdown-link>
+    <x-layout.dropdown-link href="#">
+        <svg>...</svg>
+        <span>Configuración</span>
+    </x-layout.dropdown-link>
     <x-layout.dropdown-divider />
-    <x-layout.dropdown-button>Cerrar sesión</x-layout.dropdown-button>
+    <form method="POST" action="/logout">
+        @csrf
+        <x-layout.dropdown-button type="submit">
+            <svg>...</svg>
+            <span>Cerrar sesión</span>
+        </x-layout.dropdown-button>
+    </form>
+</x-layout.dropdown>
+
+<!-- Dropdown en full-width (ej. sidebar) -->
+<x-layout.dropdown anchor="top end" width="72" :block="true">
+    <x-slot:trigger>
+        <button class="flex w-full items-center gap-x-4 p-2">
+            <img src="..." />
+            <span>Usuario</span>
+        </button>
+    </x-slot:trigger>
+    <x-layout.dropdown-link href="/profile">
+        <svg>...</svg>
+        <span>Mi Perfil</span>
+    </x-layout.dropdown-link>
 </x-layout.dropdown>
 ```
+
+### Props de Dropdown
+- `anchor`: Posición del dropdown relativo al trigger ("bottom end", "top end", "bottom start", etc.)
+- `width`: Ancho del dropdown (48, 56, 64, 72, 80)
+- `block`: Boolean para cambiar display de inline-block a block
 
 ### Dependencias
 - **@tailwindplus/elements:** Instalado via npm para web components de modal y dropdown
