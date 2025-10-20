@@ -19,6 +19,7 @@
                 <option selected>Headings</option>
                 <option>Forms</option>
                 <option>Data Display</option>
+                <option>Layout</option>
                 <option>Feedback</option>
                 <option>Actions</option>
             </select>
@@ -28,6 +29,7 @@
                 <a href="#headings" class="rounded-md bg-primary-100 px-3 py-2 text-sm font-medium text-primary-700 dark:bg-primary-900/20 dark:text-primary-400">Headings</a>
                 <a href="#forms" class="rounded-md px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-white">Forms</a>
                 <a href="#data-display" class="rounded-md px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-white">Data Display</a>
+                <a href="#layout" class="rounded-md px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-white">Layout</a>
                 <a href="#feedback" class="rounded-md px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-white">Feedback</a>
                 <a href="#actions" class="rounded-md px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-white">Actions</a>
             </nav>
@@ -853,6 +855,355 @@
 
 {{-- Categoría --}}
 &lt;x-data-display.badge&gt;Marketing&lt;/x-data-display.badge&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Stats Simple --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Stats - Grid Simple</h3>
+
+                    <x-data-display.stats title="Last 30 days">
+                        <x-data-display.stat label="Total Subscribers" value="71,897" />
+                        <x-data-display.stat label="Avg. Open Rate" value="58.16%" />
+                        <x-data-display.stat label="Avg. Click Rate" value="24.57%" />
+                    </x-data-display.stats>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.stats title="Last 30 days"&gt;
+    &lt;x-data-display.stat label="Total Subscribers" value="71,897" /&gt;
+    &lt;x-data-display.stat label="Avg. Open Rate" value="58.16%" /&gt;
+    &lt;x-data-display.stat label="Avg. Click Rate" value="24.57%" /&gt;
+&lt;/x-data-display.stats&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Stats Sin Título --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Stats - Sin Título</h3>
+
+                    <x-data-display.stats>
+                        <x-data-display.stat label="Total de Proyectos" value="42" />
+                        <x-data-display.stat label="Tareas Completadas" value="312" />
+                        <x-data-display.stat label="Horas Invertidas" value="1,248" />
+                    </x-data-display.stats>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.stats&gt;
+    &lt;x-data-display.stat label="Total de Proyectos" value="42" /&gt;
+    &lt;x-data-display.stat label="Tareas Completadas" value="312" /&gt;
+&lt;/x-data-display.stats&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Stats con Columnas Diferentes --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Stats - Grid 2 Columnas</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Puedes configurar el número de columnas del grid con el atributo "columns".
+                    </p>
+
+                    <x-data-display.stats title="Resumen Mensual" columns="2">
+                        <x-data-display.stat label="Ingresos" value="$45,231" />
+                        <x-data-display.stat label="Gastos" value="$12,345" />
+                    </x-data-display.stats>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.stats title="Resumen Mensual" columns="2"&gt;
+    &lt;x-data-display.stat label="Ingresos" value="$45,231" /&gt;
+    &lt;x-data-display.stat label="Gastos" value="$12,345" /&gt;
+&lt;/x-data-display.stats&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Stats con Contenido Personalizado --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Stats - Con Contenido Personalizado</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Puedes usar slots para contenido más complejo en el valor.
+                    </p>
+
+                    <x-data-display.stats title="Rendimiento del Equipo">
+                        <x-data-display.stat label="Tasa de Éxito">
+                            <span class="text-green-600 dark:text-green-400">92.5%</span>
+                        </x-data-display.stat>
+
+                        <x-data-display.stat label="Tiempo Promedio">
+                            <span>2.4<span class="text-xl text-neutral-500 dark:text-neutral-400">h</span></span>
+                        </x-data-display.stat>
+
+                        <x-data-display.stat label="Satisfacción">
+                            <div class="flex items-baseline gap-1">
+                                <span>4.8</span>
+                                <span class="text-xl text-yellow-500">★</span>
+                            </div>
+                        </x-data-display.stat>
+                    </x-data-display.stats>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.stats title="Rendimiento del Equipo"&gt;
+    &lt;x-data-display.stat label="Tasa de Éxito"&gt;
+        &lt;span class="text-green-600"&gt;92.5%&lt;/span&gt;
+    &lt;/x-data-display.stat&gt;
+&lt;/x-data-display.stats&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Description List Simple --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Description List - Simple</h3>
+
+                    <x-data-display.description-list title="Applicant Information" description="Personal details and application.">
+                        <x-data-display.description-item term="Full name" description="Margot Foster" />
+                        <x-data-display.description-item term="Application for" description="Backend Developer" />
+                        <x-data-display.description-item term="Email address" description="margotfoster@example.com" />
+                        <x-data-display.description-item term="Salary expectation" description="$120,000" />
+                    </x-data-display.description-list>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.description-list title="Applicant Information" description="Personal details and application."&gt;
+    &lt;x-data-display.description-item term="Full name" description="Margot Foster" /&gt;
+    &lt;x-data-display.description-item term="Email" description="margot@example.com" /&gt;
+&lt;/x-data-display.description-list&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Description List Sin Título --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Description List - Sin Título</h3>
+
+                    <x-data-display.description-list>
+                        <x-data-display.description-item term="Nombre" description="Juan Pérez" />
+                        <x-data-display.description-item term="Cargo" description="Desarrollador Senior" />
+                        <x-data-display.description-item term="Departamento" description="Ingeniería" />
+                    </x-data-display.description-list>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.description-list&gt;
+    &lt;x-data-display.description-item term="Nombre" description="Juan Pérez" /&gt;
+    &lt;x-data-display.description-item term="Cargo" description="Desarrollador Senior" /&gt;
+&lt;/x-data-display.description-list&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Description List con Contenido Complejo --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Description List - Con Contenido Complejo</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Puedes usar slots para contenido personalizado en la descripción.
+                    </p>
+
+                    <x-data-display.description-list title="Project Details" description="Information about the current project.">
+                        <x-data-display.description-item term="Project name" description="Website Redesign" />
+                        <x-data-display.description-item term="About">
+                            Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident.
+                        </x-data-display.description-item>
+                        <x-data-display.description-item term="Attachments">
+                            <ul role="list" class="divide-y divide-neutral-100 rounded-md border border-neutral-200 dark:divide-white/5 dark:border-white/10">
+                                <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">
+                                    <div class="flex w-0 flex-1 items-center">
+                                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-neutral-400 dark:text-neutral-500">
+                                            <path d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                        </svg>
+                                        <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                            <span class="truncate font-medium text-neutral-900 dark:text-white">resume_back_end_developer.pdf</span>
+                                            <span class="shrink-0 text-neutral-400 dark:text-neutral-500">2.4mb</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 shrink-0">
+                                        <a href="#" class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">Download</a>
+                                    </div>
+                                </li>
+                                <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">
+                                    <div class="flex w-0 flex-1 items-center">
+                                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-neutral-400 dark:text-neutral-500">
+                                            <path d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                        </svg>
+                                        <div class="ml-4 flex min-w-0 flex-1 gap-2">
+                                            <span class="truncate font-medium text-neutral-900 dark:text-white">coverletter_back_end_developer.pdf</span>
+                                            <span class="shrink-0 text-neutral-400 dark:text-neutral-500">4.5mb</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 shrink-0">
+                                        <a href="#" class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">Download</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </x-data-display.description-item>
+                    </x-data-display.description-list>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.description-list title="Project Details"&gt;
+    &lt;x-data-display.description-item term="Attachments"&gt;
+        &lt;ul&gt;...archivos adjuntos...&lt;/ul&gt;
+    &lt;/x-data-display.description-item&gt;
+&lt;/x-data-display.description-list&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Avatar Tamaños --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Avatar - Tamaños</h3>
+
+                    <div class="flex items-center gap-4">
+                        <x-data-display.avatar src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User" size="xs" />
+                        <x-data-display.avatar src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User" size="sm" />
+                        <x-data-display.avatar src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User" size="md" />
+                        <x-data-display.avatar src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User" size="lg" />
+                        <x-data-display.avatar src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User" size="xl" />
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-data-display.avatar src="..." alt="User" size="xs" /&gt;
+&lt;x-data-display.avatar src="..." alt="User" size="sm" /&gt;
+&lt;x-data-display.avatar src="..." alt="User" size="md" /&gt;
+&lt;x-data-display.avatar src="..." alt="User" size="lg" /&gt;
+&lt;x-data-display.avatar src="..." alt="User" size="xl" /&gt;</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- Layout Section --}}
+        <section id="layout">
+            <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Layout</h2>
+            <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+                Cards, divisores y componentes de estructura.
+            </p>
+
+            <div class="mt-6 space-y-8">
+                {{-- Card Simple --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Card - Simple</h3>
+
+                    <x-layout.card>
+                        <p class="text-sm text-neutral-700 dark:text-neutral-300">
+                            Esta es una card simple con solo contenido en el body. Perfecta para mostrar información básica o contenido que no necesita header o footer.
+                        </p>
+                    </x-layout.card>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-layout.card&gt;
+    &lt;p&gt;Contenido de la card...&lt;/p&gt;
+&lt;/x-layout.card&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Card Completa --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Card - Con Header y Footer</h3>
+
+                    <x-layout.card>
+                        <x-slot name="header">
+                            <h3 class="text-base font-semibold text-neutral-900 dark:text-white">Información del Proyecto</h3>
+                        </x-slot>
+
+                        <div class="space-y-4">
+                            <p class="text-sm text-neutral-700 dark:text-neutral-300">
+                                Este es el contenido principal de la card. Aquí puedes incluir cualquier información relevante para tu proyecto.
+                            </p>
+                            <p class="text-sm text-neutral-700 dark:text-neutral-300">
+                                Las cards con header y footer son ideales para secciones que requieren un título y acciones.
+                            </p>
+                        </div>
+
+                        <x-slot name="footer">
+                            <div class="flex justify-end gap-3">
+                                <x-actions.button variant="secondary" size="sm">Cancelar</x-actions.button>
+                                <x-actions.button variant="primary" size="sm">Guardar</x-actions.button>
+                            </div>
+                        </x-slot>
+                    </x-layout.card>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-layout.card&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h3&gt;Título de la Card&lt;/h3&gt;
+    &lt;/x-slot&gt;
+
+    &lt;p&gt;Contenido principal...&lt;/p&gt;
+
+    &lt;x-slot name="footer"&gt;
+        &lt;x-actions.button&gt;Guardar&lt;/x-actions.button&gt;
+    &lt;/x-slot&gt;
+&lt;/x-layout.card&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Card Sin Divisores --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Card - Sin Divisores</h3>
+                    <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+                        Puedes desactivar los divisores entre secciones con :divided="false".
+                    </p>
+
+                    <x-layout.card :divided="false">
+                        <x-slot name="header">
+                            <h3 class="text-base font-semibold text-neutral-900 dark:text-white">Sin Divisores</h3>
+                        </x-slot>
+
+                        <p class="text-sm text-neutral-700 dark:text-neutral-300">
+                            Esta card no tiene líneas divisorias entre el header, body y footer.
+                        </p>
+
+                        <x-slot name="footer">
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Footer sin división</p>
+                        </x-slot>
+                    </x-layout.card>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-layout.card :divided="false"&gt;
+    &lt;x-slot name="header"&gt;...&lt;/x-slot&gt;
+    ...contenido...
+    &lt;x-slot name="footer"&gt;...&lt;/x-slot&gt;
+&lt;/x-layout.card&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Divider Simple --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Divider - Simple</h3>
+
+                    <div>
+                        <p class="text-sm text-neutral-700 dark:text-neutral-300">Contenido antes del divisor.</p>
+
+                        <div class="my-6">
+                            <x-layout.divider />
+                        </div>
+
+                        <p class="text-sm text-neutral-700 dark:text-neutral-300">Contenido después del divisor.</p>
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>&lt;x-layout.divider /&gt;</code></pre>
+                    </div>
+                </div>
+
+                {{-- Divider con Label --}}
+                <div class="rounded-lg border border-neutral-200 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
+                    <h3 class="mb-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">Divider - Con Label</h3>
+
+                    <div>
+                        <p class="text-sm text-neutral-700 dark:text-neutral-300">Sección principal del contenido.</p>
+
+                        <div class="my-6">
+                            <x-layout.divider label="Continue" />
+                        </div>
+
+                        <p class="text-sm text-neutral-700 dark:text-neutral-300">Contenido adicional después del divisor.</p>
+
+                        <div class="my-6">
+                            <x-layout.divider>o continuar con</x-layout.divider>
+                        </div>
+
+                        <p class="text-sm text-neutral-700 dark:text-neutral-300">También puedes usar slots para contenido personalizado.</p>
+                    </div>
+
+                    <div class="mt-6 rounded-md bg-neutral-50 p-4 dark:bg-neutral-900">
+                        <pre class="text-xs text-neutral-800 dark:text-neutral-200"><code>{{-- Con prop label --}}
+&lt;x-layout.divider label="Continue" /&gt;
+
+{{-- Con slot --}}
+&lt;x-layout.divider&gt;o continuar con&lt;/x-layout.divider&gt;</code></pre>
                     </div>
                 </div>
             </div>
