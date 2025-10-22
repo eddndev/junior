@@ -88,12 +88,20 @@ class AreaController extends Controller
     {
         $validated = $request->validated();
 
-        $area->update([
+        // Preparar datos para actualizar
+        $dataToUpdate = [
             'name' => $validated['name'],
             'slug' => Str::slug($validated['name']),
             'description' => $validated['description'],
-            'is_active' => $request->boolean('is_active'),
-        ]);
+        ];
+
+        // Solo permitir cambiar is_active si NO es un área del sistema
+        if (!$area->is_system) {
+            $dataToUpdate['is_active'] = $request->boolean('is_active');
+        }
+        // Si es área del sistema, is_active se preserva (no se incluye en $dataToUpdate)
+
+        $area->update($dataToUpdate);
 
         return redirect()->route('areas.index')->with('success', 'Área actualizada con éxito.');
     }

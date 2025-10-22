@@ -49,6 +49,7 @@ class UserObserver
             ]),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
+            'created_at' => now(),
         ]);
     }
 
@@ -112,6 +113,7 @@ class UserObserver
             'new_values' => json_encode($changes),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
+            'created_at' => now(),
         ]);
     }
 
@@ -147,6 +149,7 @@ class UserObserver
             ]),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
+            'created_at' => now(),
         ]);
     }
 
@@ -182,6 +185,7 @@ class UserObserver
             ]),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
+            'created_at' => now(),
         ]);
     }
 
@@ -217,6 +221,7 @@ class UserObserver
             ]),
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
+            'created_at' => now(),
         ]);
     }
 }

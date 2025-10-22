@@ -56,10 +56,18 @@
             @can('ver-bitacora')
             <li>
                 <a
-                    href="#"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white"
+                    href="{{ route('team-logs.index') }}"
+                    @class([
+                        'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
+                        'bg-neutral-50 dark:bg-white/5 text-primary-600 dark:text-white' => request()->routeIs('team-logs.*'),
+                        'text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 hover:text-primary-600 dark:hover:bg-white/5 dark:hover:text-white' => !request()->routeIs('team-logs.*'),
+                    ])
                 >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 shrink-0 text-neutral-400 group-hover:text-primary-600 dark:group-hover:text-white">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" @class([
+                        'size-6 shrink-0',
+                        'text-primary-600 dark:text-white' => request()->routeIs('team-logs.*'),
+                        'text-neutral-400 group-hover:text-primary-600 dark:group-hover:text-white' => !request()->routeIs('team-logs.*'),
+                    ])>
                         <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     Bitácora
@@ -188,8 +196,19 @@
 
             @can('ver-trazabilidad')
             <li>
-                <a href="#" class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white">
-                    <span class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-white text-[0.625rem] font-medium text-neutral-400 group-hover:border-primary-600 group-hover:text-primary-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">T</span>
+                <a
+                    href="{{ route('audit-logs.index') }}"
+                    @class([
+                        'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
+                        'bg-neutral-50 dark:bg-white/5 text-primary-600 dark:text-white' => request()->routeIs('audit-logs.*'),
+                        'text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 hover:text-primary-600 dark:hover:bg-white/5 dark:hover:text-white' => !request()->routeIs('audit-logs.*'),
+                    ])
+                >
+                    <span @class([
+                        'flex size-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium',
+                        'border-primary-600 bg-primary-50 text-primary-600 dark:border-white/20 dark:bg-white/10 dark:text-white' => request()->routeIs('audit-logs.*'),
+                        'border-neutral-200 bg-white text-neutral-400 group-hover:border-primary-600 group-hover:text-primary-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white' => !request()->routeIs('audit-logs.*'),
+                    ])>T</span>
                     <span class="truncate">Trazabilidad</span>
                 </a>
             </li>

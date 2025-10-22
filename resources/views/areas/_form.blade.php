@@ -32,16 +32,41 @@
     {{-- Active Status --}}
     <div>
         <div class="flex items-center gap-x-3">
-            <input type="checkbox" name="is_active" id="is_active" value="1"
+            <input
+                type="checkbox"
+                name="is_active"
+                id="is_active"
+                value="1"
                 {{ old('is_active', $area->is_active ?? true) ? 'checked' : '' }}
-                class="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-600 dark:border-neutral-700 dark:bg-neutral-800">
+                @if(isset($area) && $area->is_system) disabled @endif
+                class="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-600 dark:border-neutral-700 dark:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
             <label for="is_active" class="text-sm font-medium leading-6 text-neutral-900 dark:text-white">
                 Área activa
             </label>
+
+            @if(isset($area) && $area->is_system)
+                <x-data-display.badge color="primary">
+                    <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" />
+                    </svg>
+                    Sistema - Protegida
+                </x-data-display.badge>
+            @endif
         </div>
-        <p class="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-            Las áreas inactivas no se podrán asignar a nuevos usuarios o tareas.
-        </p>
+
+        @if(isset($area) && $area->is_system)
+            <p class="mt-2 text-xs text-amber-600 dark:text-amber-400">
+                <svg class="inline h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                </svg>
+                Esta es un área del sistema y no puede ser desactivada. Es crítica para el funcionamiento de los módulos integrados.
+            </p>
+        @else
+            <p class="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+                Las áreas inactivas no se podrán asignar a nuevos usuarios o tareas.
+            </p>
+        @endif
     </div>
 </div>
 

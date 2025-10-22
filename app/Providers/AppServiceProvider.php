@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Area;
 use App\Models\Permission;
+use App\Models\TeamLog;
 use App\Models\User;
 use App\Observers\AreaObserver;
+use App\Observers\TeamLogObserver;
 use App\Observers\UserObserver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
         // Register model observers for audit logging
         User::observe(UserObserver::class);
         Area::observe(AreaObserver::class);
+        TeamLog::observe(TeamLogObserver::class);
 
         // Registrar Gates dinámicamente basados en permisos
         try {

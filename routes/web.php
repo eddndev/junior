@@ -53,6 +53,26 @@ Route::middleware(['auth', 'permission:gestionar-areas'])->group(function () {
     Route::resource('areas', AreaController::class)->except(['show']);
 });
 
+// RRHH - Audit Logs (Trazabilidad)
+// Protected by 'ver-trazabilidad' permission
+Route::middleware(['auth', 'permission:ver-trazabilidad'])->group(function () {
+    Route::get('audit-logs', [App\Http\Controllers\AuditLogController::class, 'index'])->name('audit-logs.index');
+});
+
+// Tareas y Colaboración Routes
+Route::middleware(['auth'])->group(function () {
+    // Team Log Routes
+    Route::get('team-logs', [App\Http\Controllers\TeamLogController::class, 'index'])
+        ->middleware('permission:ver-bitacora')
+        ->name('team-logs.index');
+    Route::post('team-logs', [App\Http\Controllers\TeamLogController::class, 'store'])
+        ->middleware('permission:crear-bitacora')
+        ->name('team-logs.store');
+    Route::delete('team-logs/{teamLog}', [App\Http\Controllers\TeamLogController::class, 'destroy'])
+        ->middleware('permission:crear-bitacora')
+        ->name('team-logs.destroy');
+});
+
 // UI Components Showcase (solo en desarrollo)
 if (config('app.debug')) {
     Route::get('/ui-components', function () {
