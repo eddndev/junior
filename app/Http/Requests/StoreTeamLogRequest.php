@@ -35,6 +35,19 @@ class StoreTeamLogRequest extends FormRequest
             'content' => ['required', 'string', 'max:5000'],
             'area_id' => ['required', 'exists:areas,id'],
             'type' => ['required', 'string', 'in:decision,event,note,meeting'],
+
+            // Validación de archivos adjuntos
+            'attachments' => ['nullable', 'array', 'max:10'],
+            'attachments.*' => [
+                'file',
+                'max:10240', // 10MB por archivo
+                'mimes:jpeg,png,jpg,gif,webp,svg,pdf,doc,docx,xls,xlsx,ppt,pptx,mp3,wav,ogg,m4a,txt,json,xml,html,css,js,zip,rar,7z'
+            ],
+
+            // Validación de enlaces
+            'links' => ['nullable', 'array', 'max:10'],
+            'links.*.url' => ['required', 'url', 'max:2048'],
+            'links.*.type' => ['required', 'string', 'in:external,video,image'],
         ];
     }
 
@@ -48,6 +61,11 @@ class StoreTeamLogRequest extends FormRequest
             'content' => 'contenido',
             'area_id' => 'área',
             'type' => 'tipo',
+            'attachments' => 'archivos adjuntos',
+            'attachments.*' => 'archivo',
+            'links' => 'enlaces',
+            'links.*.url' => 'URL del enlace',
+            'links.*.type' => 'tipo de enlace',
         ];
     }
 
@@ -65,6 +83,20 @@ class StoreTeamLogRequest extends FormRequest
             'area_id.exists' => 'El :attribute seleccionada no es válida.',
             'type.required' => 'Debes seleccionar un :attribute de entrada.',
             'type.in' => 'El :attribute seleccionado no es válido.',
+
+            // Mensajes para archivos adjuntos
+            'attachments.max' => 'No puedes adjuntar más de :max archivos.',
+            'attachments.*.file' => 'El :attribute debe ser un archivo válido.',
+            'attachments.*.max' => 'El :attribute no puede superar 10MB.',
+            'attachments.*.mimes' => 'El :attribute tiene un formato no permitido.',
+
+            // Mensajes para enlaces
+            'links.max' => 'No puedes agregar más de :max enlaces.',
+            'links.*.url.required' => 'La :attribute es obligatoria.',
+            'links.*.url.url' => 'La :attribute debe ser una URL válida.',
+            'links.*.url.max' => 'La :attribute no puede exceder :max caracteres.',
+            'links.*.type.required' => 'El :attribute es obligatorio.',
+            'links.*.type.in' => 'El :attribute no es válido.',
         ];
     }
 }

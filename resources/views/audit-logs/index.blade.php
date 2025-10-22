@@ -182,25 +182,26 @@
 
                                 {{-- Changes Summary --}}
                                 <x-layout.table-cell>
-                                    <details class="text-xs">
-                                        <summary class="cursor-pointer text-primary-600 hover:text-primary-500 dark:text-primary-400">
+                                    @if($log->old_values || $log->new_values)
+                                        <button
+                                            type="button"
+                                            command="show-modal"
+                                            commandfor="audit-log-details-modal"
+                                            data-old-values="{{ json_encode($log->old_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}"
+                                            data-new-values="{{ json_encode($log->new_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}"
+                                            @click="window.dispatchEvent(new CustomEvent('load-audit-data', {
+                                                detail: {
+                                                    oldValues: {{ json_encode($log->old_values) }},
+                                                    newValues: {{ json_encode($log->new_values) }}
+                                                }
+                                            }))"
+                                            class="text-xs cursor-pointer text-primary-600 hover:text-primary-500 dark:text-primary-400"
+                                        >
                                             Ver cambios
-                                        </summary>
-                                        <div class="mt-2 space-y-2 text-neutral-600 dark:text-neutral-400">
-                                            @if($log->old_values)
-                                                <div>
-                                                    <strong>Antes:</strong>
-                                                    <pre class="mt-1 rounded bg-neutral-50 p-2 dark:bg-neutral-800">{{ json_encode($log->old_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
-                                                </div>
-                                            @endif
-                                            @if($log->new_values)
-                                                <div>
-                                                    <strong>Después:</strong>
-                                                    <pre class="mt-1 rounded bg-neutral-50 p-2 dark:bg-neutral-800">{{ json_encode($log->new_values, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </details>
+                                        </button>
+                                    @else
+                                        <span class="text-xs text-neutral-500 dark:text-neutral-400">Sin cambios</span>
+                                    @endif
                                 </x-layout.table-cell>
 
                                 {{-- IP Address --}}
@@ -253,4 +254,76 @@
             </div>
         </div>
     </div>
+    {{-- Audit Log Details Modal --}}
+    <x-layout.modal id="audit-log-details-modal" title="Detalles del Registro de Auditoría" maxWidth="3xl">
+        <x-slot:content>
+            <div x-data="{
+                oldValues: {},
+                newValues: {},
+                hasValues(obj) {
+                    return obj && typeof obj === 'object' && Object.keys(obj).length > 0;
+                },
+                formatValue(value) {
+                    if (value === null) return 'null';
+                    if (value === undefined) return 'undefined';
+                    if (typeof value === 'object') return JSON.stringify(value, null, 2);
+                    return String(value);
+                }
+            }"
+            @load-audit-data.window="
+                oldValues = $event.detail.oldValues || {};
+                newValues = $event.detail.newValues || {};
+            "
+            >
+                <div class="w-full space-y-6">
+                    {{-- Valores Anteriores --}}
+                    <div class="w-full">
+                        <h4 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Valores Anteriores</h4>
+                        <div class="w-full rounded-lg bg-neutral-50 dark:bg-neutral-800/50 p-4 overflow-auto max-h-60">
+                            <template x-if="!hasValues(oldValues)">
+                                <p class="text-sm text-neutral-500 dark:text-neutral-400">No hay datos anteriores.</p>
+                            </template>
+                            <template x-if="hasValues(oldValues)">
+                                <dl class="w-full space-y-3">
+                                    <template x-for="[key, value] in Object.entries(oldValues)" :key="key">
+                                        <div class="w-full flex flex-col gap-1">
+                                            <dt class="text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide" x-text="key"></dt>
+                                            <dd class="w-full text-sm text-neutral-900 dark:text-neutral-100 font-mono bg-white dark:bg-neutral-900 rounded px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 break-words" x-text="formatValue(value)"></dd>
+                                        </div>
+                                    </template>
+                                </dl>
+                            </template>
+                        </div>
+                    </div>
+
+                    {{-- Valores Nuevos --}}
+                    <div class="w-full">
+                        <h4 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Valores Nuevos</h4>
+                        <div class="w-full rounded-lg bg-neutral-50 dark:bg-neutral-800/50 p-4 overflow-auto max-h-60">
+                            <template x-if="!hasValues(newValues)">
+                                <p class="text-sm text-neutral-500 dark:text-neutral-400">No hay datos nuevos.</p>
+                            </template>
+                            <template x-if="hasValues(newValues)">
+                                <dl class="w-full space-y-3">
+                                    <template x-for="[key, value] in Object.entries(newValues)" :key="key">
+                                        <div class="w-full flex flex-col gap-1">
+                                            <dt class="text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide" x-text="key"></dt>
+                                            <dd class="w-full text-sm text-neutral-900 dark:text-neutral-100 font-mono bg-white dark:bg-neutral-900 rounded px-2 py-1.5 border border-neutral-200 dark:border-neutral-700 break-words" x-text="formatValue(value)"></dd>
+                                        </div>
+                                    </template>
+                                </dl>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </x-slot:content>
+    </x-layout.modal>
+
+    @push('scripts')
+    <script>
+        // No need for DOMContentLoaded listener here, Alpine.js handles initialization
+        // The Alpine.js component itself will listen for the modal show event
+    </script>
+    @endpush
 </x-dashboard-layout>

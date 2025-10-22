@@ -111,7 +111,7 @@
         <div class="mt-6 grid grid-cols-2 gap-4">
             <!-- Google Login -->
             <a
-                href="{{ route('google.redirect') }}"
+                href="{{ route('auth.google.redirect') }}"
                 class="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-colors dark:bg-white/10 dark:text-white dark:ring-white/5 dark:hover:bg-white/20"
             >
                 <svg viewBox="0 0 24 24" aria-hidden="true" class="h-5 w-5">
@@ -125,7 +125,7 @@
 
             <!-- GitHub Login -->
             <a
-                href="{{ route('github.redirect') }}"
+                href="{{ route('auth.github.redirect') }}"
                 class="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-colors dark:bg-white/10 dark:text-white dark:ring-white/5 dark:hover:bg-white/20"
             >
                 <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 fill-[#24292F] dark:fill-white">

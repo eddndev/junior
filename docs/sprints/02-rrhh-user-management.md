@@ -517,6 +517,108 @@ Basado en el esquema `/docs/03-database-schema.md`, crear las siguientes migraci
         - **Nota:** Badge gris con ícono de información
     * **Beneficio:** Identifi visual más rápida, especialmente en feeds largos.
 
+### Decisiones de Sistema de Archivos Multimedia (2025-10-22)
+
+* **2025-10-22:** Se implementó Spatie Media Library para gestión de archivos adjuntos.
+    * **Razón:** Necesitamos un sistema robusto para manejar archivos multimedia con conversiones automáticas, sin reinventar la rueda.
+    * **Ventajas de Spatie Media Library:**
+        - Gestión automática de almacenamiento de archivos
+        - Conversiones de imagen (WebP, AVIF) con cola de procesamiento
+        - Relaciones Eloquent para media
+        - Custom properties para metadata
+        - Soporte para múltiples collections
+    * **Versión:** v10 (compatible con Laravel 11)
+
+* **2025-10-22:** Se crearon dos collections separadas: 'attachments' y 'links'.
+    * **Razón:** Separar archivos físicos de enlaces externos permite mejor organización y queries optimizados.
+    * **Implementación:**
+        - **Collection 'attachments':** Archivos subidos (PDFs, imágenes, audio, documentos)
+        - **Collection 'links':** Enlaces externos (YouTube, imágenes remotas, URLs genéricas)
+    * **Beneficio:** Queries más rápidos y lógica separada para cada tipo de media.
+
+* **2025-10-22:** Enlaces externos se guardan como registros de metadata, NO se descargan.
+    * **Contexto inicial:** Se intentó usar `addMediaFromUrl()` para enlaces externos, lo que descargaba el contenido al servidor.
+    * **Problema identificado:** Esto generaba tráfico innecesario, consumía espacio en disco y era lento.
+    * **Solución implementada:** Crear registros directos en la tabla `media` con:
+        - `mime_type = 'text/uri-list'`
+        - `size = 0`
+        - `custom_properties['url']` → URL completa del enlace externo
+        - `custom_properties['link_type']` → 'video', 'image' o 'external'
+        - `custom_properties['is_link'] = true`
+    * **Beneficio:** Performance óptimo, sin descargas innecesarias, y URLs siempre apuntan al recurso original.
+
+* **2025-10-22:** Conversiones de imagen procesadas en cola (async).
+    * **Razón:** Las conversiones de imagen (especialmente AVIF) son CPU-intensive y pueden tomar varios segundos.
+    * **Implementación:**
+        - Conversión WebP (85% calidad) → Queued
+        - Conversión AVIF (80% calidad) → Queued
+        - Thumbnail (300x300 WebP) → Non-queued (rápido, necesario inmediatamente)
+    * **User Experience:** El usuario recibe confirmación inmediata, las conversiones se procesan en background.
+    * **Requisito de producción:** Configurar queue worker (`php artisan queue:work`)
+
+* **2025-10-22:** Se abandonó Livewire para upload de archivos, se usó HTML tradicional.
+    * **Contexto:** Inicialmente se intentó usar `wire:model` para archivos adjuntos.
+    * **Problema identificado:**
+        - Livewire interceptaba los archivos y no los enviaba con el POST del formulario principal
+        - PDFs y otros archivos no se estaban adjuntando
+    * **Solución implementada:**
+        - Archivos: HTML tradicional `<input type="file" name="attachments[]" multiple>`
+        - Alpine.js para preview client-side con `URL.createObjectURL()`
+        - Livewire solo para gestión de enlaces (no archivos)
+    * **Beneficio:** Upload confiable, preview instantáneo sin Livewire overhead.
+
+* **2025-10-22:** Se usó Alpine.js DataTransfer API para manipular FileList.
+    * **Razón:** Los usuarios necesitan poder remover archivos antes de enviar el formulario, pero FileList es read-only por defecto.
+    * **Implementación:** Crear un nuevo DataTransfer object, copiar archivos excepto el eliminado, actualizar `input.files`.
+    * **UX:** Botón "X" en cada archivo preview permite removerlo antes de submit.
+
+* **2025-10-22:** Se implementó componente `<x-forms.composer>` con padding dinámico.
+    * **Problema:** La toolbar de attachments crece/encoge, causando overlap con el textarea.
+    * **Solución:** MutationObserver que detecta cambios en la toolbar y ajusta `padding-bottom` del contenedor.
+    * **Implementación:**
+        - Observa cambios en childList, subtree y attributes de la toolbar
+        - Calcula height de toolbar en tiempo real
+        - Aplica padding dinámico con transición suave
+        - Escucha eventos personalizados `@attachments-updated.window`
+    * **Beneficio:** El compositor siempre se ajusta perfectamente, sin overlap.
+
+* **2025-10-22:** Textarea con auto-resize usando Alpine.js.
+    * **Razón:** UX moderna donde el textarea crece con el contenido en lugar de tener scroll interno.
+    * **Implementación:**
+        ```javascript
+        resize() {
+            $el.style.height = 'auto';
+            $el.style.height = $el.scrollHeight + 'px';
+        }
+        ```
+    * **Trigger:** `@input="resize()"` + `x-init="resize()"`
+
+* **2025-10-22:** Se reemplazó `<x-forms.select>` web component por `<select>` nativo en Livewire.
+    * **Problema:** Web component `<el-select>` perdía su estado después de re-renders de Livewire.
+    * **Causa raíz:** Livewire DOM diffing no es compatible con Web Components que manejan su propio shadow DOM.
+    * **Solución:** Usar `<select>` HTML nativo con `wire:model.live` para el selector de tipo de enlace.
+    * **Nota:** Web components funcionan perfectamente en formularios estáticos (fuera de Livewire).
+
+* **2025-10-22:** Componente de display con viewers especializados por tipo de media.
+    * **Implementación:**
+        - **Imágenes:** Lightbox con thumbnail (usa conversión 'thumb' si existe)
+        - **Audio:** Player HTML5 nativo con controles
+        - **PDFs:** Botón de descarga con ícono distintivo
+        - **Videos (YouTube/Vimeo):** iFrame embebido con aspect ratio 16:9
+        - **Imágenes externas:** `<img>` con fallback si falla la carga
+        - **Enlaces genéricos:** Card con ícono de enlace externo
+    * **Accesibilidad:** Atributos `loading="lazy"` y `onerror` handlers.
+
+* **2025-10-22:** Modal de audit log con datos formateados correctamente.
+    * **Problema inicial:** `x-html` generaba strings HTML que se escapaban, mostrando literales en lugar de renderizar.
+    * **Solución:** Usar Alpine.js templates (`<template x-for>`) con `x-text` en lugar de generar HTML strings.
+    * **Implementación:**
+        - Definition lists (`<dl>`, `<dt>`, `<dd>`) para formato limpio
+        - Eventos personalizados para cargar datos: `@load-audit-data.window`
+        - Función `formatValue()` para manejar null, undefined y objetos JSON
+        - Clases `w-full` y `break-words` para usar todo el ancho del modal
+    * **Beneficio:** Datos formateados de forma profesional, sin problemas de escaping.
+
 ---
 
 ## 5. Registro de Bloqueos y Soluciones

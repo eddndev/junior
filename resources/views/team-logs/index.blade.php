@@ -16,7 +16,7 @@
 
         {{-- Composer Form --}}
         <div class="mb-8">
-            <form action="{{ route('team-logs.store') }}" method="POST">
+            <form action="{{ route('team-logs.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <x-forms.composer
                     title-placeholder="¿Qué sucedió hoy?"
@@ -25,26 +25,38 @@
                     description-name="content"
                     description-rows="3"
                 >
+                    {{-- Attachment Actions Toolbar --}}
+                    <x-slot name="toolbar">
+                        @livewire('team-log-attachments')
+                    </x-slot>
+
                     <x-slot name="leftActions">
                         {{-- Area Selector --}}
-                        <div>
-                            <label for="area_id" class="sr-only">Área</label>
-                            <select id="area_id" name="area_id" class="block w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-neutral-900 ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6 dark:bg-neutral-800 dark:text-white dark:ring-neutral-700">
-                                @foreach($userAreas as $area)
-                                    <option value="{{ $area->id }}">{{ $area->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <x-forms.select
+                            id="area_id"
+                            name="area_id"
+                            placeholder="Selecciona un área"
+                            :value="old('area_id', $userAreas->first()->id ?? null)"
+                        >
+                            @foreach($userAreas as $area)
+                                <x-forms.select-option :value="$area->id">
+                                    {{ $area->name }}
+                                </x-forms.select-option>
+                            @endforeach
+                        </x-forms.select>
+
                         {{-- Type Selector --}}
-                        <div>
-                            <label for="type" class="sr-only">Tipo</label>
-                            <select id="type" name="type" class="block w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-neutral-900 ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6 dark:bg-neutral-800 dark:text-white dark:ring-neutral-700">
-                                <option value="note">Nota</option>
-                                <option value="decision">Decisión</option>
-                                <option value="event">Evento</option>
-                                <option value="meeting">Reunión</option>
-                            </select>
-                        </div>
+                        <x-forms.select
+                            id="type"
+                            name="type"
+                            placeholder="Tipo de entrada"
+                            value="note"
+                        >
+                            <x-forms.select-option value="note">Nota</x-forms.select-option>
+                            <x-forms.select-option value="decision">Decisión</x-forms.select-option>
+                            <x-forms.select-option value="event">Evento</x-forms.select-option>
+                            <x-forms.select-option value="meeting">Reunión</x-forms.select-option>
+                        </x-forms.select>
                     </x-slot>
 
                     <x-slot name="rightActions">
@@ -76,35 +88,35 @@
 
                 {{-- Area Filter --}}
                 <div class="w-full sm:w-48">
-                    <label for="filter_area" class="sr-only">Filtrar por área</label>
-                    <select
-                        name="area_id"
+                    <x-forms.select
                         id="filter_area"
-                        class="block w-full rounded-md border-0 py-2 pl-3 pr-10 text-neutral-900 ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6 dark:bg-neutral-800 dark:text-white dark:ring-neutral-700"
+                        name="area_id"
+                        placeholder="Todas las áreas"
+                        :value="request('area_id')"
                     >
-                        <option value="">Todas las áreas</option>
+                        <x-forms.select-option value="">Todas las áreas</x-forms.select-option>
                         @foreach($userAreas as $area)
-                            <option value="{{ $area->id }}" {{ request('area_id') == $area->id ? 'selected' : '' }}>
+                            <x-forms.select-option :value="$area->id">
                                 {{ $area->name }}
-                            </option>
+                            </x-forms.select-option>
                         @endforeach
-                    </select>
+                    </x-forms.select>
                 </div>
 
                 {{-- Type Filter --}}
                 <div class="w-full sm:w-48">
-                    <label for="filter_type" class="sr-only">Filtrar por tipo</label>
-                    <select
-                        name="type"
+                    <x-forms.select
                         id="filter_type"
-                        class="block w-full rounded-md border-0 py-2 pl-3 pr-10 text-neutral-900 ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6 dark:bg-neutral-800 dark:text-white dark:ring-neutral-700"
+                        name="type"
+                        placeholder="Todos los tipos"
+                        :value="request('type')"
                     >
-                        <option value="">Todos los tipos</option>
-                        <option value="note" {{ request('type') == 'note' ? 'selected' : '' }}>Nota</option>
-                        <option value="decision" {{ request('type') == 'decision' ? 'selected' : '' }}>Decisión</option>
-                        <option value="event" {{ request('type') == 'event' ? 'selected' : '' }}>Evento</option>
-                        <option value="meeting" {{ request('type') == 'meeting' ? 'selected' : '' }}>Reunión</option>
-                    </select>
+                        <x-forms.select-option value="">Todos los tipos</x-forms.select-option>
+                        <x-forms.select-option value="note">Nota</x-forms.select-option>
+                        <x-forms.select-option value="decision">Decisión</x-forms.select-option>
+                        <x-forms.select-option value="event">Evento</x-forms.select-option>
+                        <x-forms.select-option value="meeting">Reunión</x-forms.select-option>
+                    </x-forms.select>
                 </div>
 
                 {{-- Filter Buttons --}}
@@ -169,6 +181,10 @@
                             </div>
                             <h3 class="text-md font-semibold text-neutral-800 dark:text-neutral-200 mt-2">{{ $log->title }}</h3>
                             <p class="text-sm leading-6 text-neutral-600 dark:text-neutral-300 mt-1">{{ $log->content }}</p>
+
+                            {{-- Display attachments and links --}}
+                            <x-team-log.attachments-display :teamLog="$log" />
+
                             <div class="mt-2">
                                 @switch($log->type)
                                     @case('decision')
