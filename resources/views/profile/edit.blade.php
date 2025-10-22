@@ -4,17 +4,20 @@
     </x-slot>
 
     <main>
-        <header class="border-b border-gray-200 dark:border-white/5">
-            <!-- Secondary navigation -->
-            <nav class="flex overflow-x-auto py-4">
-                <ul role="list" class="flex min-w-full flex-none gap-x-6 px-4 text-sm font-semibold leading-6 text-gray-400 sm:px-6 lg:px-8">
-                    <li>
-                        <a href="{{ route('profile.edit') }}" class="text-primary-600 dark:text-primary-400">{{ __('Cuenta') }}</a>
-                    </li>
-                    {{-- You can add other profile-related links here if needed --}}
-                </ul>
-            </nav>
-        </header>
+        <x-layout.tabs class="px-4 sm:px-6 lg:px-8">
+            <x-layout.tab-item :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
+                {{ __('Cuenta') }}
+            </x-layout.tab-item>
+            <x-layout.tab-item href="#" :active="false">
+                {{ __('Notificaciones') }}
+            </x-layout.tab-item>
+            <x-layout.tab-item href="#" :active="false">
+                {{ __('Disponibilidad') }}
+            </x-layout.tab-item>
+            <x-layout.tab-item href="#" :active="false">
+                {{ __('Cuentas Conectadas') }}
+            </x-layout.tab-item>
+        </x-layout.tabs>
 
         <!-- Settings forms -->
         <div class="divide-y divide-gray-200 dark:divide-white/10">
