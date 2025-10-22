@@ -11,9 +11,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Register middleware aliases
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'role' => \App\Http\Middleware\CheckRole::class,
+            'active' => \App\Http\Middleware\CheckUserActive::class,
+        ]);
+
+        // Apply CheckUserActive globally to web routes (after authentication)
+        // This ensures inactive users are logged out automatically
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckUserActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

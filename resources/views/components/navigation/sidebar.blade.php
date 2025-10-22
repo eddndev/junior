@@ -146,10 +146,21 @@
     <li>
         <div class="text-xs/6 font-semibold text-neutral-400">Administración</div>
         <ul role="list" class="-mx-2 mt-2 space-y-1">
-            @can('ver-usuarios')
+            @can('gestionar-usuarios')
             <li>
-                <a href="#" class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white">
-                    <span class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-white text-[0.625rem] font-medium text-neutral-400 group-hover:border-primary-600 group-hover:text-primary-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">U</span>
+                <a
+                    href="{{ route('users.index') }}"
+                    @class([
+                        'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
+                        'bg-neutral-50 dark:bg-white/5 text-primary-600 dark:text-white' => request()->routeIs('users.*'),
+                        'text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 hover:text-primary-600 dark:hover:bg-white/5 dark:hover:text-white' => !request()->routeIs('users.*'),
+                    ])
+                >
+                    <span @class([
+                        'flex size-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium',
+                        'border-primary-600 bg-primary-50 text-primary-600 dark:border-white/20 dark:bg-white/10 dark:text-white' => request()->routeIs('users.*'),
+                        'border-neutral-200 bg-white text-neutral-400 group-hover:border-primary-600 group-hover:text-primary-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white' => !request()->routeIs('users.*'),
+                    ])>U</span>
                     <span class="truncate">Usuarios</span>
                 </a>
             </li>

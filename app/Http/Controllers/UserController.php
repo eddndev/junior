@@ -17,6 +17,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        // Authorization check
+        $this->authorize('viewAny', User::class);
+
         // Build query with eager loading for performance
         $query = User::with(['roles', 'areas']);
 
@@ -75,6 +78,9 @@ class UserController extends Controller
      */
     public function create()
     {
+        // Authorization check
+        $this->authorize('create', User::class);
+
         // Get active areas and all roles for the form
         $areas = Area::active()->orderBy('name')->get();
         $roles = Role::orderBy('name')->get();
@@ -87,6 +93,9 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+        // Authorization check
+        $this->authorize('create', User::class);
+
         // Create the user
         $user = User::create([
             'name' => $request->name,
@@ -125,6 +134,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        // Authorization check
+        $this->authorize('view', $user);
+
         // Eager load relationships
         $user->load(['roles.permissions', 'areas']);
 
@@ -142,6 +154,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        // Authorization check
+        $this->authorize('update', $user);
+
         // Eager load relationships
         $user->load(['roles', 'areas']);
 
@@ -165,6 +180,9 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
+        // Authorization check
+        $this->authorize('update', $user);
+
         // Update basic user information
         $data = [
             'name' => $request->name,
@@ -213,10 +231,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Prevent self-deletion
-        if ($user->id === auth()->id()) {
-            return back()->with('error', 'No puedes eliminar tu propio usuario.');
-        }
+        // Authorization check
+        $this->authorize('delete', $user);
 
         // Soft delete the user
         $user->delete();
@@ -232,6 +248,9 @@ class UserController extends Controller
     public function restore($id)
     {
         $user = User::withTrashed()->findOrFail($id);
+
+        // Authorization check
+        $this->authorize('restore', $user);
 
         // Restore the user
         $user->restore();

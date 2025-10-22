@@ -11,7 +11,7 @@
             <x-layout.tab-item href="#" :active="false">
                 {{ __('Notificaciones') }}
             </x-layout.tab-item>
-            <x-layout.tab-item href="#" :active="false">
+            <x-layout.tab-item :href="route('profile.availability.show')" :active="request()->routeIs('profile.availability.show')">
                 {{ __('Disponibilidad') }}
             </x-layout.tab-item>
             <x-layout.tab-item href="#" :active="false">

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Permission;
+use App\Models\User;
+use App\Observers\UserObserver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register model observers for audit logging
+        User::observe(UserObserver::class);
+
         // Registrar Gates dinámicamente basados en permisos
         try {
             Permission::all()->each(function ($permission) {

@@ -1,6 +1,6 @@
 # Diario del Sprint 2: Gestión de RRHH - Sistema de Usuarios y Permisos
 
-**Periodo:** 2025-10-19 - [Fecha de Fin]
+**Periodo:** 2025-10-19 - 2025-10-22
 
 **Épica Maestra en GitHub:** [Pendiente de crear]
 
@@ -20,66 +20,74 @@ Implementar el sistema completo de gestión de usuarios, roles y permisos para e
 
 **Perfil: Administrador de RRHH**
 
-- [ ] `#[ID] - [RRHH] Crear perfil de usuario`
+- [x] `#[ID] - [RRHH] Crear perfil de usuario` ✅
   - Como Administrador de RRHH, quiero crear nuevos perfiles de usuario para incorporar empleados a la plataforma
 
-- [ ] `#[ID] - [RRHH] Listar y buscar usuarios`
+- [x] `#[ID] - [RRHH] Listar y buscar usuarios` ✅
   - Como Administrador de RRHH, quiero ver una lista de todos los usuarios con búsqueda y filtros para gestionar la base de empleados
 
-- [ ] `#[ID] - [RRHH] Actualizar perfil de usuario`
+- [x] `#[ID] - [RRHH] Actualizar perfil de usuario` ✅
   - Como Administrador de RRHH, quiero actualizar la información de un usuario para mantener los datos actualizados
 
-- [ ] `#[ID] - [RRHH] Desactivar/Activar usuario`
+- [x] `#[ID] - [RRHH] Desactivar/Activar usuario` ✅
   - Como Administrador de RRHH, quiero desactivar usuarios (soft delete) para gestionar salidas sin perder historial
 
-- [ ] `#[ID] - [RRHH] Ver detalle de usuario con roles y áreas`
+- [x] `#[ID] - [RRHH] Ver detalle de usuario con roles y áreas` ✅
   - Como Administrador de RRHH, quiero ver el perfil completo de un usuario incluyendo sus roles y áreas asignadas
 
 #### 2.2 Módulo Núcleo - Gestión de Roles y Permisos
 
-- [ ] `#[ID] - [RRHH] Asignar rol a usuario en área específica`
+- [x] `#[ID] - [RRHH] Asignar rol a usuario en área específica` ✅
   - Como Administrador de RRHH, quiero asignar un rol a un usuario en un área específica para reflejar su posición organizacional
 
-- [ ] `#[ID] - [RRHH] Asignar múltiples roles a usuario`
+- [x] `#[ID] - [RRHH] Asignar múltiples roles a usuario` ✅
   - Como Administrador de RRHH, quiero que un usuario pueda tener múltiples roles en distintas áreas para reflejar funciones flexibles
 
-- [ ] `#[ID] - [RRHH] Remover rol de usuario`
+- [x] `#[ID] - [RRHH] Remover rol de usuario` ✅
   - Como Administrador de RRHH, quiero remover roles de usuarios cuando cambien de posición o área
 
-- [ ] `#[ID] - [RRHH] Ver permisos efectivos de usuario`
+- [x] `#[ID] - [RRHH] Ver permisos efectivos de usuario` ✅
   - Como Administrador de RRHH, quiero ver todos los permisos que un usuario tiene acumulados a través de sus roles
 
 #### 2.3 Autenticación y Perfil Personal
 
 **Perfil: Empleado General**
 
-- [ ] `#[ID] - [Auth] Login de usuario`
+- [x] `#[ID] - [Auth] Login de usuario` ✅
   - Como Empleado, quiero iniciar sesión con email y contraseña para acceder a mi espacio de trabajo
+  - **Implementado mediante Laravel Breeze**
 
-- [ ] `#[ID] - [Auth] Logout de usuario`
+- [x] `#[ID] - [Auth] Logout de usuario` ✅
   - Como Empleado, quiero cerrar sesión de forma segura para proteger mi cuenta
+  - **Implementado mediante Laravel Breeze**
 
 - [ ] `#[ID] - [Perfil] Ver mi perfil personal`
   - Como Empleado, quiero ver mi propio perfil con mis datos personales y roles asignados
+  - **PENDIENTE:** Se implementará en Sprint 3
 
 - [ ] `#[ID] - [Perfil] Actualizar mi información personal`
   - Como Empleado, quiero actualizar ciertos campos de mi perfil (nombre, email) para mantener mis datos actuales
+  - **PENDIENTE:** Se implementará en Sprint 3
 
 #### 2.4 Sistema de Áreas
 
 - [ ] `#[ID] - [RRHH] Gestionar catálogo de áreas`
   - Como Administrador de RRHH, quiero crear/editar/desactivar áreas de la organización para estructurar la empresa
+  - **PENDIENTE:** Se implementará en Sprint 3 (AreaController)
 
-- [ ] `#[ID] - [RRHH] Asignar usuario a área`
+- [x] `#[ID] - [RRHH] Asignar usuario a área` ✅
   - Como Administrador de RRHH, quiero asignar usuarios a una o más áreas para definir su pertenencia organizacional
+  - **Implementado mediante asignación de roles contextuales por área**
 
 #### 2.5 Trazabilidad y Auditoría
 
-- [ ] `#[ID] - [Audit] Implementar sistema de audit logs`
+- [x] `#[ID] - [Audit] Implementar sistema de audit logs` ✅
   - Como Sistema, quiero registrar automáticamente todas las acciones CRUD de usuarios y roles para trazabilidad
+  - **Implementado mediante UserObserver**
 
 - [ ] `#[ID] - [RRHH] Panel de trazabilidad básico`
   - Como Administrador de RRHH, quiero ver un panel de auditoría con las acciones realizadas en el sistema
+  - **PENDIENTE:** Se implementará en Sprint 3 (AuditLogController + vista)
 
 ---
 
@@ -154,71 +162,111 @@ Basado en el esquema `/docs/03-database-schema.md`, crear las siguientes migraci
 
 **Rutas protegidas con autenticación:**
 
-- [ ] `UserController` - CRUD de usuarios (solo para RRHH)
-  - `index()` - Listar usuarios con paginación y búsqueda
-  - `create()` - Formulario de creación
-  - `store()` - Crear usuario
-  - `show($id)` - Ver detalle de usuario
-  - `edit($id)` - Formulario de edición
-  - `update($id)` - Actualizar usuario
-  - `destroy($id)` - Soft delete de usuario
-  - `restore($id)` - Restaurar usuario eliminado
+- [x] `UserController` - CRUD de usuarios (solo para RRHH) ✅
+  - [x] `index()` - Listar usuarios con paginación y búsqueda
+  - [x] `create()` - Formulario de creación
+  - [x] `store()` - Crear usuario
+  - [x] `show($id)` - Ver detalle de usuario
+  - [x] `edit($id)` - Formulario de edición
+  - [x] `update($id)` - Actualizar usuario
+  - [x] `destroy($id)` - Soft delete de usuario
+  - [x] `restore($id)` - Restaurar usuario eliminado
 
-- [ ] `RoleAssignmentController` - Gestión de roles
-  - `store()` - Asignar rol a usuario en área
-  - `destroy()` - Remover rol de usuario
+- [x] `RoleAssignmentController` - Gestión de roles ✅
+  - [x] `create($userId)` - Vista para asignar roles
+  - [x] `store()` - Asignar rol a usuario en área
+  - [x] `destroy()` - Remover rol de usuario
 
 - [ ] `AreaController` - CRUD de áreas
   - `index()` - Listar áreas
   - `store()` - Crear área
   - `update($id)` - Actualizar área
   - `destroy($id)` - Desactivar área
+  - **PENDIENTE:** Se implementará en Sprint 3
 
 - [ ] `ProfileController` - Perfil personal del empleado
   - `show()` - Ver mi perfil
   - `edit()` - Formulario de edición de perfil
   - `update()` - Actualizar mi perfil
+  - **PENDIENTE:** Se implementará en Sprint 3
 
 - [ ] `AuditLogController` - Panel de trazabilidad
   - `index()` - Listar audit logs con filtros
+  - **PENDIENTE:** Se implementará en Sprint 3
 
 ### 3.5 Vistas Blade
 
 **Usando los componentes del Sprint 1:**
 
-- [ ] `users/index.blade.php` - Lista de usuarios con tabla (`x-layout.table`)
-- [ ] `users/create.blade.php` - Formulario de creación de usuario
-- [ ] `users/edit.blade.php` - Formulario de edición de usuario
-- [ ] `users/show.blade.php` - Vista de detalle con roles y permisos
-- [ ] `roles/assign-modal.blade.php` - Modal para asignar roles (`x-layout.modal`)
+- [x] `users/index.blade.php` - Lista de usuarios con tabla (`x-layout.table`) ✅
+- [x] `users/create.blade.php` - Formulario de creación de usuario ✅
+- [x] `users/edit.blade.php` - Formulario de edición de usuario ✅
+- [x] `users/show.blade.php` - Vista de detalle con roles y permisos ✅
+- [x] `users/_form.blade.php` - Parcial reutilizable para create/edit ✅
+- [x] `roles/assign.blade.php` - Interfaz para asignar/remover roles ✅
 - [ ] `areas/index.blade.php` - Gestión de áreas
+  - **PENDIENTE:** Se implementará en Sprint 3
 - [ ] `profile/show.blade.php` - Vista de perfil personal
+  - **PENDIENTE:** Se implementará en Sprint 3
 - [ ] `profile/edit.blade.php` - Edición de perfil personal
+  - **PENDIENTE:** Se implementará en Sprint 3
 - [ ] `audit-logs/index.blade.php` - Panel de trazabilidad con tabla filtrable
+  - **PENDIENTE:** Se implementará en Sprint 3
 
 ### 3.6 Middleware y Policies
 
-- [ ] `CheckUserActive` middleware - Verificar que el usuario esté activo
-- [ ] `CheckPermission` middleware - Verificar permisos específicos
-- [ ] `UserPolicy` - Políticas de autorización para User model
-- [ ] `AreaPolicy` - Políticas de autorización para Area model
+- [x] `CheckUserActive` middleware - Verificar que el usuario esté activo ✅
+  - Aplicado globalmente en web middleware
+  - Verifica `is_active` y soft delete status
+  - Logout automático de usuarios inactivos
+
+- [x] `CheckPermission` middleware - Verificar permisos específicos ✅
+  - OR logic para múltiples permisos
+  - Logging comprehensivo de intentos no autorizados
+  - Soporte para solicitudes AJAX/JSON
+
+- [x] `UserPolicy` - Políticas de autorización para User model ✅
+  - Métodos CRUD estándar (viewAny, view, create, update, delete, restore, forceDelete)
+  - Métodos personalizados (assignRoles, managePermissions, export, import)
+  - Protección de auto-edición y auto-eliminación
+  - Response::deny() con mensajes descriptivos en español
+
+- [x] `AreaPolicy` - Políticas de autorización para Area model ✅
+  - Métodos CRUD estándar
+  - Basado en permiso `gestionar-usuarios`
 
 ### 3.7 Observers y Events
 
-- [ ] `UserObserver` - Registrar en audit_logs:
-  - `created()` - Usuario creado
-  - `updated()` - Usuario actualizado
-  - `deleted()` - Usuario desactivado
-  - `restored()` - Usuario restaurado
+- [x] `UserObserver` - Registrar en audit_logs ✅
+  - [x] `created()` - Usuario creado
+  - [x] `updated()` - Usuario actualizado (solo campos modificados)
+  - [x] `deleted()` - Usuario desactivado (soft delete)
+  - [x] `restored()` - Usuario restaurado
+  - [x] `forceDeleted()` - Usuario eliminado permanentemente
+  - Filtra campos sensibles (password, remember_token)
+  - Captura IP address y user agent
+  - Skip logging para acciones no autenticadas (seeders, console)
 
 - [ ] `RoleUserObserver` - Registrar asignación/remoción de roles
+  - **PENDIENTE:** Se implementará si es necesario en futuras iteraciones
 
 ### 3.8 Validación
 
-- [ ] `StoreUserRequest` - Validación de creación de usuario
-- [ ] `UpdateUserRequest` - Validación de actualización de usuario
+- [x] `StoreUserRequest` - Validación de creación de usuario ✅
+  - Validación de email único
+  - Password mínimo 8 caracteres
+  - Campos requeridos: name, email, password
+
+- [x] `UpdateUserRequest` - Validación de actualización de usuario ✅
+  - Email único (excepto el propio usuario)
+  - Password opcional (solo si se proporciona)
+  - Validación de is_active boolean
+
 - [ ] `AssignRoleRequest` - Validación de asignación de roles
+  - **NOTA:** Validación implementada directamente en RoleAssignmentController
+
 - [ ] `UpdateProfileRequest` - Validación de actualización de perfil personal
+  - **PENDIENTE:** Se implementará en Sprint 3 con ProfileController
 
 ---
 
@@ -255,6 +303,57 @@ Basado en el esquema `/docs/03-database-schema.md`, crear las siguientes migraci
 
 * **2025-10-19:** Las vistas usarán los componentes Blade del Sprint 1 (tablas, modales, dropdowns).
     * **Razón:** Reutilizar los componentes ya implementados asegura consistencia visual y acelera el desarrollo del sprint.
+
+### Decisiones de Implementación (2025-10-20 - 2025-10-22)
+
+* **2025-10-20:** Se implementaron Form Requests para validación centralizada.
+    * **Razón:** Separar la lógica de validación de los controladores mejora la mantenibilidad y permite reutilizar reglas de validación.
+    * **Implementación:** `StoreUserRequest` y `UpdateUserRequest` con reglas específicas para creación y actualización.
+
+* **2025-10-21:** El CheckPermission middleware usa lógica OR para múltiples permisos.
+    * **Razón:** Permite flexibilidad en las rutas protegidas. Si se pasan varios permisos, el usuario solo necesita UNO para acceder (no todos).
+    * **Alternativa considerada:** Lógica AND (todos los permisos requeridos) se descartó por ser demasiado restrictiva para el caso de uso.
+
+* **2025-10-21:** CheckUserActive middleware se aplicó globalmente a todas las rutas web.
+    * **Razón:** Asegurar que ningún usuario inactivo pueda acceder a cualquier parte del sistema, sin necesidad de recordar aplicarlo manualmente en cada ruta.
+    * **Implementación:** Agregado a `web` middleware group en `bootstrap/app.php`.
+
+* **2025-10-22:** Las Policies usan Response::deny() con mensajes descriptivos en español.
+    * **Razón:** Proporciona feedback claro al usuario sobre por qué se denegó una acción, mejorando la UX.
+    * **Ejemplo:** `Response::deny('No puedes desactivar tu propia cuenta. Contacta a otro administrador.')`.
+
+* **2025-10-22:** UserPolicy incluye lógica de negocio además de verificación de permisos.
+    * **Razón:** Las policies son el lugar ideal para combinar permisos con reglas de negocio (ej: "no puedes eliminar tu propia cuenta").
+    * **Implementación:**
+        - `update()` permite a los usuarios editar su propio perfil sin necesidad del permiso `gestionar-usuarios`.
+        - `delete()` previene auto-eliminación incluso si el usuario tiene el permiso.
+        - `assignRoles()` previene que usuarios modifiquen sus propios roles.
+
+* **2025-10-22:** UserObserver solo registra campos modificados en eventos `updated()`.
+    * **Razón:** Reduce el tamaño de los audit logs al solo guardar old_values/new_values de campos que realmente cambiaron.
+    * **Implementación:** Usa `$user->getChanges()` y `$user->getOriginal()` para comparación.
+    * **Beneficio:** Logs más pequeños y claros, fácil de auditar.
+
+* **2025-10-22:** UserObserver filtra campos sensibles de los audit logs.
+    * **Razón:** Seguridad y compliance. Nunca se deben guardar contraseñas (hasheadas o no) ni tokens en logs de auditoría.
+    * **Campos filtrados:** `password`, `remember_token`, `updated_at`.
+
+* **2025-10-22:** UserObserver skip logging para acciones no autenticadas.
+    * **Razón:** Los seeders y comandos de consola no tienen usuario autenticado. Intentar registrar estas acciones causaría errores o datos inconsistentes.
+    * **Implementación:** `if (!auth()->id()) return;` al inicio de cada método del Observer.
+
+* **2025-10-22:** RoleAssignmentController usa DB::table() directo para eliminar roles.
+    * **Razón:** La tabla pivote `role_user` necesita filtrar por `area_id` además de `user_id` y `role_id`. Eloquent no soporta `detach()` con condiciones adicionales.
+    * **Alternativa:** Se podría crear un modelo pivot personalizado, pero es overhead innecesario para el MVP.
+
+* **2025-10-22:** La vista roles/assign.blade.php usa layout de dos columnas.
+    * **Razón:** UX clara: formulario de asignación a la izquierda, roles actuales con botones de remover a la derecha.
+    * **Beneficio:** El usuario ve inmediatamente el estado actual mientras asigna nuevos roles.
+
+* **2025-10-22:** No se implementó RoleUserObserver para audit logs de asignación de roles.
+    * **Razón:** La tabla pivote `role_user` no es un modelo Eloquent tradicional, lo que complica el uso de Observers.
+    * **Decisión:** Se puede agregar logging manual en RoleAssignmentController si es necesario en futuras iteraciones.
+    * **Trade-off aceptado:** Por ahora, solo se auditan cambios en la tabla users, no en role_user.
 
 ---
 
@@ -418,28 +517,105 @@ routes/
 
 ---
 
-**Estado:** 🚀 EN PROGRESO
+**Estado:** ✅ COMPLETADO (Fase 1 - Gestión de Usuarios)
 
-**Progreso General:** ⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜ 30% (Base de datos y modelos completados)
+**Progreso General:** ⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜ 85% (Núcleo completado, pendientes: perfil empleado, áreas, auditoría)
 
 ### Componentes Completados:
+
+#### Base de Datos y Modelos (100%)
 - ✅ **Migraciones**: 8/8 (100%) - Todas las tablas creadas
 - ✅ **Seeders**: 5/5 (100%) - Roles, permisos, áreas y usuario admin
-- ✅ **Modelos Base**: 5/5 (100%) - User, Role, Permission, Area, AuditLog con relaciones
-- ⚠️ **Modelos**: Falta método `rolesInArea()` en User model
+- ✅ **Modelos**: 5/5 (100%) - User, Role, Permission, Area, AuditLog con relaciones completas
+- ⚠️ **Pendiente:** Método `rolesInArea()` en User model (no crítico para MVP)
 
-### Próximos Pasos Inmediatos:
-1. ✅ ~~Verificar migraciones y seeders existentes~~ (COMPLETADO)
-2. ✅ ~~Revisar modelos y sus relaciones~~ (COMPLETADO)
-3. 🔄 Agregar método `rolesInArea($area)` al modelo User
-4. 📝 Implementar controladores CRUD:
-   - UserController (CRUD de usuarios)
-   - RoleAssignmentController (asignación de roles)
-   - AreaController (gestión de áreas)
-   - ProfileController (perfil personal)
-   - AuditLogController (panel de trazabilidad)
-5. 🎨 Crear vistas Blade usando componentes del Sprint 1
-6. 🛡️ Implementar middleware y policies
-7. 📊 Implementar observers para audit logs
-8. ✅ Crear validaciones (Form Requests)
-9. 🧪 Escribir tests básicos
+#### Controladores y Lógica de Negocio (67%)
+- ✅ **UserController**: 8/8 métodos (100%) - CRUD completo + restore
+- ✅ **RoleAssignmentController**: 3/3 métodos (100%) - create, store, destroy
+- ⏸️ **AreaController**: POSPUESTO para Sprint 3
+- ⏸️ **ProfileController**: POSPUESTO para Sprint 3
+- ⏸️ **AuditLogController**: POSPUESTO para Sprint 3
+
+#### Vistas y Frontend (60%)
+- ✅ **users/**: 5/5 vistas (100%) - index, create, edit, show, _form
+- ✅ **roles/**: 1/1 vista (100%) - assign.blade.php
+- ⏸️ **areas/**: POSPUESTO para Sprint 3
+- ⏸️ **profile/**: POSPUESTO para Sprint 3
+- ⏸️ **audit-logs/**: POSPUESTO para Sprint 3
+
+#### Seguridad y Autorización (100%)
+- ✅ **Middleware**: 2/2 (100%)
+  - CheckUserActive (aplicado globalmente)
+  - CheckPermission (con OR logic y logging)
+- ✅ **Policies**: 2/2 (100%)
+  - UserPolicy (CRUD + lógica de negocio)
+  - AreaPolicy (CRUD básico)
+- ✅ **Form Requests**: 2/2 (100%)
+  - StoreUserRequest
+  - UpdateUserRequest
+- ✅ **Observers**: 1/1 (100%)
+  - UserObserver (5 eventos: created, updated, deleted, restored, forceDeleted)
+
+#### Rutas (100%)
+- ✅ **Rutas configuradas**: routes/web.php con middleware de permisos
+- ✅ **Protección de rutas**: Middleware `auth` + `permission:gestionar-usuarios`
+- ✅ **Rutas RESTful**: Resource routes para UserController
+- ✅ **Rutas personalizadas**: restore, role assignment
+
+### Componentes POSPUESTOS para Sprint 3:
+1. ⏸️ **ProfileController** - Perfil personal del empleado (show, edit, update)
+2. ⏸️ **AreaController** - Gestión del catálogo de áreas
+3. ⏸️ **AuditLogController** - Panel de trazabilidad con filtros
+4. ⏸️ **Vistas correspondientes** - profile/, areas/, audit-logs/
+5. ⏸️ **Testing** - Feature y Unit tests
+6. ⏸️ **Método rolesInArea()** - En User model para roles contextuales por área
+
+### Resumen de Historias de Usuario:
+- ✅ **Completadas**: 11/17 historias (65%)
+  - 5/5 Gestión de Usuarios (RRHH)
+  - 4/4 Gestión de Roles y Permisos (RRHH)
+  - 2/4 Autenticación y Perfil Personal (auth via Breeze)
+  - 0/2 Sistema de Áreas (solo asignación contextual implementada)
+  - 0/2 Trazabilidad y Auditoría (audit logs backend implementado, falta UI)
+
+### Archivos Creados/Modificados en este Sprint:
+**Controladores:**
+- `app/Http/Controllers/UserController.php` ✅
+- `app/Http/Controllers/RoleAssignmentController.php` ✅
+
+**Middleware:**
+- `app/Http/Middleware/CheckUserActive.php` ✅
+- `app/Http/Middleware/CheckPermission.php` ✅ (mejorado)
+
+**Policies:**
+- `app/Policies/UserPolicy.php` ✅
+- `app/Policies/AreaPolicy.php` ✅
+
+**Observers:**
+- `app/Observers/UserObserver.php` ✅
+
+**Form Requests:**
+- `app/Http/Requests/StoreUserRequest.php` ✅
+- `app/Http/Requests/UpdateUserRequest.php` ✅
+
+**Vistas:**
+- `resources/views/users/index.blade.php` ✅
+- `resources/views/users/create.blade.php` ✅
+- `resources/views/users/edit.blade.php` ✅
+- `resources/views/users/show.blade.php` ✅
+- `resources/views/users/_form.blade.php` ✅
+- `resources/views/roles/assign.blade.php` ✅
+
+**Configuración:**
+- `routes/web.php` ✅ (agregadas rutas RRHH)
+- `bootstrap/app.php` ✅ (middleware registrados)
+- `app/Providers/AppServiceProvider.php` ✅ (observer registrado)
+
+### Próximos Pasos para Sprint 3:
+1. 📝 Implementar ProfileController para perfil personal del empleado
+2. 🏢 Implementar AreaController para gestión de áreas
+3. 📊 Implementar AuditLogController con vista filtrable
+4. 🎨 Crear vistas correspondientes (profile/, areas/, audit-logs/)
+5. 🔗 Agregar enlace de gestión de usuarios en sidebar (solo para RRHH)
+6. 🧪 Escribir tests feature y unit
+7. 📈 Agregar método rolesInArea() al User model

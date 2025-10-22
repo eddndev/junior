@@ -1,6 +1,8 @@
-@extends('layouts.dashboard')
+<x-dashboard-layout title="Detalle de Usuario">
+    <x-slot name="sidebar">
+        <x-navigation.sidebar />
+    </x-slot>
 
-@section('content')
 <div class="px-4 sm:px-6 lg:px-8">
     {{-- Header Section --}}
     <div class="mb-8">
@@ -335,4 +337,4 @@
         </div>
     </div>
 </div>
-@endsection
+</x-dashboard-layout>
