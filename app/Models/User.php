@@ -206,4 +206,17 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $query->where('is_active', true);
     }
+
+    /**
+     * Get the roles for the user in a specific area.
+     *
+     * @param int $areaId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function rolesInArea(int $areaId)
+    {
+        return $this->roles()
+            ->wherePivot('area_id', $areaId)
+            ->get();
+    }
 }
