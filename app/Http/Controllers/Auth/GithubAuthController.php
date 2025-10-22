@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -71,5 +73,31 @@ class GithubAuthController extends Controller
 
             return redirect('/login')->with('error', 'No se pudo autenticar con GitHub. Por favor, inténtelo de nuevo.');
         }
+    }
+
+    /**
+     * Disconnect the user's GitHub account.
+     */
+    public function disconnect(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        // Verificar que el usuario tenga una contraseña configurada antes de desvincular
+        if (empty($user->password)) {
+            return redirect()->route('profile.connected-accounts.show')
+                ->with('error', 'Debes establecer una contraseña antes de desvincular tu cuenta de GitHub para poder seguir accediendo al sistema.');
+        }
+
+        // Desvincular la cuenta de GitHub
+        $user->update([
+            'github_id' => null,
+            'github_token' => null,
+            'github_refresh_token' => null,
+        ]);
+
+        Log::info('GitHub account disconnected', ['user_id' => $user->id]);
+
+        return redirect()->route('profile.connected-accounts.show')
+            ->with('status', 'Tu cuenta de GitHub ha sido desvinculada correctamente.');
     }
 }

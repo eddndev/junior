@@ -139,7 +139,7 @@
                                 name="areas[]"
                                 id="area_{{ $area->id }}"
                                 value="{{ $area->id }}"
-                                {{ in_array($area->id, old('areas', $user->areas->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}
+                                {{ in_array($area->id, old('areas', isset($user) ? $user->areas->pluck('id')->toArray() : [])) ? 'checked' : '' }}
                                 class="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-600 dark:border-neutral-700 dark:bg-neutral-800"
                             />
                             <label for="area_{{ $area->id }}" class="ml-3 block text-sm font-medium leading-6 text-neutral-900 dark:text-white">

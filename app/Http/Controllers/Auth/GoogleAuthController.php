@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log; // Para registrar errores
@@ -71,5 +73,31 @@ class GoogleAuthController extends Controller
 
             return redirect('/login')->with('error', 'No se pudo autenticar con Google. Por favor, inténtelo de nuevo.');
         }
+    }
+
+    /**
+     * Disconnect the user's Google account.
+     */
+    public function disconnect(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        // Verificar que el usuario tenga una contraseña configurada antes de desvincular
+        if (empty($user->password)) {
+            return redirect()->route('profile.connected-accounts.show')
+                ->with('error', 'Debes establecer una contraseña antes de desvincular tu cuenta de Google para poder seguir accediendo al sistema.');
+        }
+
+        // Desvincular la cuenta de Google
+        $user->update([
+            'google_id' => null,
+            'google_token' => null,
+            'google_refresh_token' => null,
+        ]);
+
+        Log::info('Google account disconnected', ['user_id' => $user->id]);
+
+        return redirect()->route('profile.connected-accounts.show')
+            ->with('status', 'Tu cuenta de Google ha sido desvinculada correctamente.');
     }
 }

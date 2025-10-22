@@ -18,6 +18,7 @@ class Area extends Model
         'slug',
         'description',
         'is_active',
+        'is_system',
     ];
 
     /**
@@ -29,6 +30,7 @@ class Area extends Model
     {
         return [
             'is_active' => 'boolean',
+            'is_system' => 'boolean',
         ];
     }
 

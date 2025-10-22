@@ -17,7 +17,7 @@
             <x-layout.tab-item :href="route('profile.availability.show')" :active="request()->routeIs('profile.availability.show')">
                 {{ __('Disponibilidad') }}
             </x-layout.tab-item>
-            <x-layout.tab-item href="#" :active="false">
+            <x-layout.tab-item :href="route('profile.connected-accounts.show')" :active="request()->routeIs('profile.connected-accounts.show')">
                 {{ __('Cuentas Conectadas') }}
             </x-layout.tab-item>
         </x-layout.tabs>

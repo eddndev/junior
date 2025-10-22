@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleAssignmentController;
+use App\Http\Controllers\AreaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +22,9 @@ Route::middleware('auth')->group(function () {
     // Availability routes
     Route::get('/profile/availability', [App\Http\Controllers\Profile\AvailabilityController::class, 'show'])->name('profile.availability.show');
     Route::patch('/profile/availability', [App\Http\Controllers\Profile\AvailabilityController::class, 'update'])->name('profile.availability.update');
+
+    // Connected Accounts routes
+    Route::get('/profile/connected-accounts', [App\Http\Controllers\Profile\ConnectedAccountsController::class, 'show'])->name('profile.connected-accounts.show');
 });
 
 // RRHH - User Management Routes
@@ -40,6 +44,13 @@ Route::middleware(['auth', 'permission:gestionar-usuarios'])->group(function () 
         ->name('users.roles.store');
     Route::delete('users/{user}/roles/{role}', [RoleAssignmentController::class, 'destroy'])
         ->name('users.roles.destroy');
+});
+
+// RRHH - Area Management Routes
+// Protected by 'gestionar-areas' permission
+Route::middleware(['auth', 'permission:gestionar-areas'])->group(function () {
+    // Resource routes for areas management
+    Route::resource('areas', AreaController::class)->except(['show']);
 });
 
 // UI Components Showcase (solo en desarrollo)

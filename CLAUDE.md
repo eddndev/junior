@@ -1,11 +1,98 @@
 # Log de Sesiones - Proyecto Junior
 
-**Última Actualización:** 2025-10-19
+**Última Actualización:** 2025-10-22
 **Propósito:** Documentar el progreso entre sesiones y facilitar la continuidad del desarrollo
 
 ---
 
-## 📋 Resumen de la Última Sesión (2025-10-19)
+## 📋 Resumen de la Última Sesión (2025-10-22)
+
+### Trabajo Realizado:
+
+#### 1. Corrección de Bugs - Calendario de Disponibilidad
+
+**Problema 1: Datos no enviados al controlador**
+- ✅ **Diagnosticado:** Alpine.js usaba sintaxis incorrecta en `Object.entries()` y mezclaba variables Blade/JS
+- ✅ **Corregido:** `weekly.blade.php` líneas 73-77
+  - Cambio de `(slots, day)` a `[day, slots]` (array destructuring correcto)
+  - Cambio de `${name}` a `{{ $name }}` (interpolación Blade)
+- ✅ **Verificado:** Usuario confirmó que la actualización de disponibilidad funciona correctamente
+
+**Problema 2: Desalineación visual de slots**
+- ✅ **Diagnosticado:** Alturas inconsistentes en grid (header: h-7 vs rows: 1.5rem)
+- ✅ **Corregido:** `weekly.blade.php` líneas 107 y 133
+  - Header: h-7 → h-6 (normalizado a 1.5rem)
+  - Primera fila del grid: 1.75rem → 1.5rem
+- ✅ **Verificado:** Los slots de media hora ahora se alinean perfectamente con las líneas horarias
+
+**Archivos Modificados:**
+- `resources/views/components/schedule/weekly.blade.php`
+
+---
+
+#### 2. OAuth - Cuentas Conectadas (NUEVA FUNCIONALIDAD ✅)
+
+**Implementación Completa del Sistema de OAuth:**
+
+**Controladores Creados:**
+- ✅ `app/Http/Controllers/Profile/ConnectedAccountsController.php`
+  - Método `show()` que retorna estado de conexiones OAuth
+  - Detecta si Google/GitHub están conectados vía `google_id`/`github_id`
+
+**Controladores Actualizados:**
+- ✅ `app/Http/Controllers/Auth/GoogleAuthController.php`
+  - Agregado método `disconnect()` para desvincular cuenta
+  - Validación: requiere contraseña configurada antes de desvincular
+  - Limpia campos: `google_id`, `google_token`, `google_refresh_token`
+
+- ✅ `app/Http/Controllers/Auth/GithubAuthController.php`
+  - Agregado método `disconnect()` con misma lógica que Google
+  - Limpia campos: `github_id`, `github_token`, `github_refresh_token`
+
+**Vistas Creadas:**
+- ✅ `resources/views/profile/connected-accounts.blade.php`
+  - Sistema de tabs integrado con otras vistas de perfil
+  - Cards visuales para Google y GitHub con logos oficiales
+  - Estado de conexión y email asociado
+  - Botones Connect/Disconnect según estado
+  - Mensajes de success/error con feedback visual
+  - Info box con instrucciones y limitaciones
+  - Soporte completo para dark mode
+
+**Vistas Actualizadas:**
+- ✅ `resources/views/profile/edit.blade.php` - Tab "Cuentas Conectadas" agregado
+- ✅ `resources/views/profile/availability.blade.php` - Tab "Cuentas Conectadas" agregado
+
+**Rutas Configuradas:**
+- ✅ `routes/socialite.php` - Consolidadas rutas OAuth con prefijo `auth.*`
+  - Google: redirect, callback, disconnect
+  - GitHub: redirect, callback, disconnect
+  - Middleware `auth` en rutas disconnect
+
+- ✅ `routes/web.php` - Agregada ruta de vista:
+  - `profile.connected-accounts.show`
+  - Removidas rutas OAuth duplicadas (conflicto resuelto)
+
+**Seguridad Implementada:**
+- ✅ Validación de contraseña antes de desvincular cuenta (previene lockout)
+- ✅ Middleware `auth` protege rutas de desconexión
+- ✅ Logging de operaciones en `storage/logs/laravel.log`
+
+**Verificado y Funcionando:**
+- ✅ Vista accesible en `/profile/connected-accounts`
+- ✅ Todas las rutas registradas correctamente
+- ✅ Usuario confirmó funcionamiento
+
+**Notas Técnicas:**
+- Los callbacks OAuth solo vinculan cuentas, no crean usuarios nuevos
+- El sistema requiere que el email OAuth coincida con el email del usuario
+- Los tokens OAuth se almacenan en campos específicos de la tabla `users`
+
+---
+
+## 📋 Resumen de Sesiones Anteriores
+
+### Sesión 2025-10-19
 
 ### Trabajo Realizado:
 
@@ -207,6 +294,12 @@ junior/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/
+│   │   │   ├── Auth/
+│   │   │   │   ├── GoogleAuthController.php ✅ (con disconnect)
+│   │   │   │   └── GithubAuthController.php ✅ (con disconnect)
+│   │   │   ├── Profile/
+│   │   │   │   ├── AvailabilityController.php ✅
+│   │   │   │   └── ConnectedAccountsController.php ✅
 │   │   │   └── [Agregar UserController, RoleAssignmentController, etc.]
 │   │   ├── Middleware/
 │   │   │   └── [Agregar CheckUserActive, CheckPermission]
@@ -243,18 +336,24 @@ junior/
 ├── resources/
 │   └── views/
 │       ├── components/
-│       │   └── layout/
-│       │       ├── table.blade.php ✅
-│       │       ├── table-header.blade.php ✅
-│       │       ├── table-row.blade.php ✅
-│       │       ├── table-cell.blade.php ✅
-│       │       ├── modal.blade.php ✅
-│       │       ├── dropdown.blade.php ✅
-│       │       ├── dropdown-link.blade.php ✅
-│       │       ├── dropdown-button.blade.php ✅
-│       │       └── dropdown-divider.blade.php ✅
+│       │   ├── layout/
+│       │   │   ├── table.blade.php ✅
+│       │   │   ├── table-header.blade.php ✅
+│       │   │   ├── table-row.blade.php ✅
+│       │   │   ├── table-cell.blade.php ✅
+│       │   │   ├── modal.blade.php ✅
+│       │   │   ├── dropdown.blade.php ✅
+│       │   │   ├── dropdown-link.blade.php ✅
+│       │   │   ├── dropdown-button.blade.php ✅
+│       │   │   └── dropdown-divider.blade.php ✅
+│       │   └── schedule/
+│       │       └── weekly.blade.php ✅ (calendario con Alpine.js)
 │       ├── layouts/
 │       │   └── dashboard.blade.php ✅ (con dropdown de usuario)
+│       ├── profile/
+│       │   ├── edit.blade.php ✅ (con tabs actualizados)
+│       │   ├── availability.blade.php ✅ (calendario corregido)
+│       │   └── connected-accounts.blade.php ✅ (OAuth Google/GitHub)
 │       ├── users/
 │       │   └── [Crear index, create, edit, show, _form]
 │       └── roles/
@@ -391,23 +490,32 @@ php artisan view:clear
 
 ## 📊 Progreso del Sprint 2
 
-**Estado Actual:** 🚀 EN PROGRESO (30%)
+**Estado Actual:** 🚀 EN PROGRESO (35%)
 
 **Componentes Completados:**
 - ✅ Migraciones: 8/8 (100%)
 - ✅ Seeders: 5/5 (100%)
 - ✅ Modelos Base: 5/5 (100%)
+- ✅ Sistema de Perfil de Usuario: 3/4 tabs (75%)
+  - ✅ Cuenta (información personal, contraseña, roles/áreas)
+  - ✅ Disponibilidad (calendario semanal con Alpine.js)
+  - ✅ Cuentas Conectadas (OAuth Google/GitHub)
+  - ⏸️ Notificaciones (diferido a sprint futuro)
 
 **Componentes Pendientes:**
 - ⚠️ Modelos: Falta método rolesInArea()
-- 📝 Controladores: 0/5 (0%)
-- 🎨 Vistas: 0/9 (0%)
+- 📝 Controladores RRHH: 0/5 (0%)
+  - UserController, RoleAssignmentController, AreaController, AuditLogController
+- 🎨 Vistas RRHH: 0/9 (0%)
+  - Gestión de usuarios (index, create, edit, show, _form)
+  - Asignación de roles (modal)
+  - Gestión de áreas
 - 🛡️ Middleware/Policies: 0/4 (0%)
 - 📊 Observers: 0/2 (0%)
 - ✅ Form Requests: 0/4 (0%)
 - 🧪 Tests: 0/7 (0%)
 
-**Progreso General:** ⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜ 30%
+**Progreso General:** ⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜ 35%
 
 ---
 
@@ -474,6 +582,11 @@ php artisan view:clear
 
 ---
 
-**Última Sesión:** 2025-10-19
+**Última Sesión:** 2025-10-22
+**Trabajo Completado:**
+- ✅ Calendario de disponibilidad (bugs corregidos: datos + alineación)
+- ✅ Sistema OAuth - Cuentas Conectadas (Google y GitHub)
+- ✅ Perfil de usuario con 3 tabs funcionando (Cuenta, Disponibilidad, Cuentas Conectadas)
+
 **Próxima Sesión:** Implementar UserController y vistas de gestión de usuarios
 **Prioridad:** Sprint 2 - Gestión de RRHH (enfoque en CRUD de usuarios)

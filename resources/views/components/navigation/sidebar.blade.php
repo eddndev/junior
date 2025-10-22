@@ -166,6 +166,26 @@
             </li>
             @endcan
 
+            @can('viewAny', App\Models\Area::class)
+            <li>
+                <a
+                    href="{{ route('areas.index') }}"
+                    @class([
+                        'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
+                        'bg-neutral-50 dark:bg-white/5 text-primary-600 dark:text-white' => request()->routeIs('areas.*'),
+                        'text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 hover:text-primary-600 dark:hover:bg-white/5 dark:hover:text-white' => !request()->routeIs('areas.*'),
+                    ])
+                >
+                    <span @class([
+                        'flex size-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium',
+                        'border-primary-600 bg-primary-50 text-primary-600 dark:border-white/20 dark:bg-white/10 dark:text-white' => request()->routeIs('areas.*'),
+                        'border-neutral-200 bg-white text-neutral-400 group-hover:border-primary-600 group-hover:text-primary-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white' => !request()->routeIs('areas.*'),
+                    ])>A</span>
+                    <span class="truncate">Áreas</span>
+                </a>
+            </li>
+            @endcan
+
             @can('ver-trazabilidad')
             <li>
                 <a href="#" class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white">
