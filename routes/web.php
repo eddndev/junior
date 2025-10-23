@@ -71,6 +71,40 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('team-logs/{teamLog}', [App\Http\Controllers\TeamLogController::class, 'destroy'])
         ->middleware('permission:crear-bitacora')
         ->name('team-logs.destroy');
+
+    // Task Management Routes (Directors and Managers)
+    Route::middleware('permission:ver-tareas')->group(function () {
+        // Kanban board view
+        Route::get('tasks/kanban/board', [App\Http\Controllers\TaskController::class, 'kanban'])
+            ->name('tasks.kanban');
+
+        // Task details for AJAX (el-dialog)
+        Route::get('tasks/{task}/details', [App\Http\Controllers\TaskController::class, 'details'])
+            ->name('tasks.details');
+
+        // Resource routes for tasks
+        Route::resource('tasks', App\Http\Controllers\TaskController::class);
+
+        // Additional task action routes
+        Route::post('tasks/{task}/complete', [App\Http\Controllers\TaskController::class, 'complete'])
+            ->name('tasks.complete');
+        Route::patch('tasks/{task}/status', [App\Http\Controllers\TaskController::class, 'updateStatus'])
+            ->name('tasks.update-status');
+        Route::patch('tasks/{task}/reassign', [App\Http\Controllers\TaskController::class, 'reassign'])
+            ->middleware('permission:crear-tareas')
+            ->name('tasks.reassign');
+        Route::post('tasks/{task}/restore', [App\Http\Controllers\TaskController::class, 'restore'])
+            ->middleware('permission:crear-tareas')
+            ->name('tasks.restore');
+    });
+
+    // Personal Task Dashboard (All Employees)
+    Route::get('my-tasks', [App\Http\Controllers\MyTasksController::class, 'index'])
+        ->name('my-tasks.index');
+    Route::post('my-tasks/{task}/complete', [App\Http\Controllers\MyTasksController::class, 'complete'])
+        ->name('my-tasks.complete');
+    Route::patch('my-tasks/{task}/status', [App\Http\Controllers\MyTasksController::class, 'updateStatus'])
+        ->name('my-tasks.status');
 });
 
 // UI Components Showcase (solo en desarrollo)

@@ -4,19 +4,41 @@
         showLinkForm: false,
         fileCount: 0,
         files: [],
-        handleFiles(fileList) {
-            this.files = Array.from(fileList);
+        handleFiles(newFiles) {
+            // Combine old and new files, filtering for uniqueness
+            const combined = [...this.files, ...Array.from(newFiles)];
+            const uniqueFiles = combined.filter((file, index, self) =>
+                index === self.findIndex((f) => (
+                    f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
+                ))
+            );
+
+            // Create a new DataTransfer object to build an updated FileList
+            const dt = new DataTransfer();
+            uniqueFiles.forEach(file => dt.items.add(file));
+
+            // Update the actual input's files property
+            this.$refs.fileInput.files = dt.files;
+
+            // Update the component's reactive state
+            this.files = Array.from(dt.files);
             this.fileCount = this.files.length;
             setTimeout(() => $dispatch('attachments-updated'), 100);
         },
         removeFile(index) {
-            // Crear un nuevo DataTransfer para modificar el FileList
+            // Create a new DataTransfer to build a new FileList
             const dt = new DataTransfer();
             this.files.forEach((file, i) => {
-                if (i !== index) dt.items.add(file);
+                if (i !== index) {
+                    dt.items.add(file);
+                }
             });
+
+            // Update the input and the reactive state directly
             this.$refs.fileInput.files = dt.files;
-            this.handleFiles(dt.files);
+            this.files = Array.from(dt.files);
+            this.fileCount = this.files.length;
+            setTimeout(() => $dispatch('attachments-updated'), 100);
         }
     }"
     @dragover.prevent="isDragging = true"
