@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Task extends Model
+class Task extends Model implements HasMedia
 {
-    use SoftDeletes;
+    use SoftDeletes, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -104,5 +107,122 @@ class Task extends Model
     {
         return $query->where('due_date', '<', now())
             ->whereNotIn('status', ['completed', 'cancelled']);
+    }
+
+    /**
+     * Scope a query to only include active tasks (not soft deleted).
+     */
+    public function scopeActive($query)
+    {
+        return $query->whereNull('deleted_at');
+    }
+
+    /**
+     * Scope a query to tasks belonging to a specific area.
+     */
+    public function scopeForArea($query, int $areaId)
+    {
+        return $query->where('area_id', $areaId);
+    }
+
+    // ========================================
+    // ACCESSORS
+    // ========================================
+
+    /**
+     * Determine if the task is overdue.
+     */
+    public function getIsOverdueAttribute(): bool
+    {
+        // No overdue if no due date or if completed/cancelled
+        if (!$this->due_date || in_array($this->status, ['completed', 'cancelled'])) {
+            return false;
+        }
+
+        return $this->due_date->isPast();
+    }
+
+    /**
+     * Determine if this task has a parent task (is a dependent task).
+     */
+    public function getIsChildTaskAttribute(): bool
+    {
+        return !is_null($this->parent_task_id);
+    }
+
+    /**
+     * Get all users assigned to this task (via polymorphic assignments).
+     */
+    public function getAssignedUsersAttribute()
+    {
+        return $this->assignments()->with('user')->get()->pluck('user');
+    }
+
+    // ========================================
+    // SPATIE MEDIA LIBRARY
+    // ========================================
+
+    /**
+     * Register media collections for this model.
+     */
+    public function registerMediaCollections(): void
+    {
+        // Collection para archivos adjuntos (igual que TeamLog)
+        $this->addMediaCollection('attachments')
+             ->useDisk('public')
+             ->acceptsMimeTypes([
+                 // Imágenes
+                 'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+                 // Documentos
+                 'application/pdf',
+                 'application/msword',
+                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                 'application/vnd.ms-excel',
+                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                 'application/vnd.ms-powerpoint',
+                 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                 // Audio
+                 'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4',
+                 // Código/Texto
+                 'text/plain', 'application/json', 'text/xml', 'text/html',
+                 'text/css', 'application/javascript',
+                 // Comprimidos
+                 'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed',
+             ]);
+    }
+
+    /**
+     * Register media conversions for this model.
+     *
+     * Conversiones de imágenes a formatos modernos (webp/avif)
+     * Se procesan de forma asíncrona en cola.
+     */
+    public function registerMediaConversions(Media $media = null): void
+    {
+        // Solo procesar conversiones para imágenes en la colección 'attachments'
+        if ($media && $media->collection_name === 'attachments' && str_starts_with($media->mime_type, 'image/')) {
+            // Conversión a WebP (mejor soporte)
+            $this->addMediaConversion('webp')
+                 ->format('webp')
+                 ->quality(85)
+                 ->performOnCollections('attachments')
+                 ->queued(); // ← Procesar en cola
+
+            // Conversión a AVIF (más moderno, mejor compresión)
+            $this->addMediaConversion('avif')
+                 ->format('avif')
+                 ->quality(80)
+                 ->performOnCollections('attachments')
+                 ->queued(); // ← Procesar en cola
+
+            // Thumbnail para previsualización rápida (pequeño, sync)
+            $this->addMediaConversion('thumb')
+                 ->width(300)
+                 ->height(300)
+                 ->format('webp')
+                 ->quality(70)
+                 ->performOnCollections('attachments')
+                 ->nonQueued(); // ← Procesar inmediatamente para preview
+        }
     }
 }

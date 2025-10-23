@@ -315,6 +315,93 @@ Basado en el esquema `/docs/03-database-schema.md`, crear las siguientes migraci
 - [ ] `RoleUserObserver` - Registrar asignación/remoción de roles
   - **PENDIENTE:** Se implementará si es necesario en futuras iteraciones
 
+### 3.9 Sistema de Archivos Multimedia (Spatie Media Library)
+
+- [x] **TeamLog Model** - Implementación de HasMedia interface ✅
+  - [x] Trait `InteractsWithMedia` agregado
+  - [x] Método `registerMediaCollections()` configurado:
+    - Collection 'attachments': Archivos físicos (imágenes, PDFs, audio, documentos)
+    - Collection 'links': Enlaces externos (metadata sin descarga)
+  - [x] Método `registerMediaConversions()` para imágenes:
+    - Conversión WebP (85% calidad) - Queued
+    - Conversión AVIF (80% calidad) - Queued
+    - Thumbnail 300x300 WebP (70% calidad) - Non-queued
+  - [x] MIME types permitidos:
+    - Imágenes: image/* (jpg, png, gif, webp, svg)
+    - Documentos: PDF, Word (doc/docx), Excel (xls/xlsx), PowerPoint (ppt/pptx)
+    - Audio: audio/* (mp3, wav, ogg)
+    - Otros: text/*, JSON, XML, HTML, CSS, JS, ZIP, RAR, 7Z
+  - [x] Límites: 10MB por archivo
+
+- [x] **TeamLogAttachments Livewire Component** ✅
+  - [x] Gestión de enlaces externos (NO archivos)
+  - [x] Propiedades: `$links`, `$newLinkUrl`, `$newLinkType`
+  - [x] Método `addLink()` con validación (URL requerida, max 2048 chars)
+  - [x] Método `removeLink($linkId)` para eliminar enlaces
+  - [x] Método `resetLinks()` para limpiar después de guardar
+  - [x] Eventos: `link-added`, `attachments-updated`
+  - [x] Tipos de enlace: external, video, image
+
+- [x] **Vista livewire/team-log-attachments.blade.php** ✅
+  - [x] Alpine.js para manejo de archivos client-side
+  - [x] Drag & drop de archivos con `@dragover`, `@dragleave`, `@drop`
+  - [x] Preview de archivos con `URL.createObjectURL()`
+  - [x] DataTransfer API para remover archivos de FileList
+  - [x] Input HTML nativo `<input type="file" name="attachments[]" multiple>`
+  - [x] Select nativo para tipo de enlace (compatible con Livewire)
+  - [x] Compact UI estilo Google Classroom: botones de archivo y enlace
+  - [x] Contador de adjuntos: muestra total de archivos + enlaces
+  - [x] Preview con chips compactos (thumbnails para imágenes, íconos para otros)
+
+- [x] **Componente forms/composer.blade.php** - Mejorado ✅
+  - [x] Sistema de padding dinámico con MutationObserver
+  - [x] Escucha eventos `@attachments-updated.window` y `@link-added.window`
+  - [x] Textarea con auto-resize usando Alpine.js
+  - [x] Slot `toolbar` para contenido dinámico (attachments component)
+  - [x] Transiciones suaves con `transition-[padding] duration-200`
+
+- [x] **Componente team-log/attachments-display.blade.php** ✅
+  - [x] Separación visual de 'attachments' vs 'links'
+  - [x] Grid responsive para attachments (2/3/4 columnas)
+  - [x] Viewers especializados:
+    - **Imágenes:** Lightbox con thumbnail conversion
+    - **Audio:** Player HTML5 con controles
+    - **PDFs y documentos:** Card con ícono y tamaño de archivo
+    - **Videos (YouTube/Vimeo):** iFrame embebido con regex parsing de URL
+    - **Imágenes externas:** `<img>` con fallback si falla la carga
+    - **Enlaces genéricos:** Card con ícono de enlace externo
+  - [x] Lazy loading con `loading="lazy"`
+  - [x] Handlers `onerror` para imágenes que no cargan
+
+- [x] **TeamLogController** - Procesamiento de media ✅
+  - [x] Método `store()` actualizado:
+    - Procesamiento de archivos con `$request->hasFile('attachments')`
+    - Loop sobre cada archivo con try/catch para manejo de errores
+    - Logging comprehensivo (nombre, mime type, tamaño)
+    - `addMedia($file)->toMediaCollection('attachments')`
+    - Procesamiento de enlaces: creación directa de registros en tabla `media`
+    - Custom properties: `url`, `link_type`, `is_link`
+    - NO descarga enlaces externos
+  - [x] Form con `enctype="multipart/form-data"`
+  - [x] Mensaje de éxito: "Entrada de bitácora creada con éxito. Los adjuntos se están procesando en segundo plano."
+
+- [x] **StoreTeamLogRequest** - Validación actualizada ✅
+  - [x] Validación de archivos:
+    - `attachments.*` (opcional): max:10240 (10MB)
+    - MIME types permitidos (imágenes, PDFs, documentos, audio)
+  - [x] Validación de enlaces:
+    - `links.*.url` (opcional): required_with:links, url, max:2048
+    - `links.*.type` (opcional): required_with:links, in:external,video,image
+  - [x] Mensajes de error personalizados en español
+
+- [x] **Configuración de Spatie Media Library** ✅
+  - [x] Instalación: `composer require "spatie/laravel-medialibrary:^10.0.0"`
+  - [x] Migración publicada: `php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"`
+  - [x] Config publicado: `config/media-library.php`
+  - [x] Disk configurado: `public` (default)
+  - [x] Queue configurado para conversiones
+  - [x] Documentación de producción: `docs/queue-configuration-production.md`
+
 ### 3.8 Validación
 
 - [x] `StoreUserRequest` - Validación de creación de usuario ✅
@@ -660,6 +747,102 @@ Basado en el esquema `/docs/03-database-schema.md`, crear las siguientes migraci
     * **Archivos afectados:**
         - `resources/views/areas/_form.blade.php`
         - `app/Http/Controllers/AreaController.php:87-106`
+
+* **2025-10-22 - PDFs no se adjuntaban en TeamLog:**
+    * **Problema:** Al enviar el formulario de bitácora con archivos PDFs, estos no se guardaban en la base de datos
+    * **Causa raíz:** `wire:model` en el input de archivos hacía que Livewire interceptara los archivos y no los enviara con el POST del formulario principal
+    * **Diagnóstico:** Se agregaron logs en `TeamLogController->store()` que mostraban `$request->hasFile('attachments')` = false
+    * **Solución:** Eliminar `wire:model` del input y usar HTML tradicional:
+        ```blade
+        <input type="file" name="attachments[]" multiple>
+        ```
+    * **Complemento:** Alpine.js para preview client-side con `URL.createObjectURL()`
+    * **Archivos afectados:**
+        - `resources/views/livewire/team-log-attachments.blade.php`
+        - `app/Livewire/TeamLogAttachments.php` (removido trait WithFileUploads)
+
+* **2025-10-22 - Enlaces se guardaban con URL incorrecta:**
+    * **Problema:** Los enlaces de YouTube se guardaban como "watch" en lugar de la URL completa "https://youtube.com/watch?v=xxx"
+    * **Causa raíz:** `addMediaFromUrl()` intentaba descargar el contenido y solo guardaba el path relativo
+    * **Diagnóstico:** Se inspeccionó la tabla `media` y el campo `name` contenía solo "watch" o "OIP" en lugar de la URL completa
+    * **Solución:** Crear registros directos en la tabla `media` en lugar de usar `addMediaFromUrl()`:
+        ```php
+        $media = $teamLog->media()->create([
+            'collection_name' => 'links',
+            'name' => $link['url'],
+            'mime_type' => 'text/uri-list',
+            'custom_properties' => [
+                'url' => $link['url'],  // URL completa aquí
+                'link_type' => $link['type'],
+                'is_link' => true,
+            ],
+            'size' => 0,
+        ]);
+        ```
+    * **Beneficio adicional:** Performance mejorado al no descargar archivos externos
+    * **Archivo afectado:** `app/Http/Controllers/TeamLogController.php:96-118`
+
+* **2025-10-22 - Composer se solapaba con attachments toolbar:**
+    * **Problema:** Cuando se agregaban archivos o enlaces, la toolbar crecía pero el compositor no ajustaba su tamaño, causando overlap del textarea con los botones inferiores
+    * **Causa raíz:** El padding-bottom del compositor era estático y no se actualizaba cuando la toolbar cambiaba de altura
+    * **Solución:** Implementar MutationObserver que detecta cambios en la toolbar y ajusta el padding dinámicamente:
+        ```javascript
+        const observer = new MutationObserver(() => {
+            setTimeout(() => updatePadding(), 50);
+        });
+        observer.observe($refs.toolbar, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        });
+        ```
+    * **Complemento:** Escuchar eventos personalizados `@attachments-updated.window` y `@link-added.window`
+    * **Archivo afectado:** `resources/views/components/forms/composer.blade.php`
+
+* **2025-10-22 - Select de tipo de enlace dejaba de funcionar después de adjuntar archivo:**
+    * **Problema:** Al hacer click en "Adjuntar archivo" después de haber agregado un enlace, el dropdown de tipo de enlace (`<x-forms.select>`) dejaba de responder
+    * **Causa raíz:** Web component `<el-select>` no es compatible con Livewire DOM diffing. Los re-renders de Livewire rompían el estado interno del web component
+    * **Solución:** Reemplazar `<x-forms.select>` por `<select>` HTML nativo con `wire:model.live`:
+        ```blade
+        <select wire:model.live="newLinkType" class="...">
+            <option value="external">Enlace</option>
+            <option value="video">Video</option>
+            <option value="image">Imagen</option>
+        </select>
+        ```
+    * **Lección aprendida:** Web components funcionan bien en formularios estáticos, pero dentro de componentes Livewire es mejor usar elementos HTML nativos
+    * **Archivo afectado:** `resources/views/livewire/team-log-attachments.blade.php:138-145`
+
+* **2025-10-22 - Modal de audit log mostraba HTML como texto:**
+    * **Problema:** El modal de detalles de audit log mostraba etiquetas HTML literales (`<ul><li>...`) en lugar de renderizar el contenido formateado
+    * **Causa raíz:** La función `formatJson()` generaba strings HTML que luego se mostraban con `x-html`, pero Blade los estaba escapando
+    * **Solución:** Reemplazar generación de HTML strings por Alpine.js templates nativos:
+        ```blade
+        <template x-for="[key, value] in Object.entries(oldValues)">
+            <div>
+                <dt x-text="key"></dt>
+                <dd x-text="formatValue(value)"></dd>
+            </div>
+        </template>
+        ```
+    * **Beneficio:** Datos se renderizan correctamente sin problemas de escaping
+    * **Archivo afectado:** `resources/views/audit-logs/index.blade.php:260-340`
+
+* **2025-10-22 - Modal de audit log no cargaba los datos al abrirse:**
+    * **Problema:** Al hacer click en "Ver cambios", el modal se abría pero mostraba "No hay datos anteriores/nuevos" para todos los registros
+    * **Causa raíz:** El evento `el-dialog-show` no se estaba disparando o no pasaba correctamente el botón trigger con los data attributes
+    * **Solución:** Disparar un evento personalizado `load-audit-data` desde el botón click con los datos directamente:
+        ```blade
+        @click="window.dispatchEvent(new CustomEvent('load-audit-data', {
+            detail: {
+                oldValues: {{ json_encode($log->old_values) }},
+                newValues: {{ json_encode($log->new_values) }}
+            }
+        }))"
+        ```
+    * **Complemento:** El componente Alpine escucha `@load-audit-data.window` y carga los datos
+    * **Beneficio:** Approach más robusto que no depende de eventos internos del web component
+    * **Archivo afectado:** `resources/views/audit-logs/index.blade.php:192-197, 273-276`
 
 ---
 

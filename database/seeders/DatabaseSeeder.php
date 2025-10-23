@@ -14,11 +14,16 @@ class DatabaseSeeder extends Seeder
     {
         // Ejecutar seeders en orden de dependencias
         $this->call([
+            // MÓDULO NÚCLEO - USUARIOS Y PERMISOS
             RoleSeeder::class,
             PermissionSeeder::class,
             RolePermissionSeeder::class,
             AreaSeeder::class,
             UserSeeder::class,
+
+            // MÓDULO TAREAS Y COLABORACIÓN (Sprint 3)
+            TaskSeeder::class,
+            SubtaskSeeder::class,
         ]);
 
         $this->command->info('');
