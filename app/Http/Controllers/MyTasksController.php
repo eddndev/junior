@@ -127,6 +127,52 @@ class MyTasksController extends Controller
     }
 
     /**
+     * Display Kanban board view for authenticated user's tasks.
+     *
+     * Shows tasks grouped by status in a drag-and-drop kanban board.
+     */
+    public function kanban(Request $request)
+    {
+        $user = auth()->user();
+
+        // Build query for user's assigned tasks with eager loading
+        $query = Task::with(['area', 'parentTask', 'assignments.user', 'subtasks'])
+            ->whereHas('assignments', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+
+        // Filter by priority
+        if ($request->filled('priority')) {
+            $query->where('priority', $request->priority);
+        }
+
+        // Filter by area
+        if ($request->filled('area_id')) {
+            $query->where('area_id', $request->area_id);
+        }
+
+        // Order by priority and due date
+        $query->orderByRaw("FIELD(priority, 'critical', 'high', 'medium', 'low')")
+              ->orderBy('due_date', 'asc')
+              ->orderBy('created_at', 'desc');
+
+        // Get all tasks and group by status
+        $allTasks = $query->get();
+
+        $tasksByStatus = [
+            'pending' => $allTasks->where('status', 'pending'),
+            'in_progress' => $allTasks->where('status', 'in_progress'),
+            'completed' => $allTasks->where('status', 'completed'),
+            'cancelled' => $allTasks->where('status', 'cancelled'),
+        ];
+
+        // Get areas for filter dropdown
+        $areas = $user->areas()->where('is_active', true)->orderBy('name')->get();
+
+        return view('my-tasks.kanban', compact('tasksByStatus', 'areas'));
+    }
+
+    /**
      * Quick action to mark a task as completed.
      *
      * Used for quick completion from the personal dashboard.

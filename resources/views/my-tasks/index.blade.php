@@ -12,6 +12,25 @@
                 Vista personal de todas tus tareas asignadas.
             </p>
         </div>
+        <div class="mt-4 sm:ml-16 sm:mt-0">
+            {{-- View Toggle --}}
+            <div class="inline-flex rounded-md shadow-sm" role="group">
+                <a href="{{ route('my-tasks.index') }}"
+                   class="rounded-l-md px-3 py-2 text-sm font-semibold bg-primary-600 text-white ring-1 ring-inset ring-primary-600 dark:bg-primary-500">
+                    <svg class="inline-block h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                    Lista
+                </a>
+                <a href="{{ route('my-tasks.kanban') }}"
+                   class="rounded-r-md px-3 py-2 text-sm font-semibold text-neutral-900 ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 dark:text-neutral-300 dark:ring-neutral-700 dark:hover:bg-neutral-700">
+                    <svg class="inline-block h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                    </svg>
+                    Kanban
+                </a>
+            </div>
+        </div>
     </div>
 
     {{-- Metrics Cards --}}
@@ -275,9 +294,11 @@
                                     @endif
 
                                     <div class="flex-1">
-                                        <a href="{{ route('tasks.show', $task) }}" class="text-base font-medium text-neutral-900 hover:text-primary-600 dark:text-white dark:hover:text-primary-400">
+                                        <button type="button"
+                                                onclick="loadTaskDetails({{ $task->id }})"
+                                                class="text-base font-medium text-neutral-900 hover:text-primary-600 dark:text-white dark:hover:text-primary-400 text-left">
                                             {{ $task->title }}
-                                        </a>
+                                        </button>
                                         @if($task->description)
                                             <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400 line-clamp-2">
                                                 {{ $task->description }}
@@ -318,12 +339,13 @@
 
                             {{-- Actions --}}
                             <div class="ml-4 flex-shrink-0">
-                                <a
-                                    href="{{ route('tasks.show', $task) }}"
+                                <button
+                                    type="button"
+                                    onclick="loadTaskDetails({{ $task->id }})"
                                     class="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 dark:bg-neutral-700 dark:text-white dark:ring-neutral-600 dark:hover:bg-neutral-600"
                                 >
                                     Ver detalle
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -342,4 +364,81 @@
         @endif
     </div>
 </div>
+
+{{-- Livewire Dialog (OUTSIDE Livewire component) --}}
+<x-dialog-wrapper id="task-detail-dialog" max-width="5xl">
+    @livewire('tasks.task-detail-dialog')
+</x-dialog-wrapper>
+
+@push('scripts')
+<script>
+    // Livewire Dialog Integration
+    document.addEventListener('livewire:init', () => {
+        // Listen for show-toast events
+        Livewire.on('show-toast', (event) => {
+            const message = event.message || event[0]?.message || 'Operación completada';
+            const type = event.type || event[0]?.type || 'success';
+            showToast(message, type);
+        });
+
+        // Listen for dialog close to refresh list if task was updated
+        document.addEventListener('dialog-closed', (event) => {
+            if (event.detail && event.detail.dialogId === 'task-detail-dialog') {
+                // Only reload if we were viewing a task
+                setTimeout(() => {
+                    window.location.reload();
+                }, 300);
+            }
+        });
+    });
+
+    // Function to open task detail dialog
+    function loadTaskDetails(taskId) {
+        // Load task data into Livewire component
+        Livewire.dispatch('loadTask', { taskId: taskId });
+
+        // Open the dialog only if it's not already open
+        if (!window.DialogSystem.isOpen('task-detail-dialog')) {
+            window.DialogSystem.open('task-detail-dialog');
+        }
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg transition-all duration-300 ${
+            type === 'success'
+                ? 'bg-green-50 text-green-800 ring-1 ring-green-600/20 dark:bg-green-900/30 dark:text-green-200'
+                : 'bg-red-50 text-red-800 ring-1 ring-red-600/20 dark:bg-red-900/30 dark:text-red-200'
+        }`;
+
+        toast.innerHTML = `
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ${type === 'success'
+                    ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />'
+                    : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />'
+                }
+            </svg>
+            <span class="text-sm font-medium">${message}</span>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Slide in
+        setTimeout(() => {
+            toast.style.transform = 'translateY(0)';
+        }, 10);
+
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(1rem)';
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 3000);
+    }
+</script>
+@endpush
+
 </x-dashboard-layout>

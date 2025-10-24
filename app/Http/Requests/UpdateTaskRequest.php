@@ -23,6 +23,26 @@ class UpdateTaskRequest extends FormRequest
      */
     public function rules(): array
     {
+        // If this is an AJAX partial update (inline editing)
+        if ($this->ajax() && ($this->has('title') || $this->has('description')) && !$this->has('area_id')) {
+            return [
+                'title' => [
+                    'sometimes',
+                    'required',
+                    'string',
+                    'max:255',
+                    'min:3',
+                ],
+                'description' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    'max:5000',
+                ],
+            ];
+        }
+
+        // Full form update
         return [
             // Basic task information
             'title' => [
@@ -176,7 +196,12 @@ class UpdateTaskRequest extends FormRequest
      */
     protected function passedValidation(): void
     {
-        // Additional custom validation logic can go here
+        // Skip additional validation for AJAX partial updates
+        if ($this->ajax() && ($this->has('title') || $this->has('description')) && !$this->has('area_id')) {
+            return;
+        }
+
+        // Additional custom validation logic for full updates
         $user = $this->user();
         $task = $this->route('task');
 

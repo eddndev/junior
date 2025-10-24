@@ -15,9 +15,35 @@
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center gap-3">
-                                    <h2 id="task-detail-title" class="text-lg font-semibold text-neutral-900 dark:text-white" data-task-title>
-                                        Cargando...
-                                    </h2>
+                                    {{-- Title Display/Edit Mode --}}
+                                    <div class="flex-1" x-data="titleEditor">
+                                        <div x-show="!editing" class="flex items-center gap-2">
+                                            <h2 id="task-detail-title" class="text-lg font-semibold text-neutral-900 dark:text-white" x-text="title">Cargando...</h2>
+                                            <button @click="startEdit()"
+                                                    class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                                                    title="Editar título">
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div x-show="editing" class="flex items-center gap-2">
+                                            <input type="text"
+                                                   x-model="title"
+                                                   @keydown.enter="save()"
+                                                   @keydown.escape="cancel()"
+                                                   class="flex-1 rounded-md border-neutral-300 text-lg font-semibold focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white"
+                                                   placeholder="Título de la tarea">
+                                            <button @click="save()"
+                                                    class="rounded-md bg-primary-600 px-2 py-1 text-sm font-semibold text-white hover:bg-primary-500">
+                                                Guardar
+                                            </button>
+                                            <button @click="cancel()"
+                                                    class="rounded-md px-2 py-1 text-sm font-semibold text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700">
+                                                Cancelar
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div data-task-status-badge></div>
                                 </div>
                                 <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400" data-task-area>
@@ -56,10 +82,39 @@
                         </div>
 
                         {{-- Description --}}
-                        <div class="mt-6">
-                            <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Descripción</h3>
-                            <div class="prose prose-sm max-w-none dark:prose-invert text-neutral-700 dark:text-neutral-300" data-task-description>
-                                Sin descripción
+                        <div class="mt-6" x-data="descriptionEditor">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-semibold text-neutral-900 dark:text-white">Descripción</h3>
+                                <button @click="startEdit()"
+                                        x-show="!editing"
+                                        class="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                                        title="Editar descripción">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div x-show="!editing">
+                                <div id="task-description-display" class="prose prose-sm max-w-none dark:prose-invert text-neutral-700 dark:text-neutral-300" x-html="description || '<p class=\'text-neutral-500 dark:text-neutral-400\'>Sin descripción</p>'"></div>
+                            </div>
+
+                            <div x-show="editing">
+                                <textarea x-model="description"
+                                          rows="6"
+                                          @keydown.escape="cancel()"
+                                          class="w-full rounded-md border-neutral-300 focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-white"
+                                          placeholder="Descripción de la tarea"></textarea>
+                                <div class="mt-2 flex items-center gap-2">
+                                    <button @click="save()"
+                                            class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-500">
+                                        Guardar
+                                    </button>
+                                    <button @click="cancel()"
+                                            class="rounded-md px-3 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700">
+                                        Cancelar
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -136,9 +191,67 @@
 </el-dialog>
 
 <script>
+// Alpine.js components
+document.addEventListener('alpine:init', () => {
+    // Title editor component
+    Alpine.data('titleEditor', () => ({
+        title: 'Cargando...',
+        originalTitle: '',
+        editing: false,
+
+        startEdit() {
+            this.originalTitle = this.title;
+            this.editing = true;
+        },
+
+        cancel() {
+            this.title = this.originalTitle;
+            this.editing = false;
+        },
+
+        save() {
+            if (!currentTaskId) return;
+            if (!this.title || this.title.trim() === '') {
+                alert('El título no puede estar vacío');
+                return;
+            }
+
+            saveTitle(this.title, () => {
+                this.editing = false;
+            });
+        }
+    }));
+
+    // Description editor component
+    Alpine.data('descriptionEditor', () => ({
+        description: '',
+        originalDescription: '',
+        editing: false,
+
+        startEdit() {
+            this.originalDescription = this.description;
+            this.editing = true;
+        },
+
+        cancel() {
+            this.description = this.originalDescription;
+            this.editing = false;
+        },
+
+        save() {
+            if (!currentTaskId) return;
+
+            saveDescription(this.description, () => {
+                this.editing = false;
+            });
+        }
+    }));
+});
+
+let currentTaskId = null;
+
 function loadTaskDetails(taskId) {
-    // Show loading state
-    document.querySelector('[data-task-title]').textContent = 'Cargando...';
+    currentTaskId = taskId;
 
     // Fetch task details
     fetch(`/tasks/${taskId}/details`, {
@@ -149,8 +262,11 @@ function loadTaskDetails(taskId) {
     })
     .then(response => response.json())
     .then(task => {
-        // Update title
-        document.querySelector('[data-task-title]').textContent = task.title;
+        // Update title using Alpine store/component
+        updateAlpineData('titleEditor', 'title', task.title);
+
+        // Update description
+        updateAlpineData('descriptionEditor', 'description', task.description || '');
 
         // Update area
         document.querySelector('[data-task-area]').textContent = task.area ? task.area.name : 'Sin área';
@@ -170,13 +286,12 @@ function loadTaskDetails(taskId) {
             dueDateEl.textContent = date.toLocaleDateString('es-ES');
             if (task.is_overdue) {
                 dueDateEl.classList.add('text-red-600', 'dark:text-red-400', 'font-semibold');
+            } else {
+                dueDateEl.classList.remove('text-red-600', 'dark:text-red-400', 'font-semibold');
             }
         } else {
             dueDateEl.textContent = 'Sin fecha';
         }
-
-        // Update description
-        document.querySelector('[data-task-description]').innerHTML = task.description || '<p class="text-neutral-500 dark:text-neutral-400">Sin descripción</p>';
 
         // Update assigned users
         const assignedUsersEl = document.querySelector('[data-task-assigned-users]');
@@ -280,5 +395,76 @@ function getPriorityBadgeHtml(priority) {
         'critical': '<span class="inline-flex items-center gap-x-1.5 rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 dark:bg-red-900 dark:text-red-300"><svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>Crítica</span>'
     };
     return badges[priority] || badges['medium'];
+}
+
+// Helper function to update Alpine.js component data
+function updateAlpineData(componentName, property, value) {
+    // Find all elements with the component
+    const elements = document.querySelectorAll(`[x-data="${componentName}"]`);
+    elements.forEach(el => {
+        if (el._x_dataStack && el._x_dataStack[0]) {
+            el._x_dataStack[0][property] = value;
+        }
+    });
+}
+
+function saveTitle(newTitle, callback) {
+    if (!currentTaskId) return;
+
+    // Send AJAX request to update title
+    fetch(`/tasks/${currentTaskId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ title: newTitle })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (typeof showToast === 'function') {
+                showToast('Título actualizado exitosamente', 'success');
+            }
+            if (callback) callback();
+        } else {
+            alert('Error al actualizar el título');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al actualizar el título');
+    });
+}
+
+function saveDescription(newDescription, callback) {
+    if (!currentTaskId) return;
+
+    // Send AJAX request to update description
+    fetch(`/tasks/${currentTaskId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ description: newDescription })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (typeof showToast === 'function') {
+                showToast('Descripción actualizada exitosamente', 'success');
+            }
+            if (callback) callback();
+        } else {
+            alert('Error al actualizar la descripción');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al actualizar la descripción');
+    });
 }
 </script>

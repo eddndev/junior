@@ -75,7 +75,7 @@ Route::middleware(['auth'])->group(function () {
     // Task Management Routes (Directors and Managers)
     Route::middleware('permission:ver-tareas')->group(function () {
         // Kanban board view
-        Route::get('tasks/kanban/board', [App\Http\Controllers\TaskController::class, 'kanban'])
+        Route::get('tasks/kanban', [App\Http\Controllers\TaskController::class, 'kanban'])
             ->name('tasks.kanban');
 
         // Task details for AJAX (el-dialog)
@@ -101,6 +101,8 @@ Route::middleware(['auth'])->group(function () {
     // Personal Task Dashboard (All Employees)
     Route::get('my-tasks', [App\Http\Controllers\MyTasksController::class, 'index'])
         ->name('my-tasks.index');
+    Route::get('my-tasks/kanban', [App\Http\Controllers\MyTasksController::class, 'kanban'])
+        ->name('my-tasks.kanban');
     Route::post('my-tasks/{task}/complete', [App\Http\Controllers\MyTasksController::class, 'complete'])
         ->name('my-tasks.complete');
     Route::patch('my-tasks/{task}/status', [App\Http\Controllers\MyTasksController::class, 'updateStatus'])

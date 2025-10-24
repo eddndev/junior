@@ -1,4 +1,4 @@
-<x-dashboard-layout title="Tablero Kanban - Tareas">
+<x-dashboard-layout title="Mis Tareas - Kanban">
     <x-slot name="sidebar">
         <x-navigation.sidebar />
     </x-slot>
@@ -7,22 +7,22 @@
     {{-- Header --}}
     <div class="sm:flex sm:items-center sm:justify-between">
         <div class="sm:flex-auto">
-            <h1 class="text-2xl font-semibold text-neutral-900 dark:text-white">Tablero Kanban</h1>
+            <h1 class="text-2xl font-semibold text-neutral-900 dark:text-white">Mis Tareas - Kanban</h1>
             <p class="mt-2 text-sm text-neutral-700 dark:text-neutral-400">
-                Vista de tareas organizadas por estado.
+                Vista personal de tus tareas organizadas por estado.
             </p>
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex sm:gap-x-3">
             {{-- View Toggle --}}
             <div class="inline-flex rounded-md shadow-sm" role="group">
-                <a href="{{ route('tasks.index') }}"
+                <a href="{{ route('my-tasks.index') }}"
                    class="rounded-l-md px-3 py-2 text-sm font-semibold text-neutral-900 ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 dark:text-neutral-300 dark:ring-neutral-700 dark:hover:bg-neutral-700">
                     <svg class="inline-block h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg>
                     Lista
                 </a>
-                <a href="{{ route('tasks.kanban') }}"
+                <a href="{{ route('my-tasks.kanban') }}"
                    class="rounded-r-md px-3 py-2 text-sm font-semibold bg-primary-600 text-white ring-1 ring-inset ring-primary-600 dark:bg-primary-500">
                     <svg class="inline-block h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
@@ -30,17 +30,6 @@
                     Kanban
                 </a>
             </div>
-
-            @can('crear-tareas')
-            <button type="button"
-                    onclick="openDialog('create-task-dialog')"
-                    class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400">
-                <svg class="inline-block h-5 w-5 -ml-0.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Nueva Tarea
-            </button>
-            @endcan
         </div>
     </div>
 
@@ -185,28 +174,15 @@
     </div>
 </div>
 
-{{-- Livewire Dialogs (OUTSIDE Livewire components) --}}
+{{-- Livewire Dialog (OUTSIDE Livewire component) --}}
 <x-dialog-wrapper id="task-detail-dialog" max-width="5xl">
     @livewire('tasks.task-detail-dialog')
-</x-dialog-wrapper>
-
-<x-dialog-wrapper id="create-task-dialog" max-width="5xl">
-    @livewire('tasks.create-task-dialog')
 </x-dialog-wrapper>
 
 @push('scripts')
 <script>
     // Livewire Dialog Integration
     document.addEventListener('livewire:init', () => {
-        // Listen for task-created event to refresh the board
-        Livewire.on('task-created', (event) => {
-            const taskId = event.taskId || event[0]?.taskId;
-            console.log('Task created:', taskId);
-
-            // Reload the page to show the new task in Kanban
-            window.location.reload();
-        });
-
         // Listen for show-toast events
         Livewire.on('show-toast', (event) => {
             const message = event.message || event[0]?.message || 'Operación completada';
@@ -218,7 +194,6 @@
         document.addEventListener('dialog-closed', (event) => {
             if (event.detail && event.detail.dialogId === 'task-detail-dialog') {
                 // Only reload if we were viewing a task (to update Kanban cards)
-                // Small delay to allow dialog close animation
                 setTimeout(() => {
                     window.location.reload();
                 }, 300);
@@ -258,7 +233,7 @@
                 if (this.filters.priority) params.append('priority', this.filters.priority);
 
                 // Fetch filtered tasks
-                fetch(`{{ route('tasks.kanban') }}?${params.toString()}`, {
+                fetch(`{{ route('my-tasks.kanban') }}?${params.toString()}`, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'text/html'
@@ -286,8 +261,8 @@
 
                     // Update URL without reload
                     const newUrl = params.toString()
-                        ? `{{ route('tasks.kanban') }}?${params.toString()}`
-                        : '{{ route('tasks.kanban') }}';
+                        ? `{{ route('my-tasks.kanban') }}?${params.toString()}`
+                        : '{{ route('my-tasks.kanban') }}';
                     window.history.pushState({}, '', newUrl);
                 })
                 .catch(error => {
@@ -369,9 +344,6 @@
         }
 
         if (draggedTaskId && newStatus) {
-            // Store original position
-            const rect = draggedElement.getBoundingClientRect();
-
             // Update task status via AJAX
             fetch(`/tasks/${draggedTaskId}/status`, {
                 method: 'PATCH',

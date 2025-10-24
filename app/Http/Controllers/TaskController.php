@@ -251,7 +251,27 @@ class TaskController extends Controller
         // Authorization check
         $this->authorize('update', $task);
 
-        // Update basic task information
+        // Handle AJAX partial updates (inline editing)
+        if ($request->ajax() && ($request->has('title') || $request->has('description')) && !$request->has('area_id')) {
+            // Update only the provided fields (already validated by UpdateTaskRequest)
+            $updateData = [];
+            if ($request->has('title')) {
+                $updateData['title'] = $request->title;
+            }
+            if ($request->has('description')) {
+                $updateData['description'] = $request->description;
+            }
+
+            $task->update($updateData);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tarea actualizada exitosamente',
+                'task' => $task->fresh(['area', 'assignments.user', 'subtasks', 'media'])
+            ]);
+        }
+
+        // Full update (from form)
         $task->update([
             'title' => $request->title,
             'description' => $request->description,

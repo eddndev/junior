@@ -85,3 +85,11 @@
     border-color: var(--color-gray-200, currentcolor);
   }
 }
+
+/* ========================================
+   LIVEWIRE INTEGRATION
+   ========================================
+   Livewire v3 no requiere estilos CSS adicionales.
+   Usa Tailwind CSS y Alpine.js internamente.
+   Los dialogs usan @tailwindplus/elements (el-dialog).
+   ======================================== */

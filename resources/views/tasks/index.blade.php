@@ -32,13 +32,14 @@
             </div>
 
             @can('create', App\Models\Task::class)
-            <a href="{{ route('tasks.create') }}"
-               class="inline-flex items-center justify-center rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 dark:bg-primary-500 dark:hover:bg-primary-400">
+            <button type="button"
+                    onclick="openDialog('create-task-dialog')"
+                    class="inline-flex items-center justify-center rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 dark:bg-primary-500 dark:hover:bg-primary-400">
                 <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Nueva Tarea
-            </a>
+            </button>
             @endcan
         </div>
     </div>
@@ -334,9 +335,11 @@
                     @forelse($tasks as $task)
                         <x-layout.table-row :selectable="false">
                             <x-layout.table-cell :primary="true">
-                                <a href="{{ route('tasks.show', $task) }}" class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                                <button type="button"
+                                        onclick="loadTaskDetails({{ $task->id }})"
+                                        class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 text-left">
                                     {{ $task->title }}
-                                </a>
+                                </button>
                                 @if($task->parent_task_id)
                                     <span class="ml-2 text-xs text-neutral-500 dark:text-neutral-400">
                                         (Subtarea)
@@ -412,13 +415,13 @@
                                         </button>
                                     </x-slot:trigger>
 
-                                    <x-layout.dropdown-link :href="route('tasks.show', $task)">
+                                    <x-layout.dropdown-button type="button" onclick="loadTaskDetails({{ $task->id }})">
                                         <svg class="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                         </svg>
                                         <span>Ver detalle</span>
-                                    </x-layout.dropdown-link>
+                                    </x-layout.dropdown-button>
 
                                     @can('update', $task)
                                         <x-layout.dropdown-link :href="route('tasks.edit', $task)">
@@ -483,4 +486,94 @@
         </div>
     @endif
 </div>
+
+{{-- Livewire Dialogs (OUTSIDE Livewire components) --}}
+<x-dialog-wrapper id="task-detail-dialog" max-width="5xl">
+    @livewire('tasks.task-detail-dialog')
+</x-dialog-wrapper>
+
+<x-dialog-wrapper id="create-task-dialog" max-width="5xl">
+    @livewire('tasks.create-task-dialog')
+</x-dialog-wrapper>
+
+@push('scripts')
+<script>
+    // Livewire Dialog Integration
+    document.addEventListener('livewire:init', () => {
+        // Listen for task-created event to refresh the list
+        Livewire.on('task-created', (event) => {
+            const taskId = event.taskId || event[0]?.taskId;
+            console.log('Task created:', taskId);
+
+            // Reload the page to show the new task
+            window.location.reload();
+        });
+
+        // Listen for show-toast events
+        Livewire.on('show-toast', (event) => {
+            const message = event.message || event[0]?.message || 'Operación completada';
+            const type = event.type || event[0]?.type || 'success';
+            showToast(message, type);
+        });
+
+        // Listen for dialog close to refresh list if task was updated
+        document.addEventListener('dialog-closed', (event) => {
+            if (event.detail && event.detail.dialogId === 'task-detail-dialog') {
+                // Only reload if we were viewing a task (to update task list)
+                setTimeout(() => {
+                    window.location.reload();
+                }, 300);
+            }
+        });
+    });
+
+    // Function to open task detail dialog
+    function loadTaskDetails(taskId) {
+        // Load task data into Livewire component
+        Livewire.dispatch('loadTask', { taskId: taskId });
+
+        // Open the dialog only if it's not already open
+        if (!window.DialogSystem.isOpen('task-detail-dialog')) {
+            window.DialogSystem.open('task-detail-dialog');
+        }
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg transition-all duration-300 ${
+            type === 'success'
+                ? 'bg-green-50 text-green-800 ring-1 ring-green-600/20 dark:bg-green-900/30 dark:text-green-200'
+                : 'bg-red-50 text-red-800 ring-1 ring-red-600/20 dark:bg-red-900/30 dark:text-red-200'
+        }`;
+
+        toast.innerHTML = `
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                ${type === 'success'
+                    ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />'
+                    : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />'
+                }
+            </svg>
+            <span class="text-sm font-medium">${message}</span>
+        `;
+
+        document.body.appendChild(toast);
+
+        // Slide in
+        setTimeout(() => {
+            toast.style.transform = 'translateY(0)';
+        }, 10);
+
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(1rem)';
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 3000);
+    }
+</script>
+@endpush
+
 </x-dashboard-layout>
