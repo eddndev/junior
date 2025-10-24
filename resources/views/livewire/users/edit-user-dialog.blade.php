@@ -11,8 +11,18 @@
 
     {{-- Form Content --}}
     <form wire:submit="save"
-          @submit.prevent="$wire.set('selectedAreas', selectedAreas); $wire.set('selectedRoles', selectedRoles); $wire.call('save')"
-          x-data
+          wire:key="edit-user-{{ $userId ?? 'loading' }}"
+          x-data="{
+              selectedRoles: @js($selectedRoles ?? []),
+              selectedAreas: @js($selectedAreas ?? []),
+              roles: @js($roles ?? []),
+              areas: @js($areas ?? [])
+          }"
+          @submit.prevent="
+              $wire.set('selectedAreas', selectedAreas);
+              $wire.set('selectedRoles', selectedRoles);
+              $wire.call('save');
+          "
           class="flex-1 overflow-y-auto">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-6">
 
@@ -106,21 +116,19 @@
                 {{-- Roles Multi-Select --}}
                 <div x-data="{
                     open: false,
-                    selectedRoles: @js($selectedRoles ?? []),
-                    roles: @js($roles ?? []),
                     toggleRole(roleId) {
-                        const index = this.selectedRoles.indexOf(roleId);
+                        const index = selectedRoles.indexOf(roleId);
                         if (index > -1) {
-                            this.selectedRoles.splice(index, 1);
+                            selectedRoles.splice(index, 1);
                         } else {
-                            this.selectedRoles.push(roleId);
+                            selectedRoles.push(roleId);
                         }
                     },
                     isSelected(roleId) {
-                        return this.selectedRoles.includes(roleId);
+                        return selectedRoles.includes(roleId);
                     },
                     getSelectedRolesData() {
-                        return this.roles.filter(r => this.selectedRoles.includes(r.id));
+                        return roles.filter(r => selectedRoles.includes(r.id));
                     }
                 }" class="relative">
                     <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
@@ -182,21 +190,19 @@
                 {{-- Areas Multi-Select --}}
                 <div x-data="{
                     open: false,
-                    selectedAreas: @js($selectedAreas ?? []),
-                    areas: @js($areas ?? []),
                     toggleArea(areaId) {
-                        const index = this.selectedAreas.indexOf(areaId);
+                        const index = selectedAreas.indexOf(areaId);
                         if (index > -1) {
-                            this.selectedAreas.splice(index, 1);
+                            selectedAreas.splice(index, 1);
                         } else {
-                            this.selectedAreas.push(areaId);
+                            selectedAreas.push(areaId);
                         }
                     },
                     isSelected(areaId) {
-                        return this.selectedAreas.includes(areaId);
+                        return selectedAreas.includes(areaId);
                     },
                     getSelectedAreasData() {
-                        return this.areas.filter(a => this.selectedAreas.includes(a.id));
+                        return areas.filter(a => selectedAreas.includes(a.id));
                     }
                 }" class="relative">
                     <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">

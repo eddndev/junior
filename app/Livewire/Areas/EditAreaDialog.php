@@ -7,9 +7,13 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class CreateAreaDialog extends Component
+class EditAreaDialog extends Component
 {
     use AuthorizesRequests;
+
+    // Area being edited
+    public ?int $areaId = null;
+    public ?Area $area = null;
 
     // Form fields
     public string $name = '';
@@ -20,15 +24,29 @@ class CreateAreaDialog extends Component
      * Livewire listeners
      */
     protected $listeners = [
-        'resetAreaForm' => 'resetForm',
+        'loadAreaForEdit' => 'load',
     ];
 
     /**
-     * Reset form to create mode
+     * Load area data for editing
      */
-    public function resetForm(): void
+    public function load(int $areaId): void
     {
-        $this->reset();
+        $this->areaId = $areaId;
+
+        try {
+            // Load area
+            $this->area = Area::findOrFail($areaId);
+
+            // Populate form fields
+            $this->name = $this->area->name;
+            $this->description = $this->area->description ?? '';
+            $this->is_active = $this->area->is_active;
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $this->dispatch('show-toast', message: 'Área no encontrada', type: 'error');
+            $this->dispatch('close-dialog', dialogId: 'edit-area-dialog');
+        }
     }
 
     /**
@@ -37,7 +55,7 @@ class CreateAreaDialog extends Component
     protected function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:areas,name'],
+            'name' => ['required', 'string', 'max:255', 'unique:areas,name,' . $this->areaId],
             'description' => ['nullable', 'string'],
             'is_active' => ['boolean'],
         ];
@@ -67,7 +85,7 @@ class CreateAreaDialog extends Component
     }
 
     /**
-     * Save area (create only)
+     * Update area
      */
     public function save(): void
     {
@@ -76,10 +94,10 @@ class CreateAreaDialog extends Component
 
         try {
             // Authorization check
-            $this->authorize('create', Area::class);
+            $this->authorize('update', $this->area);
 
-            // Create the area
-            Area::create([
+            // Update area
+            $this->area->update([
                 'name' => $this->name,
                 'slug' => Str::slug($this->name),
                 'description' => $this->description,
@@ -87,21 +105,21 @@ class CreateAreaDialog extends Component
             ]);
 
             // Success notification
-            $this->dispatch('show-toast', message: 'Área creada exitosamente', type: 'success');
+            $this->dispatch('show-toast', message: 'Área actualizada exitosamente', type: 'success');
 
             // Dispatch event
-            $this->dispatch('area-created');
+            $this->dispatch('area-updated');
 
             // Close dialog
-            $this->dispatch('close-dialog', dialogId: 'create-area-dialog');
+            $this->dispatch('close-dialog', dialogId: 'edit-area-dialog');
 
             // Reset form
             $this->reset();
 
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            $this->dispatch('show-toast', message: 'No tiene permisos para crear áreas', type: 'error');
+            $this->dispatch('show-toast', message: 'No tiene permisos para editar esta área', type: 'error');
         } catch (\Exception $e) {
-            $this->dispatch('show-toast', message: 'Error al crear área: ' . $e->getMessage(), type: 'error');
+            $this->dispatch('show-toast', message: 'Error al actualizar área: ' . $e->getMessage(), type: 'error');
         }
     }
 
@@ -111,7 +129,7 @@ class CreateAreaDialog extends Component
     public function cancel(): void
     {
         $this->reset();
-        $this->dispatch('close-dialog', dialogId: 'create-area-dialog');
+        $this->dispatch('close-dialog', dialogId: 'edit-area-dialog');
     }
 
     /**
@@ -119,6 +137,6 @@ class CreateAreaDialog extends Component
      */
     public function render()
     {
-        return view('livewire.areas.create-area-dialog');
+        return view('livewire.areas.edit-area-dialog');
     }
 }

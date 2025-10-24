@@ -1,10 +1,10 @@
 <div>
     {{-- Header --}}
-    <x-dialog-header dialog-id="create-area-dialog">
-        <x-slot:title>Crear Nueva Área</x-slot:title>
+    <x-dialog-header dialog-id="edit-area-dialog">
+        <x-slot:title>Editar Área</x-slot:title>
         <x-slot:description>
             <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                Complete el formulario para crear una nueva área de trabajo
+                Actualice la información del área
             </p>
         </x-slot:description>
     </x-dialog-header>
@@ -58,7 +58,7 @@
         </div>
 
         {{-- Footer --}}
-        <x-dialog-footer dialog-id="create-area-dialog">
+        <x-dialog-footer dialog-id="edit-area-dialog">
             <button type="button"
                     wire:click="cancel"
                     class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 dark:bg-neutral-800 dark:text-white dark:ring-neutral-700 dark:hover:bg-neutral-700">
@@ -66,7 +66,7 @@
             </button>
             <button type="submit"
                     class="rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400">
-                Crear Área
+                Actualizar Área
             </button>
         </x-dialog-footer>
     </form>

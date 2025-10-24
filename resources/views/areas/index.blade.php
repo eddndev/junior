@@ -192,6 +192,11 @@
     @livewire('areas.create-area-dialog')
 </x-dialog-wrapper>
 
+{{-- Edit Area Dialog (outside Livewire component to preserve state) --}}
+<x-dialog-wrapper id="edit-area-dialog" max-width="2xl">
+    @livewire('areas.edit-area-dialog')
+</x-dialog-wrapper>
+
 @push('scripts')
 <script>
     /**
@@ -220,16 +225,18 @@
     }
 
     /**
-     * Load area for editing and open create dialog
+     * Load area for editing and open edit dialog
      */
     function loadAreaForEdit(areaId) {
         // Dispatch event to Livewire component
         Livewire.dispatch('loadAreaForEdit', { areaId: areaId });
 
-        // Open create dialog in edit mode (with check to prevent duplicate opens)
-        if (!window.DialogSystem.isOpen('create-area-dialog')) {
-            window.DialogSystem.open('create-area-dialog');
-        }
+        // Open edit dialog (with check to prevent duplicate opens)
+        setTimeout(() => {
+            if (!window.DialogSystem.isOpen('edit-area-dialog')) {
+                window.DialogSystem.open('edit-area-dialog');
+            }
+        }, 150);
     }
 
     /**
