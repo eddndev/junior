@@ -178,10 +178,12 @@
                                     class="rounded-md px-3 py-2 text-sm font-semibold text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-700">
                                 Cerrar
                             </button>
-                            <a href="#" data-task-edit-link
-                               class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400">
+                            <button type="button"
+                                    onclick="openEditTaskDialog()"
+                                    data-task-edit-button
+                                    class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400">
                                 Editar Tarea
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -368,8 +370,7 @@ function loadTaskDetails(taskId) {
             document.querySelector('[data-task-completed-at-container]').style.display = 'none';
         }
 
-        // Update edit link
-        document.querySelector('[data-task-edit-link]').href = `/tasks/${task.id}/edit`;
+        // Update edit button (no need to update href, we use onclick with currentTaskId)
     })
     .catch(error => {
         console.error('Error loading task details:', error);
@@ -466,5 +467,20 @@ function saveDescription(newDescription, callback) {
         console.error('Error:', error);
         alert('Error al actualizar la descripción');
     });
+}
+
+// Function to open edit dialog
+function openEditTaskDialog() {
+    if (!currentTaskId) return;
+
+    // Close the detail dialog
+    window.DialogSystem.close('task-detail-dialog');
+
+    // Call the global loadTaskForEdit function (defined in parent pages)
+    if (typeof loadTaskForEdit === 'function') {
+        loadTaskForEdit(currentTaskId);
+    } else {
+        console.error('loadTaskForEdit function not found');
+    }
 }
 </script>

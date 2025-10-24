@@ -44,9 +44,12 @@
     {{-- Select component --}}
     <div class="{{ $label || $cornerHint ? 'mt-2' : '' }}">
         <el-select
+            {{ $attributes->except(['label', 'error', 'description', 'cornerHint']) }}
             id="{{ $selectId }}"
             name="{{ $name }}"
+            @if($value)
             value="{{ old($name, $value) }}"
+            @endif
             class="block"
             @if($hasError)
                 aria-invalid="true"

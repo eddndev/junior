@@ -11,9 +11,13 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class CreateTaskDialog extends Component
+class EditTaskDialog extends Component
 {
     use AuthorizesRequests, WithFileUploads;
+
+    // Task being edited
+    public ?int $taskId = null;
+    public ?Task $task = null;
 
     // Form fields
     public string $title = '';
@@ -43,16 +47,56 @@ class CreateTaskDialog extends Component
      * Livewire listeners
      */
     protected $listeners = [
-        'resetTaskForm' => 'resetForm',
+        'loadTaskForEdit' => 'loadTask',
     ];
 
     /**
-     * Reset form to create mode
+     * Load task data for editing
      */
-    public function resetForm(): void
+    public function loadTask(int $taskId): void
     {
-        $this->reset();
-        $this->loadFormData();
+        $this->taskId = $taskId;
+
+        try {
+            // Load task with relationships
+            $this->task = Task::with(['subtasks', 'assignments.user', 'area'])
+                ->findOrFail($taskId);
+
+            // Check authorization
+            $this->authorize('update', $this->task);
+
+            // Populate form fields
+            $this->title = $this->task->title;
+            $this->description = $this->task->description ?? '';
+            $this->areaId = $this->task->area_id;
+            $this->priority = $this->task->priority;
+            $this->status = $this->task->status;
+            $this->dueDate = $this->task->due_date?->format('Y-m-d');
+            $this->parentTaskId = $this->task->parent_task_id;
+
+            // Load assigned users
+            $this->assignedUsers = $this->task->assignments->pluck('user_id')->toArray();
+
+            // Load subtasks
+            $this->subtasks = $this->task->subtasks->map(function ($subtask) {
+                return [
+                    'id' => $subtask->id,
+                    'title' => $subtask->title,
+                    'description' => $subtask->description ?? '',
+                    'temp_id' => $subtask->id,
+                ];
+            })->toArray();
+
+            // Load form data
+            $this->loadFormData();
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            $this->dispatch('show-toast', message: 'Tarea no encontrada', type: 'error');
+            $this->dispatch('close-dialog', dialogId: 'edit-task-dialog');
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $this->dispatch('show-toast', message: 'No tienes permiso para editar esta tarea', type: 'error');
+            $this->dispatch('close-dialog', dialogId: 'edit-task-dialog');
+        }
     }
 
     /**
@@ -73,7 +117,7 @@ class CreateTaskDialog extends Component
             'subtasks' => 'nullable|array',
             'subtasks.*.title' => 'required|string|max:255',
             'subtasks.*.description' => 'nullable|string|max:1000',
-            'attachments.*' => 'nullable|file|max:10240', // 10MB
+            'attachments.*' => 'nullable|file|max:10240',
         ];
     }
 
@@ -126,16 +170,14 @@ class CreateTaskDialog extends Component
         // Load users
         $this->users = User::where('is_active', true)->orderBy('name')->get();
 
-        // Load parent tasks (for creating dependent tasks)
+        // Load parent tasks
         $this->parentTasks = Task::whereNull('parent_task_id')
             ->whereIn('area_id', $this->areas->pluck('id'))
+            ->when($this->taskId ?? null, function($query) {
+                $query->where('id', '!=', $this->taskId); // Exclude self from parent options
+            })
             ->orderBy('title')
             ->get();
-
-        // Set default area if only one
-        if ($this->areas->count() === 1) {
-            $this->areaId = $this->areas->first()->id;
-        }
     }
 
     /**
@@ -146,7 +188,7 @@ class CreateTaskDialog extends Component
         $this->subtasks[] = [
             'title' => '',
             'description' => '',
-            'temp_id' => uniqid(), // For wire:key
+            'temp_id' => uniqid(),
         ];
     }
 
@@ -161,7 +203,7 @@ class CreateTaskDialog extends Component
     }
 
     /**
-     * Create the task
+     * Update the task
      */
     public function save(): void
     {
@@ -172,10 +214,10 @@ class CreateTaskDialog extends Component
             $validated = $this->validate();
 
             // Check authorization
-            $this->authorize('create', Task::class);
+            $this->authorize('update', $this->task);
 
-            // Create task
-            $task = Task::create([
+            // Update task
+            $this->task->update([
                 'title' => $this->title,
                 'description' => $this->description,
                 'area_id' => $this->areaId,
@@ -185,24 +227,26 @@ class CreateTaskDialog extends Component
                 'due_date' => $this->dueDate,
             ]);
 
-            // Assign users
+            // Sync user assignments
+            $this->task->assignments()->delete();
             if (!empty($this->assignedUsers)) {
                 foreach ($this->assignedUsers as $userId) {
                     TaskAssignment::create([
                         'assignable_type' => Task::class,
-                        'assignable_id' => $task->id,
+                        'assignable_id' => $this->task->id,
                         'user_id' => $userId,
                         'assigned_at' => now(),
                     ]);
                 }
             }
 
-            // Create subtasks
+            // Sync subtasks
+            $this->task->subtasks()->delete();
             if (!empty($this->subtasks)) {
                 foreach ($this->subtasks as $index => $subtaskData) {
                     if (!empty($subtaskData['title'])) {
                         Subtask::create([
-                            'task_id' => $task->id,
+                            'task_id' => $this->task->id,
                             'title' => $subtaskData['title'],
                             'description' => $subtaskData['description'] ?? null,
                             'status' => 'pending',
@@ -215,26 +259,22 @@ class CreateTaskDialog extends Component
             // Handle file attachments
             if (!empty($this->attachments)) {
                 foreach ($this->attachments as $file) {
-                    $task->addMedia($file)->toMediaCollection('attachments');
+                    $this->task->addMedia($file)->toMediaCollection('attachments');
                 }
             }
 
             // Dispatch events
-            $this->dispatch('task-created', taskId: $task->id);
-            $this->dispatch('show-toast', message: 'Tarea creada exitosamente', type: 'success');
+            $this->dispatch('task-updated', taskId: $this->task->id);
+            $this->dispatch('show-toast', message: 'Tarea actualizada exitosamente', type: 'success');
 
             // Close dialog
-            $this->dispatch('close-dialog', dialogId: 'create-task-dialog');
-
-            // Reset form
-            $this->reset();
-            $this->loadFormData();
+            $this->dispatch('close-dialog', dialogId: 'edit-task-dialog');
 
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            $this->dispatch('show-toast', message: 'No tienes permiso para crear tareas', type: 'error');
+            $this->dispatch('show-toast', message: 'No tienes permiso para editar esta tarea', type: 'error');
         } catch (\Exception $e) {
-            $this->dispatch('show-toast', message: 'Error al crear la tarea: ' . $e->getMessage(), type: 'error');
-            \Log::error('Error creating task: ' . $e->getMessage());
+            $this->dispatch('show-toast', message: 'Error al actualizar la tarea: ' . $e->getMessage(), type: 'error');
+            \Log::error('Error updating task: ' . $e->getMessage());
         } finally {
             $this->isLoading = false;
         }
@@ -245,9 +285,7 @@ class CreateTaskDialog extends Component
      */
     public function cancel(): void
     {
-        $this->reset();
-        $this->loadFormData();
-        $this->dispatch('close-dialog', dialogId: 'create-task-dialog');
+        $this->dispatch('close-dialog', dialogId: 'edit-task-dialog');
     }
 
     /**
@@ -255,6 +293,6 @@ class CreateTaskDialog extends Component
      */
     public function render()
     {
-        return view('livewire.tasks.create-task-dialog');
+        return view('livewire.tasks.edit-task-dialog');
     }
 }

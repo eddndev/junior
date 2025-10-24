@@ -424,12 +424,12 @@
                                     </x-layout.dropdown-button>
 
                                     @can('update', $task)
-                                        <x-layout.dropdown-link :href="route('tasks.edit', $task)">
+                                        <x-layout.dropdown-button type="button" onclick="loadTaskForEdit({{ $task->id }})">
                                             <svg class="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                             <span>Editar</span>
-                                        </x-layout.dropdown-link>
+                                        </x-layout.dropdown-button>
                                     @endcan
 
                                     @can('complete', $task)
@@ -496,6 +496,10 @@
     @livewire('tasks.create-task-dialog')
 </x-dialog-wrapper>
 
+<x-dialog-wrapper id="edit-task-dialog" max-width="5xl">
+    @livewire('tasks.edit-task-dialog')
+</x-dialog-wrapper>
+
 @push('scripts')
 <script>
     // Livewire Dialog Integration
@@ -509,6 +513,15 @@
             window.location.reload();
         });
 
+        // Listen for task-updated event to refresh the list
+        Livewire.on('task-updated', (event) => {
+            const taskId = event.taskId || event[0]?.taskId;
+            console.log('Task updated:', taskId);
+
+            // Reload the page to show the updated task
+            window.location.reload();
+        });
+
         // Listen for show-toast events
         Livewire.on('show-toast', (event) => {
             const message = event.message || event[0]?.message || 'Operación completada';
@@ -516,16 +529,28 @@
             showToast(message, type);
         });
 
-        // Listen for dialog close to refresh list if task was updated
+        // Listen for dialog close events
         document.addEventListener('dialog-closed', (event) => {
-            if (event.detail && event.detail.dialogId === 'task-detail-dialog') {
-                // Only reload if we were viewing a task (to update task list)
+            if (!event.detail) return;
+
+            // Reset form when create-task-dialog closes
+            if (event.detail.dialogId === 'create-task-dialog') {
                 setTimeout(() => {
-                    window.location.reload();
-                }, 300);
+                    Livewire.dispatch('resetTaskForm');
+                }, 100);
             }
         });
     });
+
+    // Function to open dialog for creating a new task
+    function openDialog(dialogId) {
+        // Reset form to create mode
+        Livewire.dispatch('resetTaskForm');
+
+        if (!window.DialogSystem.isOpen(dialogId)) {
+            window.DialogSystem.open(dialogId);
+        }
+    }
 
     // Function to open task detail dialog
     function loadTaskDetails(taskId) {
@@ -536,6 +561,19 @@
         if (!window.DialogSystem.isOpen('task-detail-dialog')) {
             window.DialogSystem.open('task-detail-dialog');
         }
+    }
+
+    // Function to load task for editing
+    function loadTaskForEdit(taskId) {
+        // Dispatch event to Livewire component
+        Livewire.dispatch('loadTaskForEdit', { taskId: taskId });
+
+        // Wait a bit for Livewire to process the data before opening dialog
+        setTimeout(() => {
+            if (!window.DialogSystem.isOpen('edit-task-dialog')) {
+                window.DialogSystem.open('edit-task-dialog');
+            }
+        }, 150);
     }
 
     // Toast notification function

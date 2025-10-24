@@ -13,15 +13,16 @@
             </p>
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <a
-                href="{{ route('users.create') }}"
+            <button
+                type="button"
+                onclick="openDialog('create-user-dialog')"
                 class="inline-flex items-center justify-center rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 dark:bg-primary-500 dark:hover:bg-primary-400"
             >
                 <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Crear Usuario
-            </a>
+            </button>
         </div>
     </div>
 
@@ -186,9 +187,11 @@
                     @forelse($users as $user)
                         <x-layout.table-row :selectable="true">
                             <x-layout.table-cell :primary="true">
-                                <a href="{{ route('users.show', $user) }}" class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                                <button type="button"
+                                        onclick="loadUserDetails({{ $user->id }})"
+                                        class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 text-left">
                                     {{ $user->name }}
-                                </a>
+                                </button>
                                 @if($user->trashed())
                                     <span class="ml-2 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-600/30">
                                         Eliminado
@@ -257,21 +260,21 @@
                                         </button>
                                     </x-slot:trigger>
 
-                                    <x-layout.dropdown-link :href="route('users.show', $user)">
+                                    <x-layout.dropdown-button type="button" onclick="loadUserDetails({{ $user->id }})">
                                         <svg class="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                         </svg>
                                         <span>Ver detalle</span>
-                                    </x-layout.dropdown-link>
+                                    </x-layout.dropdown-button>
 
                                     @if(!$user->trashed())
-                                        <x-layout.dropdown-link :href="route('users.edit', $user)">
+                                        <x-layout.dropdown-button type="button" onclick="loadUserForEdit({{ $user->id }})">
                                             <svg class="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                             <span>Editar</span>
-                                        </x-layout.dropdown-link>
+                                        </x-layout.dropdown-button>
 
                                         <x-layout.dropdown-divider />
 
@@ -322,4 +325,107 @@
         </div>
     @endif
 </div>
+
+{{-- User Detail Dialog (outside Livewire component to preserve state) --}}
+<x-dialog-wrapper id="user-detail-dialog" max-width="5xl">
+    @livewire('users.user-detail-dialog')
+</x-dialog-wrapper>
+
+{{-- Create User Dialog (outside Livewire component to preserve state) --}}
+<x-dialog-wrapper id="create-user-dialog" max-width="5xl">
+    @livewire('users.create-user-dialog')
+</x-dialog-wrapper>
+
+{{-- Edit User Dialog (outside Livewire component to preserve state) --}}
+<x-dialog-wrapper id="edit-user-dialog" max-width="5xl">
+    @livewire('users.edit-user-dialog')
+</x-dialog-wrapper>
+
+@push('scripts')
+<script>
+    /**
+     * Open dialog for creating a new user
+     */
+    function openDialog(dialogId) {
+        // Reset form to create mode
+        Livewire.dispatch('resetUserForm');
+
+        if (!window.DialogSystem.isOpen(dialogId)) {
+            window.DialogSystem.open(dialogId);
+        }
+    }
+
+    /**
+     * Load user details and open dialog
+     */
+    function loadUserDetails(userId) {
+        // Dispatch event to Livewire component
+        Livewire.dispatch('loadUser', { userId: userId });
+
+        // Open dialog (with check to prevent duplicate opens)
+        if (!window.DialogSystem.isOpen('user-detail-dialog')) {
+            window.DialogSystem.open('user-detail-dialog');
+        }
+    }
+
+    /**
+     * Load user for editing and open dialog
+     */
+    function loadUserForEdit(userId) {
+        // Dispatch event to Livewire component
+        Livewire.dispatch('loadUserForEdit', { userId: userId });
+
+        // Open dialog (with check to prevent duplicate opens)
+        setTimeout(() => {
+            if (!window.DialogSystem.isOpen('edit-user-dialog')) {
+                window.DialogSystem.open('edit-user-dialog');
+            }
+        }, 150);
+    }
+
+    /**
+     * Toast notification system
+     */
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 z-50 rounded-md p-4 shadow-lg transition-all transform ${
+            type === 'success'
+                ? 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-200'
+                : 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-200'
+        }`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Fade out and remove after 3 seconds
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Listen for toast events from Livewire
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('show-toast', (event) => {
+            showToast(event.message, event.type || 'success');
+        });
+
+        // Listen for dialog close events
+        Livewire.on('close-dialog', (event) => {
+            if (event.dialogId && window.DialogSystem.isOpen(event.dialogId)) {
+                window.DialogSystem.close(event.dialogId);
+            }
+        });
+
+        // Listen for user created event - reload page to show new user
+        Livewire.on('user-created', () => {
+            window.location.reload();
+        });
+
+        // Listen for user updated event - reload page to show changes
+        Livewire.on('user-updated', () => {
+            window.location.reload();
+        });
+    });
+</script>
+@endpush
 </x-dashboard-layout>

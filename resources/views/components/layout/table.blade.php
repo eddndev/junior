@@ -24,7 +24,7 @@
     'bulkActions' => false,
 ])
 
-<div class="px-4 sm:px-6 lg:px-8">
+<div>
     @if($title || $description || $actionButton)
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">

@@ -42,8 +42,11 @@ window.DialogSystem = {
      * Cierra un dialog por su ID.
      *
      * @param {string} dialogId - El ID del elemento dialog
+     * @param {Object} options - Opciones adicionales
+     * @param {boolean} options.silent - Si es true, no emite el evento 'dialog-closed'
+     * @param {string} options.reason - Razón del cierre (ej: 'opening-edit-dialog')
      */
-    close(dialogId) {
+    close(dialogId, options = {}) {
         const dialog = document.getElementById(dialogId);
 
         if (!dialog) {
@@ -54,15 +57,20 @@ window.DialogSystem = {
         if (typeof dialog.close === 'function') {
             try {
                 dialog.close();
-                console.log(`[DialogSystem] Closed dialog: ${dialogId}`);
+                console.log(`[DialogSystem] Closed dialog: ${dialogId}`, options.reason ? `(reason: ${options.reason})` : '');
 
-                // Emit custom event for other listeners
-                const event = new CustomEvent('dialog-closed', {
-                    detail: { dialogId: dialogId },
-                    bubbles: true,
-                    cancelable: false
-                });
-                document.dispatchEvent(event);
+                // Emit custom event for other listeners (unless silent mode)
+                if (!options.silent) {
+                    const event = new CustomEvent('dialog-closed', {
+                        detail: {
+                            dialogId: dialogId,
+                            reason: options.reason || null
+                        },
+                        bubbles: true,
+                        cancelable: false
+                    });
+                    document.dispatchEvent(event);
+                }
             } catch (error) {
                 console.error(`[DialogSystem] Error closing dialog "${dialogId}":`, error);
             }

@@ -13,13 +13,14 @@
                 </p>
             </div>
             <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                <a href="{{ route('areas.create') }}"
+                <button type="button"
+                    onclick="openDialog('create-area-dialog')"
                     class="inline-flex items-center justify-center rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 dark:bg-primary-500 dark:hover:bg-primary-400">
                     <svg class="-ml-0.5 mr-1.5 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Crear Área
-                </a>
+                </button>
             </div>
         </div>
 
@@ -90,9 +91,11 @@
                         @forelse($areas as $area)
                             <x-layout.table-row>
                                 <x-layout.table-cell :primary="true">
-                                    <a href="{{ route('areas.edit', $area) }}" class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+                                    <button type="button"
+                                            onclick="loadAreaDetails({{ $area->id }})"
+                                            class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 text-left">
                                         {{ $area->name }}
-                                    </a>
+                                    </button>
                                 </x-layout.table-cell>
 
                                 <x-layout.table-cell>{{ $area->slug }}</x-layout.table-cell>
@@ -131,12 +134,12 @@
                                             </button>
                                         </x-slot:trigger>
 
-                                        <x-layout.dropdown-link :href="route('areas.edit', $area)">
+                                        <x-layout.dropdown-button type="button" onclick="loadAreaForEdit({{ $area->id }})">
                                             <svg class="h-4 w-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                             <span>Editar</span>
-                                        </x-layout.dropdown-link>
+                                        </x-layout.dropdown-button>
 
                                         @if (!$area->is_system)
                                             <x-layout.dropdown-divider />
@@ -178,4 +181,100 @@
             </div>
         @endif
     </div>
+
+{{-- Area Detail Dialog (outside Livewire component to preserve state) --}}
+<x-dialog-wrapper id="area-detail-dialog" max-width="4xl">
+    @livewire('areas.area-detail-dialog')
+</x-dialog-wrapper>
+
+{{-- Create Area Dialog (outside Livewire component to preserve state) --}}
+<x-dialog-wrapper id="create-area-dialog" max-width="2xl">
+    @livewire('areas.create-area-dialog')
+</x-dialog-wrapper>
+
+@push('scripts')
+<script>
+    /**
+     * Open dialog for creating a new area
+     */
+    function openDialog(dialogId) {
+        // Reset form to create mode
+        Livewire.dispatch('resetAreaForm');
+
+        if (!window.DialogSystem.isOpen(dialogId)) {
+            window.DialogSystem.open(dialogId);
+        }
+    }
+
+    /**
+     * Load area details and open dialog
+     */
+    function loadAreaDetails(areaId) {
+        // Dispatch event to Livewire component
+        Livewire.dispatch('loadArea', { areaId: areaId });
+
+        // Open dialog (with check to prevent duplicate opens)
+        if (!window.DialogSystem.isOpen('area-detail-dialog')) {
+            window.DialogSystem.open('area-detail-dialog');
+        }
+    }
+
+    /**
+     * Load area for editing and open create dialog
+     */
+    function loadAreaForEdit(areaId) {
+        // Dispatch event to Livewire component
+        Livewire.dispatch('loadAreaForEdit', { areaId: areaId });
+
+        // Open create dialog in edit mode (with check to prevent duplicate opens)
+        if (!window.DialogSystem.isOpen('create-area-dialog')) {
+            window.DialogSystem.open('create-area-dialog');
+        }
+    }
+
+    /**
+     * Toast notification system
+     */
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 z-50 rounded-md p-4 shadow-lg transition-all transform ${
+            type === 'success'
+                ? 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-200'
+                : 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-200'
+        }`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Fade out and remove after 3 seconds
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Listen for toast events from Livewire
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('show-toast', (event) => {
+            showToast(event.message, event.type || 'success');
+        });
+
+        // Listen for dialog close events
+        Livewire.on('close-dialog', (event) => {
+            if (event.dialogId && window.DialogSystem.isOpen(event.dialogId)) {
+                window.DialogSystem.close(event.dialogId);
+            }
+        });
+
+        // Listen for area created event - reload page to show new area
+        Livewire.on('area-created', () => {
+            window.location.reload();
+        });
+
+        // Listen for area updated event - reload page to show changes
+        Livewire.on('area-updated', () => {
+            window.location.reload();
+        });
+    });
+</script>
+@endpush
 </x-dashboard-layout>

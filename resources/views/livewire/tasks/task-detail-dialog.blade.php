@@ -5,7 +5,7 @@
             <x-slot:title>
                 {{-- Title Editor --}}
                 @if($editingTitle)
-                    <div class="flex items-center gap-2 -mt-1">
+                    <div class="flex items-center gap-2">
                         <input type="text"
                                wire:model="title"
                                wire:keydown.enter="saveTitle"
@@ -28,7 +28,7 @@
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                     @enderror
                 @else
-                    <div class="flex items-center gap-2 -mt-1">
+                    <div class="flex items-center gap-2">
                         <span class="truncate">{{ $title }}</span>
                         <button wire:click="startEditTitle"
                                 class="flex-shrink-0 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
@@ -269,10 +269,13 @@
 
         {{-- Footer --}}
         <x-dialog-footer dialog-id="task-detail-dialog">
-            <a href="{{ route('tasks.show', $task) }}"
-               class="rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400 transition-colors">
-                Ver detalles completos
-            </a>
+            @can('update', $task)
+                <button type="button"
+                        onclick="window.DialogSystem.close('task-detail-dialog'); loadTaskForEdit({{ $task->id }})"
+                        class="rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 dark:bg-primary-500 dark:hover:bg-primary-400 transition-colors">
+                    Editar Tarea
+                </button>
+            @endcan
         </x-dialog-footer>
 
     @else

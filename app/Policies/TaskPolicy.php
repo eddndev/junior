@@ -92,8 +92,8 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): Response|bool
     {
-        // Requires 'crear-tareas' permission
-        if (!$user->hasPermission('crear-tareas')) {
+        // Requires 'crear-tareas' OR 'editar-tareas' permission
+        if (!$user->hasPermission('crear-tareas') && !$user->hasPermission('editar-tareas')) {
             return Response::deny('No tienes permiso para editar tareas.');
         }
 
@@ -122,8 +122,8 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): Response|bool
     {
-        // Requires 'crear-tareas' permission
-        if (!$user->hasPermission('crear-tareas')) {
+        // Requires 'eliminar-tareas' permission
+        if (!$user->hasPermission('eliminar-tareas')) {
             return Response::deny('No tienes permiso para eliminar tareas.');
         }
 
@@ -156,8 +156,8 @@ class TaskPolicy
      */
     public function restore(User $user, Task $task): Response|bool
     {
-        // Requires 'crear-tareas' permission
-        if (!$user->hasPermission('crear-tareas')) {
+        // Requires 'crear-tareas' OR 'editar-tareas' permission
+        if (!$user->hasPermission('crear-tareas') && !$user->hasPermission('editar-tareas')) {
             return Response::deny('No tienes permiso para restaurar tareas.');
         }
 
@@ -187,6 +187,11 @@ class TaskPolicy
      */
     public function complete(User $user, Task $task): Response|bool
     {
+        // Requires 'completar-tareas' permission
+        if (!$user->hasPermission('completar-tareas')) {
+            return Response::deny('No tienes permiso para completar tareas.');
+        }
+
         // Can complete if:
         // 1. User is assigned to the task
         $isAssigned = $task->assignments()
@@ -198,7 +203,7 @@ class TaskPolicy
         }
 
         // 2. User is a director/manager of the task's area
-        if ($user->hasPermission('crear-tareas')) {
+        if ($user->hasPermission('crear-tareas') || $user->hasPermission('editar-tareas')) {
             $userAreaIds = $user->areas->pluck('id')->toArray();
 
             if (in_array($task->area_id, $userAreaIds)) {
@@ -225,8 +230,8 @@ class TaskPolicy
      */
     public function reassign(User $user, Task $task): Response|bool
     {
-        // Requires 'crear-tareas' permission
-        if (!$user->hasPermission('crear-tareas')) {
+        // Requires 'asignar-tareas' permission
+        if (!$user->hasPermission('asignar-tareas')) {
             return Response::deny('No tienes permiso para reasignar tareas.');
         }
 
@@ -262,7 +267,7 @@ class TaskPolicy
         }
 
         // 2. User is a director/manager of the task's area
-        if ($user->hasPermission('crear-tareas')) {
+        if ($user->hasPermission('crear-tareas') || $user->hasPermission('editar-tareas')) {
             $userAreaIds = $user->areas->pluck('id')->toArray();
 
             if (in_array($task->area_id, $userAreaIds)) {

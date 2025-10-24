@@ -365,15 +365,43 @@
     </div>
 </div>
 
-{{-- Livewire Dialog (OUTSIDE Livewire component) --}}
+{{-- Task Detail Dialog --}}
 <x-dialog-wrapper id="task-detail-dialog" max-width="5xl">
     @livewire('tasks.task-detail-dialog')
 </x-dialog-wrapper>
+
+{{-- Create Task Dialog (only for users with crear-tareas permission) --}}
+@if(auth()->user()->hasPermission('crear-tareas'))
+<x-dialog-wrapper id="create-task-dialog" max-width="5xl">
+    @livewire('tasks.create-task-dialog')
+</x-dialog-wrapper>
+@endif
+
+{{-- Edit Task Dialog (only for users with editar-tareas permission) --}}
+@if(auth()->user()->hasPermission('editar-tareas') || auth()->user()->hasPermission('crear-tareas'))
+<x-dialog-wrapper id="edit-task-dialog" max-width="5xl">
+    @livewire('tasks.edit-task-dialog')
+</x-dialog-wrapper>
+@endif
 
 @push('scripts')
 <script>
     // Livewire Dialog Integration
     document.addEventListener('livewire:init', () => {
+        // Listen for task-created event to refresh the list
+        Livewire.on('task-created', (event) => {
+            const taskId = event.taskId || event[0]?.taskId;
+            console.log('Task created:', taskId);
+            window.location.reload();
+        });
+
+        // Listen for task-updated event to refresh the list
+        Livewire.on('task-updated', (event) => {
+            const taskId = event.taskId || event[0]?.taskId;
+            console.log('Task updated:', taskId);
+            window.location.reload();
+        });
+
         // Listen for show-toast events
         Livewire.on('show-toast', (event) => {
             const message = event.message || event[0]?.message || 'Operación completada';
@@ -381,14 +409,18 @@
             showToast(message, type);
         });
 
-        // Listen for dialog close to refresh list if task was updated
+        // Listen for dialog close events
         document.addEventListener('dialog-closed', (event) => {
-            if (event.detail && event.detail.dialogId === 'task-detail-dialog') {
-                // Only reload if we were viewing a task
+            if (!event.detail) return;
+
+            // Reset form when create-task-dialog closes
+            if (event.detail.dialogId === 'create-task-dialog') {
                 setTimeout(() => {
-                    window.location.reload();
-                }, 300);
+                    Livewire.dispatch('resetTaskForm');
+                }, 100);
             }
+
+            // No need to reset edit dialog - it loads fresh data each time
         });
     });
 
@@ -401,6 +433,19 @@
         if (!window.DialogSystem.isOpen('task-detail-dialog')) {
             window.DialogSystem.open('task-detail-dialog');
         }
+    }
+
+    // Function to load task for editing
+    function loadTaskForEdit(taskId) {
+        // Dispatch event to Livewire component
+        Livewire.dispatch('loadTaskForEdit', { taskId: taskId });
+
+        // Wait a bit for Livewire to process the data before opening dialog
+        setTimeout(() => {
+            if (!window.DialogSystem.isOpen('edit-task-dialog')) {
+                window.DialogSystem.open('edit-task-dialog');
+            }
+        }, 150);
     }
 
     // Toast notification function
