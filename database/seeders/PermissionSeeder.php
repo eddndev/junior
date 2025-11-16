@@ -85,12 +85,23 @@ class PermissionSeeder extends Seeder
             ['name' => 'Editar Leads', 'slug' => 'editar-leads', 'module' => 'marketing', 'description' => 'Editar información de leads'],
             ['name' => 'Ver Leads', 'slug' => 'ver-leads', 'module' => 'marketing', 'description' => 'Ver leads generados'],
             ['name' => 'Ver Reportes de Marketing', 'slug' => 'ver-reportes-marketing', 'module' => 'marketing', 'description' => 'Ver reportes de campañas y leads'],
+
+            // Módulo Calendario General
+            ['name' => 'Ver Calendario General', 'slug' => 'ver-calendario', 'module' => 'calendario', 'description' => 'Ver el calendario general de la empresa'],
+            ['name' => 'Crear Eventos', 'slug' => 'crear-eventos-calendario', 'module' => 'calendario', 'description' => 'Crear eventos en el calendario'],
+            ['name' => 'Editar Eventos', 'slug' => 'editar-eventos-calendario', 'module' => 'calendario', 'description' => 'Editar eventos del calendario'],
+            ['name' => 'Eliminar Eventos', 'slug' => 'eliminar-eventos-calendario', 'module' => 'calendario', 'description' => 'Eliminar eventos del calendario'],
+            ['name' => 'Crear Reuniones', 'slug' => 'crear-reuniones', 'module' => 'calendario', 'description' => 'Crear reuniones con participantes'],
+            ['name' => 'Registrar Asistencia', 'slug' => 'registrar-asistencia', 'module' => 'calendario', 'description' => 'Registrar asistencia a reuniones'],
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create($permission);
+            Permission::firstOrCreate(
+                ['slug' => $permission['slug']],
+                $permission
+            );
         }
 
-        $this->command->info('Permisos creados exitosamente.');
+        $this->command->info('Permisos creados/actualizados exitosamente.');
     }
 }

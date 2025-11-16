@@ -69,9 +69,15 @@ class RolePermissionSeeder extends Seeder
             'editar-bitacora',
             'eliminar-bitacora',
             'ver-bitacora',
-            // Calendario
+            // Calendario de disponibilidad
             'gestionar-disponibilidad',
             'ver-disponibilidad-equipo',
+            // Calendario General
+            'ver-calendario',
+            'crear-eventos-calendario',
+            'editar-eventos-calendario',
+            'crear-reuniones',
+            'registrar-asistencia',
             // Comunicación
             'enviar-notificaciones',
             'ver-notificaciones',
@@ -150,9 +156,11 @@ class RolePermissionSeeder extends Seeder
             // Bitácora
             'crear-bitacora',
             'ver-bitacora',
-            // Calendario
+            // Calendario de disponibilidad
             'gestionar-disponibilidad',
             'ver-disponibilidad-equipo',
+            // Calendario General
+            'ver-calendario',
             // Comunicación
             'ver-notificaciones',
             // Básico
@@ -171,6 +179,8 @@ class RolePermissionSeeder extends Seeder
             // Bitácora
             'ver-bitacora',
             'crear-bitacora',
+            // Calendario General
+            'ver-calendario',
             // Comunicación
             'ver-notificaciones',
             // Básico

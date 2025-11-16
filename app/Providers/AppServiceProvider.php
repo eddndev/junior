@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Models\Area;
+use App\Models\CalendarEvent;
 use App\Models\Permission;
 use App\Models\Task;
 use App\Models\TeamLog;
 use App\Models\User;
 use App\Observers\AreaObserver;
+use App\Observers\CalendarEventObserver;
 use App\Observers\TaskObserver;
 use App\Observers\TeamLogObserver;
 use App\Observers\UserObserver;
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Area::observe(AreaObserver::class);
         Task::observe(TaskObserver::class);
         TeamLog::observe(TeamLogObserver::class);
+        CalendarEvent::observe(CalendarEventObserver::class);
 
         // Registrar Gates dinámicamente basados en permisos
         try {

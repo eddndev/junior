@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleAssignmentController;
 use App\Http\Controllers\AreaController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\TeamAvailabilityController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -102,6 +104,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('tasks/{task}/restore', [App\Http\Controllers\TaskController::class, 'restore'])
             ->middleware('permission:crear-tareas')
             ->name('tasks.restore');
+
+        // Task Submission file download
+        Route::get('task-submissions/{file}/download', [App\Http\Controllers\TaskSubmissionController::class, 'download'])
+            ->name('task-submissions.download');
     });
 
     // Personal Task Dashboard (All Employees)
@@ -113,6 +119,31 @@ Route::middleware(['auth'])->group(function () {
         ->name('my-tasks.complete');
     Route::patch('my-tasks/{task}/status', [App\Http\Controllers\MyTasksController::class, 'updateStatus'])
         ->name('my-tasks.status');
+
+    // Calendar General Routes
+    Route::middleware('permission:ver-calendario')->group(function () {
+        // Main calendar view
+        Route::get('calendar', [CalendarController::class, 'index'])
+            ->name('calendar.index');
+
+        // API endpoint for calendar data (JSON)
+        Route::get('calendar/events/api', [CalendarController::class, 'events'])
+            ->name('calendar.events.api');
+
+        // Show specific event/meeting details
+        Route::get('calendar/{calendarEvent}', [CalendarController::class, 'show'])
+            ->name('calendar.show');
+
+        // Upcoming events API (for dashboard widget)
+        Route::get('calendar/upcoming/api', [CalendarController::class, 'upcoming'])
+            ->name('calendar.upcoming.api');
+    });
+
+    // Team Availability Routes
+    Route::get('team-availability', [TeamAvailabilityController::class, 'index'])
+        ->name('team-availability.index');
+    Route::get('team-availability/day', [TeamAvailabilityController::class, 'dayData'])
+        ->name('team-availability.day');
 });
 
 // UI Components Showcase (solo en desarrollo)

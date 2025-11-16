@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(php artisan:*)",
-      "Edit(**)"
+      "Edit(**)",
+      "Bash(dir \"C:\\apache\\htdocs\\junior\\app\\Livewire\" /B)",
+      "Bash(dir \"C:\\apache\\htdocs\\junior\\resources\\views\\livewire\" /B)",
+      "Bash(mkdir:*)",
+      "Bash(findstr:*)",
+      "Bash(dir \"C:\\apache\\htdocs\\junior\\resources\\views\\components\" /B)"
     ],
     "deny": [],
     "ask": []

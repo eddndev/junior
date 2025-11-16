@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -82,6 +83,14 @@ class Task extends Model implements HasMedia
     public function assignments(): MorphMany
     {
         return $this->morphMany(TaskAssignment::class, 'assignable');
+    }
+
+    /**
+     * Get the submission for this task.
+     */
+    public function submission(): HasOne
+    {
+        return $this->hasOne(TaskSubmission::class);
     }
 
     /**

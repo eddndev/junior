@@ -192,6 +192,13 @@
                         </div>
                     @endif
 
+                    {{-- Task Submission/Deliverable --}}
+                    @if($task->assignments->count() > 0)
+                        <div class="pt-6 border-t border-neutral-200 dark:border-neutral-700">
+                            <livewire:tasks.task-submission-manager :taskId="$task->id" :key="'submission-'.$task->id" />
+                        </div>
+                    @endif
+
                     {{-- Metadata --}}
                     <div class="pt-6 border-t border-neutral-200 dark:border-neutral-700">
                         <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Información</h3>

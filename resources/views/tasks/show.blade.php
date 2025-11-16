@@ -225,6 +225,15 @@
                     </div>
                 </div>
             @endif
+
+            {{-- Task Submission/Deliverable --}}
+            @if($task->assignments->count() > 0)
+                <div class="bg-white dark:bg-neutral-800 shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <livewire:tasks.task-submission-manager :taskId="$task->id" />
+                    </div>
+                </div>
+            @endif
         </div>
 
         {{-- Right Column: Sidebar Info --}}

@@ -60,6 +60,15 @@ return [
             'report' => false,
         ],
 
+        'submissions' => [
+            'driver' => 'local',
+            'root' => storage_path('app/submissions'),
+            'url' => env('APP_URL').'/submissions',
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
