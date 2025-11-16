@@ -67,23 +67,51 @@
                         </dl>
                     </div>
 
-                    {{-- Roles --}}
+                    {{-- Roles por Área --}}
                     <div>
                         <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">
-                            Roles Asignados
-                            @if($user->roles->count() > 0)
-                                <span class="ml-2 text-xs font-normal text-neutral-500">({{ $user->roles->count() }})</span>
+                            Roles por Área
+                            @if($user->areas->count() > 0)
+                                <span class="ml-2 text-xs font-normal text-neutral-500">({{ $user->areas->count() }} áreas)</span>
                             @endif
                         </h3>
-                        @if($user->roles->count() > 0)
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($user->roles as $role)
-                                    <span class="inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-600/30">
-                                        <svg class="h-1.5 w-1.5 fill-blue-500" viewBox="0 0 6 6" aria-hidden="true">
-                                            <circle cx="3" cy="3" r="3" />
-                                        </svg>
-                                        {{ $role->name }}
-                                    </span>
+                        @php
+                            // Group roles by area
+                            $rolesByArea = [];
+                            foreach ($user->roles as $role) {
+                                $areaId = $role->pivot->area_id;
+                                if ($areaId) {
+                                    if (!isset($rolesByArea[$areaId])) {
+                                        $rolesByArea[$areaId] = [];
+                                    }
+                                    $rolesByArea[$areaId][] = $role;
+                                }
+                            }
+                        @endphp
+
+                        @if(count($rolesByArea) > 0)
+                            <div class="space-y-4">
+                                @foreach($user->areas as $area)
+                                    @if(isset($rolesByArea[$area->id]))
+                                        <div class="rounded-lg border border-neutral-200 dark:border-neutral-700 p-3">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <div class="flex h-6 w-6 items-center justify-center rounded bg-purple-100 text-xs font-semibold text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                                                    {{ substr($area->name, 0, 1) }}
+                                                </div>
+                                                <span class="text-sm font-medium text-neutral-900 dark:text-white">{{ $area->name }}</span>
+                                            </div>
+                                            <div class="flex flex-wrap gap-1.5">
+                                                @foreach($rolesByArea[$area->id] as $role)
+                                                    <span class="inline-flex items-center gap-x-1 rounded px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-600/30">
+                                                        <svg class="h-1.5 w-1.5 fill-blue-500" viewBox="0 0 6 6" aria-hidden="true">
+                                                            <circle cx="3" cy="3" r="3" />
+                                                        </svg>
+                                                        {{ $role->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
                                 @endforeach
                             </div>
                         @else
@@ -96,33 +124,19 @@
                 {{-- RIGHT COLUMN (1/3) - Sidebar --}}
                 <div class="lg:col-span-1 space-y-6">
 
-                    {{-- Areas --}}
+                    {{-- Quick Stats --}}
                     <div>
-                        <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">
-                            Áreas
-                            @if($user->areas->count() > 0)
-                                <span class="ml-2 text-xs font-normal text-neutral-500">({{ $user->areas->count() }})</span>
-                            @endif
-                        </h3>
-                        @if($user->areas->count() > 0)
-                            <div class="space-y-2">
-                                @foreach($user->areas as $area)
-                                    <div class="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
-                                        <div class="flex h-8 w-8 items-center justify-center rounded bg-purple-100 text-sm font-semibold text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-                                            {{ substr($area->name, 0, 1) }}
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-neutral-900 dark:text-white truncate">{{ $area->name }}</p>
-                                            @if($area->description)
-                                                <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{ $area->description }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endforeach
+                        <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Resumen</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800">
+                                <span class="text-xs text-neutral-500 dark:text-neutral-400">Total de Áreas</span>
+                                <span class="text-sm font-semibold text-neutral-900 dark:text-white">{{ $user->areas->count() }}</span>
                             </div>
-                        @else
-                            <p class="text-sm text-neutral-500 dark:text-neutral-400 italic">Sin áreas asignadas</p>
-                        @endif
+                            <div class="flex items-center justify-between p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800">
+                                <span class="text-xs text-neutral-500 dark:text-neutral-400">Total de Roles</span>
+                                <span class="text-sm font-semibold text-neutral-900 dark:text-white">{{ $user->roles->count() }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- OAuth Connections --}}

@@ -68,6 +68,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('team-logs', [App\Http\Controllers\TeamLogController::class, 'store'])
         ->middleware('permission:crear-bitacora')
         ->name('team-logs.store');
+    Route::get('team-logs/{teamLog}/edit', [App\Http\Controllers\TeamLogController::class, 'edit'])
+        ->middleware('permission:crear-bitacora')
+        ->name('team-logs.edit');
+    Route::put('team-logs/{teamLog}', [App\Http\Controllers\TeamLogController::class, 'update'])
+        ->middleware('permission:crear-bitacora')
+        ->name('team-logs.update');
     Route::delete('team-logs/{teamLog}', [App\Http\Controllers\TeamLogController::class, 'destroy'])
         ->middleware('permission:crear-bitacora')
         ->name('team-logs.destroy');

@@ -20,8 +20,9 @@ class CreateUserDialog extends Component
     public string $password = '';
     public string $password_confirmation = '';
     public bool $is_active = true;
-    public array $selectedAreas = [];
-    public array $selectedRoles = [];
+
+    // Role assignments per area: [area_id => [role_id, role_id, ...], ...]
+    public array $areaRoleAssignments = [];
 
     // For Alpine.js multi-select (passed via @js())
     public array $areas = [];
@@ -74,10 +75,9 @@ class CreateUserDialog extends Component
             ],
             'password_confirmation' => ['required'],
             'is_active' => ['boolean'],
-            'selectedAreas' => ['nullable', 'array'],
-            'selectedAreas.*' => ['integer', 'exists:areas,id'],
-            'selectedRoles' => ['nullable', 'array'],
-            'selectedRoles.*' => ['integer', 'exists:roles,id'],
+            'areaRoleAssignments' => ['nullable', 'array'],
+            'areaRoleAssignments.*' => ['array'],
+            'areaRoleAssignments.*.*' => ['integer', 'exists:roles,id'],
         ];
     }
 
@@ -92,8 +92,7 @@ class CreateUserDialog extends Component
             'password' => 'contraseña',
             'password_confirmation' => 'confirmación de contraseña',
             'is_active' => 'estado activo',
-            'selectedAreas' => 'áreas',
-            'selectedRoles' => 'roles',
+            'areaRoleAssignments' => 'asignaciones de roles por área',
         ];
     }
 
@@ -117,14 +116,35 @@ class CreateUserDialog extends Component
                 'is_active' => $this->is_active,
             ]);
 
-            // Sync areas if provided
-            if (!empty($this->selectedAreas)) {
-                $user->areas()->sync($this->selectedAreas);
-            }
+            // Process area-role assignments
+            if (!empty($this->areaRoleAssignments)) {
+                $areasToSync = [];
+                $rolesToAttach = [];
 
-            // Attach roles if provided
-            if (!empty($this->selectedRoles)) {
-                $user->roles()->attach($this->selectedRoles);
+                foreach ($this->areaRoleAssignments as $areaId => $roleIds) {
+                    if (!empty($roleIds)) {
+                        // Add area to sync list
+                        $areasToSync[] = $areaId;
+
+                        // Add each role with its area_id pivot
+                        foreach ($roleIds as $roleId) {
+                            $rolesToAttach[] = [
+                                'role_id' => $roleId,
+                                'area_id' => $areaId,
+                            ];
+                        }
+                    }
+                }
+
+                // Sync areas
+                if (!empty($areasToSync)) {
+                    $user->areas()->sync($areasToSync);
+                }
+
+                // Attach roles with area context
+                foreach ($rolesToAttach as $attachment) {
+                    $user->roles()->attach($attachment['role_id'], ['area_id' => $attachment['area_id']]);
+                }
             }
 
             // Success notification

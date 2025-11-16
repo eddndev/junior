@@ -11,8 +11,36 @@
 
     {{-- Form Content --}}
     <form wire:submit="save"
-          @submit.prevent="$wire.set('selectedAreas', selectedAreas); $wire.set('selectedRoles', selectedRoles); $wire.call('save')"
-          x-data
+          @submit.prevent="$wire.set('areaRoleAssignments', areaRoleAssignments); $wire.call('save')"
+          x-data="{
+              areaRoleAssignments: @js($areaRoleAssignments ?? []),
+              areas: @js($areas ?? []),
+              roles: @js($roles ?? []),
+              toggleAreaRole(areaId, roleId) {
+                  if (!this.areaRoleAssignments[areaId]) {
+                      this.areaRoleAssignments[areaId] = [];
+                  }
+                  const index = this.areaRoleAssignments[areaId].indexOf(roleId);
+                  if (index > -1) {
+                      this.areaRoleAssignments[areaId].splice(index, 1);
+                      if (this.areaRoleAssignments[areaId].length === 0) {
+                          delete this.areaRoleAssignments[areaId];
+                      }
+                  } else {
+                      this.areaRoleAssignments[areaId].push(roleId);
+                  }
+              },
+              hasRole(areaId, roleId) {
+                  return this.areaRoleAssignments[areaId] && this.areaRoleAssignments[areaId].includes(roleId);
+              },
+              getAreaRoles(areaId) {
+                  if (!this.areaRoleAssignments[areaId]) return [];
+                  return this.roles.filter(r => this.areaRoleAssignments[areaId].includes(r.id));
+              },
+              getAssignedAreasCount() {
+                  return Object.keys(this.areaRoleAssignments).length;
+              }
+          }"
           class="flex-1 overflow-y-auto">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-6">
 
@@ -101,158 +129,67 @@
 
             </div>
 
-            {{-- RIGHT COLUMN (1/3) - Assignments --}}
+            {{-- RIGHT COLUMN (1/3) - Role Assignments per Area --}}
             <div class="lg:col-span-1 space-y-6">
 
-                {{-- Roles Multi-Select --}}
-                <div wire:key="roles-new"
-                     x-data="{
-                    open: false,
-                    selectedRoles: @js($selectedRoles ?? []),
-                    roles: @js($roles ?? []),
-                    toggleRole(roleId) {
-                        const index = this.selectedRoles.indexOf(roleId);
-                        if (index > -1) {
-                            this.selectedRoles.splice(index, 1);
-                        } else {
-                            this.selectedRoles.push(roleId);
-                        }
-                    },
-                    isSelected(roleId) {
-                        return this.selectedRoles.includes(roleId);
-                    },
-                    getSelectedRolesData() {
-                        return this.roles.filter(r => this.selectedRoles.includes(r.id));
-                    }
-                }" class="relative">
-                    <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        Roles
-                    </label>
+                <div>
+                    <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-2">
+                        Asignación de Roles por Área
+                    </h3>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 mb-4">
+                        Selecciona los roles que tendrá el usuario en cada área. Un usuario puede tener diferentes roles en diferentes áreas.
+                    </p>
 
-                    {{-- Selected Roles Badges --}}
-                    <div x-show="selectedRoles.length > 0" class="mb-2 flex flex-wrap gap-2">
-                        <template x-for="role in getSelectedRolesData()" :key="role.id">
-                            <span class="inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-600/30">
-                                <svg class="h-1.5 w-1.5 fill-blue-500" viewBox="0 0 6 6" aria-hidden="true">
-                                    <circle cx="3" cy="3" r="3" />
-                                </svg>
-                                <span x-text="role.name"></span>
-                            </span>
-                        </template>
-                    </div>
-
-                    {{-- Dropdown Button --}}
-                    <button type="button"
-                            @click="open = !open"
-                            @click.away="open = false"
-                            class="relative w-full cursor-pointer rounded-md bg-white py-2 pl-3 pr-10 text-left shadow-sm ring-1 ring-inset ring-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-neutral-800 dark:ring-neutral-700 sm:text-sm">
-                        <span class="block truncate text-neutral-900 dark:text-white">
-                            <span x-show="selectedRoles.length === 0">Seleccionar roles...</span>
-                            <span x-show="selectedRoles.length > 0" x-text="`${selectedRoles.length} rol(es) seleccionado(s)`"></span>
-                        </span>
-                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <svg class="h-5 w-5 text-neutral-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd" />
+                    {{-- Summary Badge --}}
+                    <div x-show="getAssignedAreasCount() > 0" class="mb-4">
+                        <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-900/20 dark:text-green-400 dark:ring-green-600/30">
+                            <svg class="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
                             </svg>
+                            <span x-text="`${getAssignedAreasCount()} área(s) configurada(s)`"></span>
                         </span>
-                    </button>
-
-                    {{-- Dropdown Menu --}}
-                    <div x-show="open"
-                         x-transition
-                         class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-800 sm:text-sm">
-                        <template x-for="role in roles" :key="role.id">
-                            <div @click="toggleRole(role.id)"
-                                 class="relative cursor-pointer select-none py-2 pl-3 pr-9 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                 :class="{ 'bg-primary-50 dark:bg-primary-900/20': isSelected(role.id) }">
-                                <div class="flex items-center">
-                                    <span class="block truncate font-normal text-neutral-900 dark:text-white"
-                                          :class="{ 'font-semibold': isSelected(role.id) }"
-                                          x-text="role.name"></span>
-                                </div>
-                                <span x-show="isSelected(role.id)"
-                                      class="absolute inset-y-0 right-0 flex items-center pr-4 text-primary-600 dark:text-primary-400">
-                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                                    </svg>
-                                </span>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-                {{-- Areas Multi-Select --}}
-                <div wire:key="areas-new"
-                     x-data="{
-                    open: false,
-                    selectedAreas: @js($selectedAreas ?? []),
-                    areas: @js($areas ?? []),
-                    toggleArea(areaId) {
-                        const index = this.selectedAreas.indexOf(areaId);
-                        if (index > -1) {
-                            this.selectedAreas.splice(index, 1);
-                        } else {
-                            this.selectedAreas.push(areaId);
-                        }
-                    },
-                    isSelected(areaId) {
-                        return this.selectedAreas.includes(areaId);
-                    },
-                    getSelectedAreasData() {
-                        return this.areas.filter(a => this.selectedAreas.includes(a.id));
-                    }
-                }" class="relative">
-                    <label class="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        Áreas
-                    </label>
-
-                    {{-- Selected Areas Badges --}}
-                    <div x-show="selectedAreas.length > 0" class="mb-2 flex flex-wrap gap-2">
-                        <template x-for="area in getSelectedAreasData()" :key="area.id">
-                            <span class="inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-700/10 dark:bg-purple-900/20 dark:text-purple-400 dark:ring-purple-600/30">
-                                <svg class="h-1.5 w-1.5 fill-purple-500" viewBox="0 0 6 6" aria-hidden="true">
-                                    <circle cx="3" cy="3" r="3" />
-                                </svg>
-                                <span x-text="area.name"></span>
-                            </span>
-                        </template>
                     </div>
 
-                    {{-- Dropdown Button --}}
-                    <button type="button"
-                            @click="open = !open"
-                            @click.away="open = false"
-                            class="relative w-full cursor-pointer rounded-md bg-white py-2 pl-3 pr-10 text-left shadow-sm ring-1 ring-inset ring-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-neutral-800 dark:ring-neutral-700 sm:text-sm">
-                        <span class="block truncate text-neutral-900 dark:text-white">
-                            <span x-show="selectedAreas.length === 0">Seleccionar áreas...</span>
-                            <span x-show="selectedAreas.length > 0" x-text="`${selectedAreas.length} área(s) seleccionada(s)`"></span>
-                        </span>
-                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <svg class="h-5 w-5 text-neutral-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                    </button>
-
-                    {{-- Dropdown Menu --}}
-                    <div x-show="open"
-                         x-transition
-                         class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-800 sm:text-sm">
+                    {{-- Areas with Role Selection --}}
+                    <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
                         <template x-for="area in areas" :key="area.id">
-                            <div @click="toggleArea(area.id)"
-                                 class="relative cursor-pointer select-none py-2 pl-3 pr-9 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-                                 :class="{ 'bg-primary-50 dark:bg-primary-900/20': isSelected(area.id) }">
-                                <div class="flex items-center">
-                                    <span class="block truncate font-normal text-neutral-900 dark:text-white"
-                                          :class="{ 'font-semibold': isSelected(area.id) }"
-                                          x-text="area.name"></span>
+                            <div class="rounded-lg border border-neutral-200 dark:border-neutral-700 p-3">
+                                {{-- Area Header --}}
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-neutral-900 dark:text-white" x-text="area.name"></span>
+                                    <span x-show="getAreaRoles(area.id).length > 0"
+                                          class="text-xs text-primary-600 dark:text-primary-400"
+                                          x-text="`${getAreaRoles(area.id).length} rol(es)`"></span>
                                 </div>
-                                <span x-show="isSelected(area.id)"
-                                      class="absolute inset-y-0 right-0 flex items-center pr-4 text-primary-600 dark:text-primary-400">
-                                    <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-                                    </svg>
-                                </span>
+
+                                {{-- Selected Roles for this Area --}}
+                                <div x-show="getAreaRoles(area.id).length > 0" class="mb-2 flex flex-wrap gap-1">
+                                    <template x-for="role in getAreaRoles(area.id)" :key="role.id">
+                                        <span class="inline-flex items-center gap-x-1 rounded px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-600/30">
+                                            <span x-text="role.name"></span>
+                                            <button type="button"
+                                                    @click="toggleAreaRole(area.id, role.id)"
+                                                    class="ml-0.5 hover:text-blue-900 dark:hover:text-blue-200">
+                                                <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </template>
+                                </div>
+
+                                {{-- Role Checkboxes --}}
+                                <div class="space-y-1">
+                                    <template x-for="role in roles" :key="role.id">
+                                        <label class="flex items-center gap-2 text-xs cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded p-1 -m-1">
+                                            <input type="checkbox"
+                                                   :checked="hasRole(area.id, role.id)"
+                                                   @change="toggleAreaRole(area.id, role.id)"
+                                                   class="h-3.5 w-3.5 rounded border-neutral-300 text-primary-600 focus:ring-primary-600 dark:border-neutral-600 dark:bg-neutral-700" />
+                                            <span class="text-neutral-700 dark:text-neutral-300" x-text="role.name"></span>
+                                        </label>
+                                    </template>
+                                </div>
                             </div>
                         </template>
                     </div>

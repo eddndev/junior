@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTeamLogRequest;
+use App\Http\Requests\UpdateTeamLogRequest;
 use App\Models\TeamLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,7 @@ class TeamLogController extends Controller
     public function __construct()
     {
         $this->middleware('permission:ver-bitacora')->only('index');
-        $this->middleware('permission:crear-bitacora')->only('store');
+        $this->middleware('permission:crear-bitacora')->only(['store', 'edit', 'update']);
     }
 
     /**
@@ -119,6 +120,85 @@ class TeamLogController extends Controller
 
         return redirect()->route('team-logs.index')
                        ->with('success', 'Entrada de bitácora creada con éxito. Los adjuntos se están procesando en segundo plano.');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(TeamLog $teamLog)
+    {
+        // Only the author can edit their own team log entries
+        if ($teamLog->user_id !== auth()->id()) {
+            return redirect()->route('team-logs.index')->with('error', 'No tienes permiso para editar esta entrada.');
+        }
+
+        // Load area and media relationships for display
+        $teamLog->load(['area', 'media']);
+
+        return view('team-logs.edit', compact('teamLog'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateTeamLogRequest $request, TeamLog $teamLog)
+    {
+        $validated = $request->validated();
+
+        $teamLog->update([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'type' => $validated['type'],
+        ]);
+
+        // Process new attachments (if any)
+        if ($request->hasFile('attachments')) {
+            \Log::info('Procesando nuevos archivos adjuntos en actualización:', ['count' => count($request->file('attachments'))]);
+
+            foreach ($request->file('attachments') as $index => $file) {
+                try {
+                    \Log::info("Archivo {$index}:", [
+                        'original_name' => $file->getClientOriginalName(),
+                        'mime_type' => $file->getMimeType(),
+                        'size' => $file->getSize(),
+                    ]);
+
+                    $teamLog->addMedia($file)
+                           ->toMediaCollection('attachments');
+                } catch (\Exception $e) {
+                    \Log::error('Error al procesar archivo adjunto: ' . $e->getMessage(), [
+                        'file' => $file->getClientOriginalName(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                }
+            }
+        }
+
+        // Process new links (if any)
+        if ($request->has('links') && is_array($request->input('links'))) {
+            foreach ($request->input('links') as $link) {
+                $media = $teamLog->media()->create([
+                    'collection_name' => 'links',
+                    'name' => $link['url'],
+                    'file_name' => basename(parse_url($link['url'], PHP_URL_PATH)) ?: 'link',
+                    'mime_type' => 'text/uri-list',
+                    'disk' => config('filesystems.default'),
+                    'size' => 0,
+                    'manipulations' => [],
+                    'custom_properties' => [
+                        'url' => $link['url'],
+                        'link_type' => $link['type'],
+                        'is_link' => true,
+                    ],
+                    'generated_conversions' => [],
+                    'responsive_images' => [],
+                    'order_column' => $teamLog->media()->where('collection_name', 'links')->count() + 1,
+                ]);
+            }
+        }
+
+        return redirect()->route('team-logs.index')
+                       ->with('success', 'Entrada de bitácora actualizada con éxito.');
     }
 
     /**

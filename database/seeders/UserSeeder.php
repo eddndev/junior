@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
         $finanzasArea = Area::where('slug', 'finanzas')->first();
         $marketingArea = Area::where('slug', 'marketing')->first();
         $produccionArea = Area::where('slug', 'produccion')->first();
-        $tecnologiaArea = Area::where('slug', 'tecnologia')->first();
+        $generalArea = Area::where('slug', 'general')->first();
 
         // Usuario 1: Director General
         $directorGeneral = User::create([
@@ -40,7 +40,8 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $directorGeneral->roles()->attach($direccionGeneralRole->id, ['area_id' => $direccionArea->id]);
-        $directorGeneral->areas()->attach($direccionArea->id);
+        $directorGeneral->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $directorGeneral->areas()->attach([$direccionArea->id, $generalArea->id]);
 
         // Usuario 2: Administrador RRHH
         $adminRRHH = User::create([
@@ -51,7 +52,8 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $adminRRHH->roles()->attach($adminRRHHRole->id, ['area_id' => $rrhhArea->id]);
-        $adminRRHH->areas()->attach($rrhhArea->id);
+        $adminRRHH->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $adminRRHH->areas()->attach([$rrhhArea->id, $generalArea->id]);
 
         // Usuario 3: Gestor Financiero
         $gestorFinanzas = User::create([
@@ -62,7 +64,8 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $gestorFinanzas->roles()->attach($gestorFinancieroRole->id, ['area_id' => $finanzasArea->id]);
-        $gestorFinanzas->areas()->attach($finanzasArea->id);
+        $gestorFinanzas->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $gestorFinanzas->areas()->attach([$finanzasArea->id, $generalArea->id]);
 
         // Usuario 4: Gestor de Marketing
         $gestorMarketing = User::create([
@@ -73,7 +76,8 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $gestorMarketing->roles()->attach($gestorMarketingRole->id, ['area_id' => $marketingArea->id]);
-        $gestorMarketing->areas()->attach($marketingArea->id);
+        $gestorMarketing->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $gestorMarketing->areas()->attach([$marketingArea->id, $generalArea->id]);
 
         // Usuario 5: Director de Producción
         $directorProduccion = User::create([
@@ -84,7 +88,8 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $directorProduccion->roles()->attach($directorAreaRole->id, ['area_id' => $produccionArea->id]);
-        $directorProduccion->areas()->attach($produccionArea->id);
+        $directorProduccion->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $directorProduccion->areas()->attach([$produccionArea->id, $generalArea->id]);
 
         // Usuario 6: Miembro de Producción 1
         $miembroProduccion1 = User::create([
@@ -95,7 +100,8 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $miembroProduccion1->roles()->attach($miembroProduccionRole->id, ['area_id' => $produccionArea->id]);
-        $miembroProduccion1->areas()->attach($produccionArea->id);
+        $miembroProduccion1->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $miembroProduccion1->areas()->attach([$produccionArea->id, $generalArea->id]);
 
         // Usuario 7: Miembro de Producción 2
         $miembroProduccion2 = User::create([
@@ -106,7 +112,8 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $miembroProduccion2->roles()->attach($miembroProduccionRole->id, ['area_id' => $produccionArea->id]);
-        $miembroProduccion2->areas()->attach($produccionArea->id);
+        $miembroProduccion2->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $miembroProduccion2->areas()->attach([$produccionArea->id, $generalArea->id]);
 
         // Usuario 8: Empleado General de Marketing
         $empleadoMarketing = User::create([
@@ -117,22 +124,23 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
         $empleadoMarketing->roles()->attach($empleadoGeneralRole->id, ['area_id' => $marketingArea->id]);
-        $empleadoMarketing->areas()->attach($marketingArea->id);
+        $empleadoMarketing->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $empleadoMarketing->areas()->attach([$marketingArea->id, $generalArea->id]);
 
-        // Usuario 9: Empleado General de Tecnología (multi-área)
-        $empleadoTecnologia = User::create([
+        // Usuario 9: Empleado Multi-área (Producción y General)
+        $empleadoMultiArea = User::create([
             'name' => 'María Fernández',
-            'email' => 'maria.tech@junior.com',
+            'email' => 'maria.produccion@junior.com',
             'password' => Hash::make('password'),
             'is_active' => true,
             'email_verified_at' => now(),
         ]);
-        // Este usuario pertenece a dos áreas: Tecnología y Producción
-        $empleadoTecnologia->roles()->attach($empleadoGeneralRole->id, ['area_id' => $tecnologiaArea->id]);
-        $empleadoTecnologia->roles()->attach($empleadoGeneralRole->id, ['area_id' => $produccionArea->id]);
-        $empleadoTecnologia->areas()->attach([$tecnologiaArea->id, $produccionArea->id]);
+        $empleadoMultiArea->roles()->attach($empleadoGeneralRole->id, ['area_id' => $produccionArea->id]);
+        $empleadoMultiArea->roles()->attach($empleadoGeneralRole->id, ['area_id' => $generalArea->id]);
+        $empleadoMultiArea->areas()->attach([$produccionArea->id, $generalArea->id]);
 
         $this->command->info('Usuarios de ejemplo creados exitosamente.');
+        $this->command->info('Todos los usuarios tienen acceso al área General para bitácora compartida.');
         $this->command->info('Credenciales por defecto: email / password');
     }
 }

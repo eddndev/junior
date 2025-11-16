@@ -24,8 +24,9 @@ class EditUserDialog extends Component
     public string $password = '';
     public string $password_confirmation = '';
     public bool $is_active = true;
-    public array $selectedAreas = [];
-    public array $selectedRoles = [];
+
+    // Role assignments per area: [area_id => [role_id, role_id, ...], ...]
+    public array $areaRoleAssignments = [];
 
     // For Alpine.js multi-select (passed via @js())
     public array $areas = [];
@@ -56,11 +57,17 @@ class EditUserDialog extends Component
             $this->email = $this->user->email;
             $this->is_active = $this->user->is_active;
 
-            // Get selected areas
-            $this->selectedAreas = $this->user->areas->pluck('id')->toArray();
-
-            // Get selected roles
-            $this->selectedRoles = $this->user->roles->pluck('id')->toArray();
+            // Build area-role assignments from existing pivot data
+            $this->areaRoleAssignments = [];
+            foreach ($this->user->roles as $role) {
+                $areaId = $role->pivot->area_id;
+                if ($areaId) {
+                    if (!isset($this->areaRoleAssignments[$areaId])) {
+                        $this->areaRoleAssignments[$areaId] = [];
+                    }
+                    $this->areaRoleAssignments[$areaId][] = $role->id;
+                }
+            }
 
             // Load areas and roles for the form
             $this->areas = Area::active()->orderBy('name')->get()->toArray();
@@ -92,10 +99,9 @@ class EditUserDialog extends Component
             ],
             'password_confirmation' => ['nullable'],
             'is_active' => ['boolean'],
-            'selectedAreas' => ['nullable', 'array'],
-            'selectedAreas.*' => ['integer', 'exists:areas,id'],
-            'selectedRoles' => ['nullable', 'array'],
-            'selectedRoles.*' => ['integer', 'exists:roles,id'],
+            'areaRoleAssignments' => ['nullable', 'array'],
+            'areaRoleAssignments.*' => ['array'],
+            'areaRoleAssignments.*.*' => ['integer', 'exists:roles,id'],
         ];
     }
 
@@ -110,8 +116,7 @@ class EditUserDialog extends Component
             'password' => 'contraseña',
             'password_confirmation' => 'confirmación de contraseña',
             'is_active' => 'estado activo',
-            'selectedAreas' => 'áreas',
-            'selectedRoles' => 'roles',
+            'areaRoleAssignments' => 'asignaciones de roles por área',
         ];
     }
 
@@ -142,11 +147,35 @@ class EditUserDialog extends Component
             // Update user
             $this->user->update($data);
 
-            // Sync areas
-            $this->user->areas()->sync($this->selectedAreas);
+            // Process area-role assignments
+            $areasToSync = [];
+            $rolesToSync = [];
 
-            // Sync roles
-            $this->user->roles()->sync($this->selectedRoles);
+            if (!empty($this->areaRoleAssignments)) {
+                foreach ($this->areaRoleAssignments as $areaId => $roleIds) {
+                    if (!empty($roleIds)) {
+                        // Add area to sync list
+                        $areasToSync[] = $areaId;
+
+                        // Add each role with its area_id pivot
+                        foreach ($roleIds as $roleId) {
+                            $rolesToSync[] = [
+                                'role_id' => $roleId,
+                                'area_id' => $areaId,
+                            ];
+                        }
+                    }
+                }
+            }
+
+            // Sync areas
+            $this->user->areas()->sync($areasToSync);
+
+            // Detach all roles first, then attach with proper area context
+            $this->user->roles()->detach();
+            foreach ($rolesToSync as $attachment) {
+                $this->user->roles()->attach($attachment['role_id'], ['area_id' => $attachment['area_id']]);
+            }
 
             // Success notification
             $this->dispatch('show-toast', message: 'Usuario actualizado exitosamente', type: 'success');

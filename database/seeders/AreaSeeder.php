@@ -49,9 +49,9 @@ class AreaSeeder extends Seeder
                 'is_system' => true, // Área del sistema - no se puede desactivar
             ],
             [
-                'name' => 'Tecnología',
-                'slug' => 'tecnologia',
-                'description' => 'Desarrollo de tecnología e infraestructura IT',
+                'name' => 'General',
+                'slug' => 'general',
+                'description' => 'Área común para comunicaciones y bitácora general de toda la empresa',
                 'is_active' => true,
                 'is_system' => true, // Área del sistema - no se puede desactivar
             ],
