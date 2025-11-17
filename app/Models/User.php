@@ -25,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'is_active',
+        'avatar_path',
         'google_id',
         'google_token',
         'google_refresh_token',
@@ -218,5 +219,35 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles()
             ->wherePivot('area_id', $areaId)
             ->get();
+    }
+
+    /**
+     * Get the user's avatar URL.
+     * Returns the uploaded avatar or a placeholder with initials.
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar_path) {
+            return asset('storage/' . $this->avatar_path);
+        }
+
+        // Generate initials from name
+        $initials = collect(explode(' ', $this->name))
+            ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+            ->take(2)
+            ->implode('');
+
+        return "https://ui-avatars.com/api/?name={$initials}&background=6366f1&color=fff&size=256&font-size=0.4";
+    }
+
+    /**
+     * Get the user's initials.
+     */
+    public function getInitialsAttribute(): string
+    {
+        return collect(explode(' ', $this->name))
+            ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+            ->take(2)
+            ->implode('');
     }
 }

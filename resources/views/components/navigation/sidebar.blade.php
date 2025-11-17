@@ -140,10 +140,18 @@
             {{-- Notificaciones --}}
             <li>
                 <a
-                    href="#"
-                    class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-neutral-700 hover:bg-neutral-50 hover:text-primary-600 dark:text-neutral-400 dark:hover:bg-white/5 dark:hover:text-white"
+                    href="{{ route('notifications.index') }}"
+                    @class([
+                        'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
+                        'bg-neutral-50 dark:bg-white/5 text-primary-600 dark:text-white' => request()->routeIs('notifications.*'),
+                        'text-neutral-700 dark:text-neutral-400 hover:bg-neutral-50 hover:text-primary-600 dark:hover:bg-white/5 dark:hover:text-white' => !request()->routeIs('notifications.*'),
+                    ])
                 >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 shrink-0 text-neutral-400 group-hover:text-primary-600 dark:group-hover:text-white">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" @class([
+                        'size-6 shrink-0',
+                        'text-primary-600 dark:text-white' => request()->routeIs('notifications.*'),
+                        'text-neutral-400 group-hover:text-primary-600 dark:group-hover:text-white' => !request()->routeIs('notifications.*'),
+                    ])>
                         <path d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     Notificaciones
@@ -300,47 +308,4 @@
     </li>
     @endif
 
-    {{-- User Profile (at bottom) --}}
-    <li class="mt-auto">
-        <x-layout.dropdown anchor="top end" width="72" :block="true">
-            <x-slot:trigger>
-                <button type="button" class="flex w-full items-center gap-x-4 p-2 text-sm/6 font-semibold text-neutral-900 hover:bg-neutral-50 rounded-md dark:text-white dark:hover:bg-white/5 -mx-2">
-                    <img
-                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128"
-                        alt="{{ Auth::user()->name }}"
-                        class="size-8 rounded-full bg-neutral-50 outline -outline-offset-1 outline-black/5 dark:bg-neutral-800 dark:outline-white/10"
-                    />
-                    <span class="sr-only">Tu perfil</span>
-                    <span aria-hidden="true">{{ Auth::user()->name }}</span>
-                </button>
-            </x-slot:trigger>
-
-            <x-layout.dropdown-link href="{{ route('profile.edit') }}">
-                <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 text-neutral-400">
-                    <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" />
-                </svg>
-                <span>Mi Perfil</span>
-            </x-layout.dropdown-link>
-
-            <x-layout.dropdown-link href="{{ route('dashboard') }}">
-                <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 text-neutral-400">
-                    <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
-                </svg>
-                <span>Configuración</span>
-            </x-layout.dropdown-link>
-
-            <x-layout.dropdown-divider />
-
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <x-layout.dropdown-button type="submit">
-                    <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 text-neutral-400">
-                        <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd" />
-                        <path fill-rule="evenodd" d="M6 10a.75.75 0 0 1 .75-.75h9.546l-1.048-.943a.75.75 0 1 1 1.004-1.114l2.5 2.25a.75.75 0 0 1 0 1.114l-2.5 2.25a.75.75 0 1 1-1.004-1.114l1.048-.943H6.75A.75.75 0 0 1 6 10Z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Cerrar Sesión</span>
-                </x-layout.dropdown-button>
-            </form>
-        </x-layout.dropdown>
-    </li>
 </ul>

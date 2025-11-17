@@ -66,9 +66,7 @@
                         <div class="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
                             {{-- Participant Header --}}
                             <div class="flex items-center gap-3 mb-4">
-                                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-medium text-primary-700 dark:bg-primary-900 dark:text-primary-300">
-                                    {{ substr($participant->user->name, 0, 1) }}
-                                </div>
+                                <x-data-display.avatar :user="$participant->user" size="md" />
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-medium text-neutral-900 dark:text-white truncate">
                                         {{ $participant->user->name }}

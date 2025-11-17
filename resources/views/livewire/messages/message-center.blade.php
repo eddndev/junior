@@ -33,9 +33,7 @@
                     class="w-full text-left p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors border-b border-gray-100 dark:border-white/5 {{ $isSelected ? 'bg-indigo-50 dark:bg-indigo-900/20' : '' }}">
                     <div class="flex items-start gap-3">
                         <div class="flex-shrink-0">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-sm font-medium text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
-                                {{ substr($otherUser->name, 0, 1) }}
-                            </div>
+                            <x-data-display.avatar :user="$otherUser" size="md" />
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between">
@@ -83,9 +81,7 @@
                 $chatUser = $selectedConversation->getOtherUser(auth()->user());
             @endphp
             <div class="p-4 border-b border-gray-200 dark:border-white/10 flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-sm font-medium text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
-                    {{ substr($chatUser->name, 0, 1) }}
-                </div>
+                <x-data-display.avatar :user="$chatUser" size="md" />
                 <div>
                     <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $chatUser->name }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ $chatUser->email }}</p>
@@ -158,9 +154,7 @@
                                 <button wire:click="selectUser({{ $user->id }})"
                                     class="w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
                                     <div class="flex items-center gap-3">
-                                        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-medium text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
-                                            {{ substr($user->name, 0, 1) }}
-                                        </div>
+                                        <x-data-display.avatar :user="$user" size="sm" />
                                         <div>
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $user->name }}</p>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">{{ $user->email }}</p>
@@ -177,11 +171,9 @@
                     @php
                         $selectedUser = App\Models\User::find($selectedUserId);
                     @endphp
-                    <div class="flex-1 flex items-center justify-center">
+                    <div class="flex-1 flex items-center justify-center overflow-y-auto">
                         <div class="text-center">
-                            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 text-xl font-medium text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
-                                {{ substr($selectedUser->name, 0, 1) }}
-                            </div>
+                            <x-data-display.avatar :user="$selectedUser" size="xl" class="mx-auto" />
                             <p class="mt-3 text-lg font-semibold text-gray-900 dark:text-white">{{ $selectedUser->name }}</p>
                             <p class="text-sm text-gray-500 dark:text-gray-400">{{ $selectedUser->email }}</p>
                             <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">

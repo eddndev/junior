@@ -249,11 +249,7 @@
                             @foreach($task->assignments as $assignment)
                                 <li class="flex items-center gap-2">
                                     <div class="flex-shrink-0">
-                                        <div class="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
-                                            <span class="text-sm font-medium text-primary-700 dark:text-primary-400">
-                                                {{ substr($assignment->user->name, 0, 1) }}
-                                            </span>
-                                        </div>
+                                        <x-data-display.avatar :user="$assignment->user" size="sm" />
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-neutral-900 dark:text-white">

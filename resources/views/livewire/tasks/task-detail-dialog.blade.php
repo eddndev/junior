@@ -232,9 +232,7 @@
                             <div class="space-y-2">
                                 @foreach($task->assignments as $assignment)
                                     <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
-                                        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-sm font-medium text-primary-700 dark:bg-primary-900 dark:text-primary-300">
-                                            {{ substr($assignment->user->name, 0, 1) }}
-                                        </div>
+                                        <x-data-display.avatar :user="$assignment->user" size="sm" />
                                         <div class="flex-1 min-w-0">
                                             <p class="text-sm font-medium text-neutral-900 dark:text-white truncate">{{ $assignment->user->name }}</p>
                                             <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">{{ $assignment->user->email }}</p>

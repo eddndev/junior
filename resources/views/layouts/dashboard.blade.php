@@ -116,11 +116,7 @@
                     <x-slot:trigger>
                         <button type="button" class="-m-1.5 flex items-center p-1.5">
                             <span class="sr-only">Abrir menu de usuario</span>
-                            <img
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128"
-                                alt="{{ Auth::user()->name }}"
-                                class="size-8 rounded-full bg-neutral-50 outline -outline-offset-1 outline-black/5 dark:bg-neutral-800 dark:outline-white/10"
-                            />
+                            <x-data-display.avatar :user="Auth::user()" size="sm" />
                             <span class="hidden lg:flex lg:items-center">
                                 <span class="ml-4 text-sm/6 font-semibold text-neutral-900 dark:text-white">
                                     {{ Auth::user()->name }}
@@ -181,11 +177,7 @@
                     <x-slot:trigger>
                         <button type="button" class="-m-1.5 flex items-center p-1.5">
                             <span class="sr-only">Abrir menú de usuario</span>
-                            <img
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128"
-                                alt="{{ Auth::user()->name }}"
-                                class="size-8 rounded-full bg-neutral-50 outline -outline-offset-1 outline-black/5 dark:bg-neutral-800 dark:outline-white/10"
-                            />
+                            <x-data-display.avatar :user="Auth::user()" size="sm" />
                         </button>
                     </x-slot:trigger>
 

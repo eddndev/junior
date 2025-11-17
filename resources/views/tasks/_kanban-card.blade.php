@@ -63,10 +63,12 @@
     @if($task->assignments->count() > 0)
     <div class="relative z-20 pointer-events-none mt-3 flex -space-x-2">
         @foreach($task->assignments->take(3) as $assignment)
-        <div class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 text-xs font-medium text-primary-700 ring-2 ring-white dark:bg-primary-900 dark:text-primary-300 dark:ring-neutral-800"
-             title="{{ $assignment->user->name }}">
-            {{ substr($assignment->user->name, 0, 1) }}
-        </div>
+        <x-data-display.avatar
+            :user="$assignment->user"
+            size="xs"
+            class="ring-2 ring-white dark:ring-neutral-800"
+            :title="$assignment->user->name"
+        />
         @endforeach
         @if($task->assignments->count() > 3)
         <div class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-neutral-100 text-xs font-medium text-neutral-600 ring-2 ring-white dark:bg-neutral-700 dark:text-neutral-300 dark:ring-neutral-800">

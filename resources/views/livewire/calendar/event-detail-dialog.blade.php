@@ -158,9 +158,7 @@
                                 @foreach($event->participants as $participant)
                                     <div class="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
                                         <div class="flex items-center gap-3">
-                                            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-sm font-medium text-primary-700 dark:bg-primary-900 dark:text-primary-300">
-                                                {{ substr($participant->user->name, 0, 1) }}
-                                            </div>
+                                            <x-data-display.avatar :user="$participant->user" size="sm" />
                                             <div class="min-w-0">
                                                 <p class="text-sm font-medium text-neutral-900 dark:text-white truncate">
                                                     {{ $participant->user->name }}
@@ -246,9 +244,7 @@
                         <h3 class="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Creado por</h3>
                         @if($event->creator)
                             <div class="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
-                                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-medium text-primary-700 dark:bg-primary-900 dark:text-primary-300">
-                                    {{ substr($event->creator->name, 0, 1) }}
-                                </div>
+                                <x-data-display.avatar :user="$event->creator" size="md" />
                                 <div class="min-w-0">
                                     <p class="text-sm font-medium text-neutral-900 dark:text-white truncate">
                                         {{ $event->creator->name }}

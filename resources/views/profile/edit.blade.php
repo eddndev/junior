@@ -34,13 +34,7 @@
                     @method('patch')
 
                     <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
-                        <div class="col-span-full flex items-center gap-x-8">
-                            <x-data-display.avatar src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=256" alt="{{ Auth::user()->name }}" size="xl" />
-                            <div>
-                                <x-actions.button type="button" variant="secondary">{{ __('Cambiar avatar') }}</x-actions.button>
-                                <p class="mt-2 text-xs leading-5 text-gray-400">{{ __('JPG, GIF o PNG. 1MB máximo.') }}</p>
-                            </div>
-                        </div>
+                        <livewire:profile.update-avatar />
 
                         <div class="col-span-full">
                             <x-forms.input name="name" label="{{ __('Nombre') }}" :value="old('name', Auth::user()->name)" required />

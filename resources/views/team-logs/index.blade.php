@@ -155,7 +155,7 @@
                         <div class="absolute left-0 top-0 flex w-6 justify-center -bottom-6">
                             <div class="w-px bg-neutral-200 dark:bg-neutral-700"></div>
                         </div>
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($log->user->name) }}&background=6366f1&color=fff&size=128" alt="" class="relative mt-3 h-6 w-6 flex-none rounded-full bg-neutral-50">
+                        <x-data-display.avatar :user="$log->user" size="xs" class="relative mt-3 flex-none" />
                         <div class="flex-auto rounded-md p-3 ring-1 ring-inset ring-neutral-200 dark:ring-neutral-700">
                             <div class="flex justify-between gap-x-4">
                                 <div class="py-0.5 text-xs leading-5 text-neutral-500 dark:text-neutral-400">
