@@ -34,7 +34,9 @@
                     @method('patch')
 
                     <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
-                        <livewire:profile.update-avatar />
+                        <div class="col-span-full">
+                            <livewire:profile.update-avatar />
+                        </div>
 
                         <div class="col-span-full">
                             <x-forms.input name="name" label="{{ __('Nombre') }}" :value="old('name', Auth::user()->name)" required />
