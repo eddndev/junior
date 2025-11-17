@@ -32,17 +32,49 @@ class TaskDetailDialog extends Component
      */
     protected $listeners = [
         'loadTask' => 'load',
+        'openTaskDetail' => 'openDialog',
         'refreshTaskDetail' => 'load',
     ];
 
     /**
-     * Load task data
+     * Open dialog and load task
      *
-     * @param int $taskId
+     * @param int|array $taskId
      * @return void
      */
-    public function load(int $taskId): void
+    public function openDialog(int|array $taskId): void
     {
+        // Handle both direct int and array from Livewire dispatch
+        if (is_array($taskId)) {
+            $taskId = $taskId['taskId'] ?? null;
+        }
+
+        if (!$taskId) {
+            $this->dispatch('show-toast', message: 'ID de tarea inválido', type: 'error');
+            return;
+        }
+
+        $this->load($taskId);
+        $this->dispatch('open-dialog', dialogId: 'task-detail-dialog');
+    }
+
+    /**
+     * Load task data
+     *
+     * @param int|array $taskId
+     * @return void
+     */
+    public function load(int|array $taskId): void
+    {
+        // Handle both direct int and array from Livewire dispatch
+        if (is_array($taskId)) {
+            $taskId = $taskId['taskId'] ?? null;
+        }
+
+        if (!$taskId) {
+            return;
+        }
+
         $this->taskId = $taskId;
 
         try {

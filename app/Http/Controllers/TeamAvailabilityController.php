@@ -84,10 +84,58 @@ class TeamAvailabilityController extends Controller
             }
         }
 
+        // Transform data for heatmap view
+        $heatmapData = [];
+        $dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+        // Generate slots for each hour (8:00 to 20:00)
+        for ($hour = 8; $hour <= 20; $hour++) {
+            $timeFormatted = sprintf('%d:00 %s', $hour > 12 ? $hour - 12 : $hour, $hour >= 12 ? 'PM' : 'AM');
+
+            for ($dayIndex = 0; $dayIndex < 7; $dayIndex++) {
+                $key = $hour . '-' . $dayIndex;
+                $usersInSlot = [];
+
+                if (isset($weekData[$dayIndex])) {
+                    foreach ($weekData[$dayIndex]['availability'] as $avail) {
+                        $startHour = (int) substr($avail['start_time'], 0, 2);
+                        $endHour = (int) substr($avail['end_time'], 0, 2);
+                        $endMin = (int) substr($avail['end_time'], 3, 2);
+
+                        // Adjust end hour if minutes > 0 (e.g., 17:30 means available until 17:30, not 18:00)
+                        $effectiveEndHour = $endMin > 0 ? $endHour : $endHour - 1;
+
+                        // User is available if hour falls within their range
+                        if ($hour >= $startHour && $hour <= $effectiveEndHour) {
+                            $usersInSlot[] = [
+                                'id' => $avail['user']->id,
+                                'name' => $avail['user']->name,
+                                'email' => $avail['user']->email,
+                                'initials' => strtoupper(substr($avail['user']->name, 0, 1)),
+                                'start_time' => $avail['start_time_formatted'],
+                                'end_time' => $avail['end_time_formatted'],
+                                'notes' => $avail['notes'],
+                            ];
+                        }
+                    }
+                }
+
+                $heatmapData[$key] = [
+                    'hour' => $hour,
+                    'dayIndex' => $dayIndex,
+                    'dayName' => $dayNames[$dayIndex],
+                    'timeFormatted' => $timeFormatted,
+                    'count' => count($usersInSlot),
+                    'users' => $usersInSlot,
+                ];
+            }
+        }
+
         return view('team-availability.index', [
             'userAreas' => $userAreas,
             'selectedArea' => $selectedArea,
             'weekData' => $weekData,
+            'heatmapData' => $heatmapData,
         ]);
     }
 

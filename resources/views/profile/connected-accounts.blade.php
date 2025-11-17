@@ -8,7 +8,7 @@
             <x-layout.tab-item :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                 {{ __('Cuenta') }}
             </x-layout.tab-item>
-            <x-layout.tab-item href="#" :active="false">
+            <x-layout.tab-item :href="route('profile.notifications')" :active="request()->routeIs('profile.notifications')">
                 {{ __('Notificaciones') }}
             </x-layout.tab-item>
             <x-layout.tab-item :href="route('profile.availability.show')" :active="request()->routeIs('profile.availability.show')">

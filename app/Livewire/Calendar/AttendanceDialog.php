@@ -34,11 +34,22 @@ class AttendanceDialog extends Component
     /**
      * Load event data for attendance recording
      *
-     * @param int $eventId
+     * @param int|array $eventId
      * @return void
      */
-    public function load(int $eventId): void
+    public function load(int|array $eventId): void
     {
+        // Handle both direct int and array from Livewire dispatch
+        if (is_array($eventId)) {
+            $eventId = $eventId['eventId'] ?? null;
+        }
+
+        if (!$eventId) {
+            $this->dispatch('show-toast', message: 'ID de evento inválido', type: 'error');
+            $this->dispatch('close-dialog', dialogId: 'attendance-dialog');
+            return;
+        }
+
         $this->eventId = $eventId;
 
         try {

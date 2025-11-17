@@ -6,6 +6,7 @@ use App\Http\Controllers\RoleAssignmentController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\TeamAvailabilityController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,6 +28,17 @@ Route::middleware('auth')->group(function () {
 
     // Connected Accounts routes
     Route::get('/profile/connected-accounts', [App\Http\Controllers\Profile\ConnectedAccountsController::class, 'show'])->name('profile.connected-accounts.show');
+
+    // Notification Preferences routes
+    Route::get('/profile/notifications', function () {
+        return view('profile.notifications');
+    })->name('profile.notifications');
+
+    // Notification History/Management routes
+    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/mark-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/notifications/{notification}', [App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
 });
 
 // RRHH - User Management Routes
@@ -144,6 +156,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('team-availability.index');
     Route::get('team-availability/day', [TeamAvailabilityController::class, 'dayData'])
         ->name('team-availability.day');
+
+    // Direct Messaging Routes
+    Route::get('messages', [MessageController::class, 'index'])
+        ->name('messages.index');
+    Route::get('messages/start/{userId}', [MessageController::class, 'startWith'])
+        ->name('messages.start');
 });
 
 // UI Components Showcase (solo en desarrollo)

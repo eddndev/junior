@@ -78,7 +78,7 @@
 
     <div style="width: 165%" class="flex max-w-full flex-none flex-col sm:max-w-none md:max-w-full">
         <div class="sticky top-0 z-30 flex-none bg-white shadow-sm ring-1 ring-black/5 sm:pr-8 dark:bg-gray-900 dark:shadow-none dark:ring-white/20">
-            <div class="-mr-px hidden grid-cols-7 divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500 sm:grid dark:divide-white/10 dark:border-white/10 dark:text-gray-400">
+            <div class="-mr-px hidden grid-cols-5 divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500 sm:grid dark:divide-white/10 dark:border-white/10 dark:text-gray-400">
                 <div class="col-end-1 w-14"></div>
                 <template x-for="day in days" :key="day.full_date">
                     <div class="flex items-center justify-center py-3">
@@ -106,7 +106,7 @@
                 >
                     <div class="row-end-1 h-6"></div>
                     @foreach ($hours as $hour)
-                        <div style="grid-row-start: {{ ($loop->index * (60 / $interval)) + 2 }}; grid-row-end: span {{ 60 / $interval }};">
+                        <div style="grid-row-start: {{ ($loop->index * (60 / $interval)) + 1 }};">
                             <div class="sticky left-0 z-20 -mt-2.5 -ml-14 w-14 pr-2 text-right text-xs/5 text-gray-400 dark:text-gray-500">{{ $hour }}</div>
                         </div>
                         @for ($i = 0; $i < (60 / $interval); $i++)
@@ -116,20 +116,18 @@
                 </div>
 
                 <!-- Vertical lines -->
-                <div class="col-start-1 col-end-2 row-start-1 hidden grid-rows-1 divide-x divide-gray-100 sm:grid sm:grid-cols-7 dark:divide-white/5">
+                <div class="col-start-1 col-end-2 row-start-1 hidden grid-rows-1 divide-x divide-gray-100 sm:grid sm:grid-cols-5 dark:divide-white/5">
                     <div class="col-start-1 row-span-full"></div>
                     <div class="col-start-2 row-span-full"></div>
                     <div class="col-start-3 row-span-full"></div>
                     <div class="col-start-4 row-span-full"></div>
                     <div class="col-start-5 row-span-full"></div>
-                    <div class="col-start-6 row-span-full"></div>
-                    <div class="col-start-7 row-span-full"></div>
-                    <div class="col-start-8 row-span-full w-8"></div>
+                    <div class="col-start-6 row-span-full w-8"></div>
                 </div>
 
                 <!-- Slots -->
                 <div
-                    class="col-start-1 col-end-2 row-start-1 grid grid-cols-1 sm:grid-cols-7 sm:pr-8"
+                    class="col-start-1 col-end-2 row-start-1 grid grid-cols-1 sm:grid-cols-5 sm:pr-8"
                     :style="`grid-template-rows: 1.5rem repeat({{ ($endHour - $startHour) * (60 / $interval) }}, 1.5rem) auto`"
                 >
                     <template x-for="(day, dayIndex) in days" :key="day.full_date">

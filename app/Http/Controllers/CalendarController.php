@@ -141,7 +141,8 @@ class CalendarController extends Controller
                     ];
                 });
 
-            $result = $events->merge($tasks);
+            // Use concat instead of merge to combine collections of arrays
+            $result = $events->concat($tasks);
         }
 
         return response()->json($result->values());

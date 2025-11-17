@@ -106,6 +106,61 @@
                 </div>
             </div>
 
+            <!-- Desktop top bar -->
+            <div class="hidden lg:fixed lg:left-72 lg:right-0 lg:top-0 lg:z-40 lg:flex lg:h-16 lg:items-center lg:justify-end lg:gap-x-4 lg:border-b lg:border-neutral-200 lg:bg-white lg:px-8 dark:lg:border-white/10 dark:lg:bg-neutral-900">
+                {{-- Notification Bell --}}
+                <livewire:notifications.notification-bell />
+
+                {{-- User Menu Dropdown --}}
+                <x-layout.dropdown anchor="bottom end" width="56">
+                    <x-slot:trigger>
+                        <button type="button" class="-m-1.5 flex items-center p-1.5">
+                            <span class="sr-only">Abrir menu de usuario</span>
+                            <img
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=6366f1&color=fff&size=128"
+                                alt="{{ Auth::user()->name }}"
+                                class="size-8 rounded-full bg-neutral-50 outline -outline-offset-1 outline-black/5 dark:bg-neutral-800 dark:outline-white/10"
+                            />
+                            <span class="hidden lg:flex lg:items-center">
+                                <span class="ml-4 text-sm/6 font-semibold text-neutral-900 dark:text-white">
+                                    {{ Auth::user()->name }}
+                                </span>
+                                <svg class="ml-2 size-5 text-neutral-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </button>
+                    </x-slot:trigger>
+
+                    <x-layout.dropdown-link href="{{ route('profile.edit') }}">
+                        <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 text-neutral-400">
+                            <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" />
+                        </svg>
+                        <span>Mi Perfil</span>
+                    </x-layout.dropdown-link>
+
+                    <x-layout.dropdown-link href="{{ route('profile.notifications') }}">
+                        <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 text-neutral-400">
+                            <path fill-rule="evenodd" d="M10 2a6 6 0 0 0-6 6c0 1.887-.454 3.665-1.257 5.234a.75.75 0 0 0 .515 1.076 32.91 32.91 0 0 0 3.256.508 3.5 3.5 0 0 0 6.972 0 32.903 32.903 0 0 0 3.256-.508.75.75 0 0 0 .515-1.076A11.448 11.448 0 0 1 16 8a6 6 0 0 0-6-6ZM8.05 14.943a33.54 33.54 0 0 0 3.9 0 2 2 0 0 1-3.9 0Z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Notificaciones</span>
+                    </x-layout.dropdown-link>
+
+                    <x-layout.dropdown-divider />
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <x-layout.dropdown-button type="submit">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 text-neutral-400">
+                                <path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 0 1 5.25 2h5.5A2.25 2.25 0 0 1 13 4.25v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 0-.75-.75h-5.5a.75.75 0 0 0-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 0 0 .75-.75v-2a.75.75 0 0 1 1.5 0v2A2.25 2.25 0 0 1 10.75 18h-5.5A2.25 2.25 0 0 1 3 15.75V4.25Z" clip-rule="evenodd" />
+                                <path fill-rule="evenodd" d="M6 10a.75.75 0 0 1 .75-.75h9.546l-1.048-.943a.75.75 0 1 1 1.004-1.114l2.5 2.25a.75.75 0 0 1 0 1.114l-2.5 2.25a.75.75 0 1 1-1.004-1.114l1.048-.943H6.75A.75.75 0 0 1 6 10Z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Cerrar Sesion</span>
+                        </x-layout.dropdown-button>
+                    </form>
+                </x-layout.dropdown>
+            </div>
+
             <!-- Mobile top bar -->
             <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-xs sm:px-6 lg:hidden dark:bg-neutral-900 dark:shadow-none dark:after:pointer-events-none dark:after:absolute dark:after:inset-0 dark:after:border-b dark:after:border-white/10 dark:after:bg-black/10">
                 <button type="button" @click="sidebarOpen = true" class="-m-2.5 p-2.5 text-neutral-700 hover:text-neutral-900 lg:hidden dark:text-neutral-400 dark:hover:text-white">
@@ -117,6 +172,9 @@
                 <div class="flex-1 text-sm/6 font-semibold text-neutral-900 dark:text-white">
                     {{ $mobileTitle ?? $title ?? 'Dashboard' }}
                 </div>
+
+                {{-- Notification Bell --}}
+                <livewire:notifications.notification-bell />
 
                 {{-- User Menu Dropdown --}}
                 <x-layout.dropdown anchor="bottom end" width="56">
@@ -161,7 +219,7 @@
             </div>
 
             <!-- Main content -->
-            <main class="py-10 lg:pl-72">
+            <main class="py-10 lg:pl-72 lg:pt-16">
                 <div class="px-4 sm:px-6 lg:px-8">
                     {{ $slot }}
                 </div>

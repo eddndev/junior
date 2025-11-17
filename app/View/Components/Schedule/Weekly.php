@@ -34,10 +34,15 @@ class Weekly extends Component
     {
         $startOfWeek = now()->startOfWeek();
         $days = [];
-        for ($i = 0; $i < 7; $i++) {
+
+        // Spanish day names (Monday to Friday only)
+        $spanishDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'];
+
+        // Only Monday to Friday (5 days)
+        for ($i = 0; $i < 5; $i++) {
             $day = $startOfWeek->copy()->addDays($i);
             $days[] = [
-                'short_name' => $day->format('D'),
+                'short_name' => $spanishDays[$i],
                 'number' => $day->format('d'),
                 'full_date' => $day->format('Y-m-d'),
                 'is_today' => $day->isToday(),
