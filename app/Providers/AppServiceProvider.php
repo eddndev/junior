@@ -79,6 +79,11 @@ class AppServiceProvider extends ServiceProvider
             if ($user->hasRole('direccion-general')) {
                 return true; // Dirección General bypasses todas las verificaciones
             }
+
+            // Supervisor tiene acceso de solo lectura global (permisos que empiezan con "ver-")
+            if ($user->hasRole('supervisor') && str_starts_with($ability, 'ver-')) {
+                return true; // Supervisor puede ver todo sin restricción de área
+            }
         });
     }
 }

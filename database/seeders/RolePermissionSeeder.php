@@ -16,11 +16,10 @@ class RolePermissionSeeder extends Seeder
         // Obtener todos los roles
         $direccionGeneral = Role::where('slug', 'direccion-general')->first();
         $directorArea = Role::where('slug', 'director-area')->first();
+        $gerente = Role::where('slug', 'gerente')->first();
         $adminRRHH = Role::where('slug', 'admin-rrhh')->first();
-        $gestorFinanciero = Role::where('slug', 'gestor-financiero')->first();
-        $gestorMarketing = Role::where('slug', 'gestor-marketing')->first();
-        $miembroProduccion = Role::where('slug', 'miembro-produccion')->first();
-        $empleadoGeneral = Role::where('slug', 'empleado-general')->first();
+        $empleado = Role::where('slug', 'empleado')->first();
+        $supervisor = Role::where('slug', 'supervisor')->first();
 
         // ===================================
         // DIRECCIÓN GENERAL - Acceso Total
@@ -36,6 +35,7 @@ class RolePermissionSeeder extends Seeder
             'gestionar-usuarios',
             'asignar-roles',
             'ver-usuarios',
+            'gestionar-areas',
             'ver-areas',
             // Comunicación
             'enviar-notificaciones',
@@ -47,6 +47,10 @@ class RolePermissionSeeder extends Seeder
             // Tareas básicas
             'ver-tareas',
             'ver-bitacora',
+            'crear-bitacora',
+            // Calendario
+            'ver-calendario',
+            'gestionar-disponibilidad',
         ])->pluck('id');
         $adminRRHH->permissions()->sync($rrhhPermissions);
 
@@ -76,6 +80,7 @@ class RolePermissionSeeder extends Seeder
             'ver-calendario',
             'crear-eventos-calendario',
             'editar-eventos-calendario',
+            'eliminar-eventos-calendario',
             'crear-reuniones',
             'registrar-asistencia',
             // Comunicación
@@ -87,75 +92,21 @@ class RolePermissionSeeder extends Seeder
         $directorArea->permissions()->sync($directorPermissions);
 
         // ===================================
-        // GESTOR FINANCIERO
+        // GERENTE - Mismos permisos que Director de Área
         // ===================================
-        $finanzasPermissions = Permission::whereIn('slug', [
-            // Clientes
-            'gestionar-clientes',
-            'ver-clientes',
-            // Catálogo de costos
-            'gestionar-catalogo-costos',
-            'ver-catalogo-costos',
-            // Presupuestos
-            'crear-presupuestos',
-            'editar-presupuestos',
-            'ver-presupuestos',
-            'registrar-gastos',
-            'ver-reportes-presupuestos',
-            // Cotizaciones
-            'crear-cotizaciones',
-            'editar-cotizaciones',
-            'ver-cotizaciones',
-            'usar-calculadora-costos',
-            // Básico
-            'ver-usuarios',
-            'ver-areas',
-            'ver-notificaciones',
-            'ver-tareas',
-            'completar-tareas',
-            'ver-bitacora',
-            'crear-bitacora',
-        ])->pluck('id');
-        $gestorFinanciero->permissions()->sync($finanzasPermissions);
+        $gerente->permissions()->sync($directorPermissions);
 
         // ===================================
-        // GESTOR DE MARKETING
+        // EMPLEADO
         // ===================================
-        $marketingPermissions = Permission::whereIn('slug', [
-            // Campañas
-            'crear-campanas',
-            'editar-campanas',
-            'ver-campanas',
-            // Tareas de marketing
-            'crear-tareas-marketing',
-            'asignar-tareas-marketing',
-            'ver-tareas-marketing',
-            // Leads
-            'registrar-leads',
-            'editar-leads',
-            'ver-leads',
-            'ver-reportes-marketing',
-            // Básico
-            'ver-usuarios',
-            'ver-areas',
-            'ver-notificaciones',
-            'ver-tareas',
-            'completar-tareas',
-            'ver-bitacora',
-            'crear-bitacora',
-        ])->pluck('id');
-        $gestorMarketing->permissions()->sync($marketingPermissions);
-
-        // ===================================
-        // MIEMBRO DE PRODUCCIÓN
-        // ===================================
-        $produccionPermissions = Permission::whereIn('slug', [
+        $empleadoPermissions = Permission::whereIn('slug', [
             // Tareas
             'ver-tareas',
             'completar-tareas',
             // Bitácora
-            'crear-bitacora',
             'ver-bitacora',
+            'crear-bitacora',
+            'editar-bitacora',
             // Calendario de disponibilidad
             'gestionar-disponibilidad',
             'ver-disponibilidad-equipo',
@@ -167,27 +118,13 @@ class RolePermissionSeeder extends Seeder
             'ver-usuarios',
             'ver-areas',
         ])->pluck('id');
-        $miembroProduccion->permissions()->sync($produccionPermissions);
+        $empleado->permissions()->sync($empleadoPermissions);
 
         // ===================================
-        // EMPLEADO GENERAL
+        // SUPERVISOR - Solo permisos de lectura (ver)
         // ===================================
-        $empleadoPermissions = Permission::whereIn('slug', [
-            // Tareas básicas
-            'ver-tareas',
-            'completar-tareas',
-            // Bitácora
-            'ver-bitacora',
-            'crear-bitacora',
-            // Calendario General
-            'ver-calendario',
-            // Comunicación
-            'ver-notificaciones',
-            // Básico
-            'ver-usuarios',
-            'ver-areas',
-        ])->pluck('id');
-        $empleadoGeneral->permissions()->sync($empleadoPermissions);
+        $supervisorPermissions = Permission::where('slug', 'like', 'ver-%')->pluck('id');
+        $supervisor->permissions()->sync($supervisorPermissions);
 
         $this->command->info('Permisos asignados a roles exitosamente.');
     }
